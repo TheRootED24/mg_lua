@@ -1,0 +1,34 @@
+#ifndef MG_MQTT_MESAGE_H
+#define MG_MQTT_MESAGE_H
+
+#include "mg_mqtt.h"
+
+#define MG_MQTT_MSG "mg_mqtt_message"
+
+typedef struct mg_mqtt_message mqtt_message;
+
+// C++ GAURDS FOR C LIBS
+#ifndef __cplusplus
+// LUA LIBS FOR gcc
+#include <lua.h>
+#include <lauxlib.h>
+#include <lualib.h>
+#endif
+
+#ifdef __cplusplus
+// LUA LIBS FOR g++
+#include <lua.hpp>
+extern "C" {
+#endif
+// MONGOOSE C LIB
+#include "../includes/libmongoose/src/mongoose.h"
+
+#ifdef __cplusplus
+}
+#endif
+
+void  mg_open_mg_mqtt_message (lua_State *L);
+int _mg_mqtt_message_new (lua_State *L);
+mqtt_message *check_mqtt_message(lua_State *L, int pos);
+
+#endif

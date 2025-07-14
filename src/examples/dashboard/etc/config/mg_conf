@@ -1,0 +1,8 @@
+
+config settings 'settings'
+	option log_enabled 'false'
+	option log_level '3'
+	option brightness '54'
+	option device_name 'My Device'
+	option name 'My Device'
+

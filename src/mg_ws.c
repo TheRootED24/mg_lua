@@ -1,0 +1,133 @@
+#include "mg_ws.h"
+
+// struct mg_connection *mg_ws_connect(struct mg_mgr *mgr, const char *url, mg_event_handler_t fn, void *fn_data, const char *fmt, ...);
+static int _mg_ws_connect(lua_State *L) {
+	mg_mgr *mgr = check_mg_mgr(L);
+	const char *s_url = luaL_checkstring(L, 2);
+	const char *cb = luaL_checkstring(L, 3);
+	const char *argstr = luaL_optstring(L, 4, NULL);
+
+	mg_event_handler_t fn = (mg_event_handler_t)fn_lua_cb;
+	lua_State_t *GL = alloc_lua_state(); 
+	GL->L = L; // pass the lua_State pointer to fn_serv
+	GL->callback = cb;
+
+	if(argstr) 
+		mg_ws_connect(mgr, s_url, fn, GL, "%s", argstr);
+	else
+		mg_ws_connect(mgr, s_url, fn, GL, NULL);
+
+	return 0; // return the udata on the stack
+};
+
+// void mg_ws_upgrade(struct mg_connection *c, struct mg_http_message *, const char *fmt, ...);
+static int _mg_ws_upgrade(lua_State *L) {
+	mg_connection *conn = NULL;
+	http_message *hm = NULL;
+	const char *fmt = luaL_optstring(L, 3, NULL);
+	
+	if(lua_istable(L, 1))
+		conn = check_mg_connection(L, 1);
+	else
+		conn = (mg_connection*)lua_topointer(L, 1);
+	
+	if(lua_istable(L, 2)) {
+		lua_getfield(L, 2, "ctx");
+		hm = (http_message*)lua_topointer(L, -1);
+		lua_pop(L, 1);
+	}
+	else
+		hm = (http_message*)lua_topointer(L, 2);
+	
+	if(fmt)
+		mg_ws_upgrade(conn, hm, fmt, luaL_checkstring(L, 4));
+	else
+		mg_ws_upgrade(conn, hm, fmt);
+
+	return 0;
+};
+
+// size_t mg_ws_send(struct mg_connection *c, const void *buf, size_t len, int op);
+static int _mg_ws_send(lua_State *L) {
+	mg_connection *conn = NULL;
+
+	if(lua_istable(L, 1))
+		conn = check_mg_connection(L, 1);
+	else
+		conn = (mg_connection*)lua_topointer(L, 1);
+
+	const char *buf = lua_tostring(L, 2);
+	size_t len = luaL_checkinteger(L, 3);
+	int op = luaL_checkinteger(L, 4);
+
+	size_t sent = mg_ws_send(conn, (const void*)buf, len, op);
+	lua_pushnumber(L, sent);
+
+	return 1;
+};
+
+// size_t mg_ws_printf(struct mg_connection *, int op, const char *fmt, ...);
+static int _mg_ws_printf(lua_State *L) {
+	mg_connection *conn = NULL;
+	size_t ret = 0;
+
+	if(lua_istable(L, 1))
+		conn = check_mg_connection(L, 1);
+	else
+		conn = (mg_connection*)lua_topointer(L, 1);
+
+	int op = luaL_checkinteger(L, 2);
+	const char *fmt = luaL_checkstring(L, 3);
+	const char *argstr = luaL_checkstring(L, 4);
+
+	if(conn)
+		ret = mg_ws_printf(conn, op, fmt, argstr);
+
+	lua_pushinteger(L, ret);
+
+	return 1;
+};
+
+// TODO VARIADIC ARG HANDLER
+static int _mg_ws_vprintf(lua_State *L) {
+	if(L)
+		return 0;
+
+	return 0;
+};
+
+// size_t mg_ws_wrap(struct mg_connection *c, size_t len, int op)
+static int _mg_ws_wrap(lua_State *L) {
+	mg_connection *conn = check_mg_connection(L, 1);
+	size_t len = (size_t)luaL_checkinteger(L, 2);
+	int op = luaL_checkinteger(L, 3);
+	size_t sent = mg_ws_wrap(conn, len, op);
+	lua_pushnumber(L, sent);
+
+	return 1;
+};
+
+static const struct luaL_reg mg_ws_lib_m [] = {
+	{"connect",	_mg_ws_connect	},
+	{"upgrade",	_mg_ws_upgrade	},
+	{"send",	_mg_ws_send,	},
+	{"printf", 	_mg_ws_printf	},
+	{"vprintf",	_mg_ws_vprintf	},
+	{"wrap",	_mg_ws_wrap	},
+	{NULL, NULL}
+};
+
+void mg_open_mg_ws(lua_State *L) {
+	lua_newtable(L);
+	luaL_register(L, NULL, mg_ws_lib_m);
+	lua_setfield(L, -2, "ws");
+	// mg_ws
+	luaL_newmetatable(L, "LuaBook.mg_ws");
+	lua_pushstring(L, "__index");
+	lua_pushvalue(L, -2);  /* pushes the metatable */
+	lua_settable(L, -3);  /* metatable.__index = metatable */
+	lua_pop(L, 1);
+	// open sub-module
+	mg_open_mg_ws_message(L);
+	lua_pop(L, 1);
+};

@@ -1,0 +1,7 @@
+
+config dhcp 'dhcp'
+	option enabled 'true'
+	option address_begin '10'
+	option address_end '250'
+	option lease_time_sec '86400'
+
