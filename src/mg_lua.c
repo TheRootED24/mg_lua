@@ -8,27 +8,78 @@ mg_mqtt_message.c mg_tls.c mg_tls_opts.c mg_timer.c mg_time.c mg_json.c -shared 
 #include "mg_lua.h"
 
 static const char *s_web_root = ".";
+
 int mg_log_level = MG_LL_DEBUG;
-/*
-static int _web_root(lua_State *L) {
+
+
+static int _mg_web_root(lua_State *L) {
 	s_web_root = luaL_checkstring(L, -1);
+
 	return 0;
 }
-
+/*
 static int _log_level(lua_State *L) {
 	mg_log_level = luaL_checkinteger(L, -1);
 	return 0;
 }
 
-static int do_callback(lua_State *L) {
-	const char *a = luaL_checkstring(L, -2);
-	int b = luaL_checknumber(L, -1);
-	lua_getglobal(L, "callback");
-	lua_pushstring(L, a);
-	printf("The data says: %s\n", a);
-	lua_pushnumber(L, b);
-	lua_pcall(L, 2, 0, 0);
-	return 0;
+
+void fn_lua(mg_connection *c, int ev, void *ev_data) {
+	lua_State_t *GL = (lua_State_t*)c->fn_data;
+	lua_State *L = GL->L;
+	lua_getglobal(L, GL->callback);
+	lua_pushlightuserdata(L, c);
+	lua_pushinteger(L, ev);
+	lua_pushlightuserdata(L, ev_data);
+	//dumpstack(L);
+	lua_pcall(L, 3, 0, 0);
+}
+*/
+
+static int _MG_U32(lua_State *L) {
+	uint8_t a = (uint8_t)lua_tointeger(L, 1);
+	uint8_t b = (uint8_t)lua_tointeger(L, 2);
+	uint8_t c = (uint8_t)lua_tointeger(L, 3);
+	uint8_t d = (uint8_t)lua_tointeger(L, 4);
+	lua_pushinteger(L, MG_U32(a, b, c, d));
+
+	return 1;
+}
+
+/*
+// Linked list management macros
+#define LIST_ADD_HEAD(type_, head_, elem_) \
+  do {                                     \
+    (elem_)->next = (*head_);              \
+    *(head_) = (elem_);                    \
+  } while (0)
+
+#define LIST_ADD_TAIL(type_, head_, elem_) \
+  do {                                     \
+    type_ **h = head_;                     \
+    while (*h != NULL) h = &(*h)->next;    \
+    *h = (elem_);                          \
+  } while (0)
+
+#define LIST_DELETE(type_, head_, elem_)   \
+  do {                                     \
+    type_ **h = head_;                     \
+    while (*h != (elem_)) h = &(*h)->next; \
+    *h = (elem_)->next;                    \
+  } while (0)
+
+static enum _types{
+	HTTP_MESSAGE,	
+};
+
+
+static int _LIST_ADD_HEAD(lua_State *L) {
+	mg_connection *_type = (mg_connection*)lua_topointer(L, 1);
+	mg_connection *_head = (mg_connection*)lua_topointer(L, 2);
+	mg_connection *_elem = (mg_connection*)lua_topointer(L, 3);
+
+
+	LIST_ADD_HEAD(_type, &_head, _elem);
 }
 */
 void fn_serv(mg_connection *c, int ev, void *ev_data) {
@@ -63,34 +114,40 @@ void fn_serv(mg_connection *c, int ev, void *ev_data) {
 /* MG CORE */
 
 static int _mg_listen(lua_State *L) {
-	mg_mgr *mgr = checkmgr(L);
-	const char *s_url = luaL_checkstring(L, -1);
-	mg_event_handler_t fn = (mg_event_handler_t)fn_serv;
+	mg_mgr *mgr = check_mg_mgr(L);
+	const char *s_url = luaL_checkstring(L, 2);
+	const char * cb = luaL_checkstring(L, 3);
+
+	mg_event_handler_t fn = (mg_event_handler_t)fn_lua_cb;
 	lua_State_t *GL = ((lua_State_t*)lua_newuserdata(L, sizeof(lua_State_t)));
 	GL->L = L; // pass the lua_State pointer to fn_serv
+	GL->callback = cb;
 
 	lua_settop(L, 0); // clear the stack
 	mg_connection *c = (mg_connection*)mg_listen(mgr, s_url, fn, GL);
 	lua_pushlightuserdata(L, c);
 	newconn(L); // push a new connection udata on stack
-	//mg_connection *conn = 
 	checkconn(L); // check conn is ready
+
 	return 1;
 }
 
 static int _mg_connect(lua_State *L) {
-	mg_mgr *mgr = checkmgr(L);
+	mg_mgr *mgr = check_mg_mgr(L);
 	const char *s_url = luaL_checkstring(L, -1);
-	mg_event_handler_t fn = (mg_event_handler_t)fn_serv;
+	const char * cb = luaL_checkstring(L, 3);
+
+	mg_event_handler_t fn = (mg_event_handler_t)fn_lua_cb;
 	lua_State_t *GL = ((lua_State_t*)lua_newuserdata(L, sizeof(lua_State_t)));
 	GL->L = L; // pass the lua_State pointer to fn_serv
+	GL->callback = cb;
 
 	lua_settop(L, 0); // clear the stack
 	mg_connection *c = (mg_connection*)mg_connect(mgr, s_url, fn, GL);
 	lua_pushlightuserdata(L, c);
 	newconn(L); // push a new connection udata on stack
-	//mg_connection *conn = 
 	checkconn(L); // check conn is ready
+
 	return 1; // return the udata on the stack
 }
 
@@ -100,29 +157,33 @@ static int _mg_send(lua_State *L) {
 	//size_t len = luaL_checknumber(L, -1);
 	bool ret = mg_send(conn, (void*)lua_topointer(L, -2), luaL_checknumber(L, -1));
 	lua_pushboolean(L, ret);
+
 	return 1;
 }
 
 static int _mg_wakeup(lua_State *L) {
-	mg_mgr *mgr = checkmgr(L);
+	mg_mgr *mgr = check_mg_mgr(L);
 	// long id = (long)lua_tonumber(L, -3);
 	// void *data = (void*)lua_topointer(L, -2);
 	//size_t len = luaL_checknumber(L, -1);
 	bool ret = mg_wakeup(mgr, (long)lua_tonumber(L, -3), (void*)lua_topointer(L, -2), luaL_checknumber(L, -1));
 	lua_pushboolean(L, ret);
+
 	return 1;
 }
 
 static int _mg_wakeup_init(lua_State *L) {
-	mg_mgr *mgr = checkmgr(L);
+	mg_mgr *mgr = check_mg_mgr(L);
 	bool ret = mg_wakeup_init(mgr);
-	return ret;
+	lua_pushboolean(L, ret);
+
+	return 1;
 }
 
 // struct mg_connection *mg_wrapfd(struct mg_mgr *mgr, int fd, mg_event_handler_t fn, void *fn_data);
 
 static int _mg_wrapfd(lua_State *L) {
-	mg_mgr *mgr = checkmgr(L);
+	mg_mgr *mgr = check_mg_mgr(L);
 	int fd = luaL_checkinteger(L, -2);
 	mg_event_handler_t fn = (mg_event_handler_t)fn_serv;
 	lua_State_t *GL = ((lua_State_t*)lua_newuserdata(L, sizeof(lua_State_t)));
@@ -132,13 +193,31 @@ static int _mg_wrapfd(lua_State *L) {
 	mg_connection *c = (mg_connection*)mg_wrapfd(mgr, fd, fn, GL);
 	lua_pushlightuserdata(L, c);
 	newconn(L); // push a new connection udata on stack
-	//mg_connection *conn = 
 	checkconn(L); // check conn is ready
 
 	return 1;
 }
 
-static void dumpstack (lua_State *L) {
+static int _mg_printf(lua_State *L) {
+	mg_connection *conn = (mg_connection*)lua_topointer(L, 1);
+	const char *fargs = luaL_checkstring(L, 2);
+	size_t ret  = mg_printf(conn, "%s", fargs);
+	lua_pushnumber(L, ret);
+
+	return 1;
+
+}
+
+static int _mg_handle_sig(lua_State *L) {
+	int signo = luaL_checkinteger(L, 1);
+	store_state(L, luaL_checkstring(L, 2)); // store the state and callback name
+	signal(signo, fn_lua_signal);
+
+	return 0;
+}
+
+
+/*static void dumpstack (lua_State *L) {
   int top=lua_gettop(L);
   for (int i = 1; i <= top; i++) {
     printf("%d\t%s\t", i, luaL_typename(L,i));
@@ -160,28 +239,30 @@ static void dumpstack (lua_State *L) {
         break;
     }
   }
-}
+}*/
 
 static const luaL_reg mg_methods[] = {
-	{ "connect",		_mg_connect		},
-	{ "send",			_mg_send		},
-	{ "listen",			_mg_listen		},
-	{ "wakeup",			_mg_wakeup		},
+	{ "set_web_root",	_mg_web_root	},
+	{ "connect",		_mg_connect	},
+	{ "send",		_mg_send	},
+	{ "listen",		_mg_listen	},
+	{ "wakeup",		_mg_wakeup	},
 	{ "wakeup_init",	_mg_wakeup_init	},
-	{ "wrapfd",			_mg_wrapfd		},
-	{}
+	{ "wrapfd",		_mg_wrapfd	},
+	{ "mg_u32",		_MG_U32		},
+	{ "printf",		_mg_printf	},
+	{ "handle_sig",		_mg_handle_sig	},
+	{NULL, NULL}
 };
 
 // lua_require "mg" for k,v in pairs(mg) do print(k,v) end;
 int luaopen_mg_lua(lua_State *L)
 {
 	luaL_newmetatable(L, "mg.mg");
-
 	lua_pushvalue(L, -1);	// pushes the metatable
 	lua_setfield(L, -2, "__index");	// metatable.__index = metatable
-
 	luaL_register(L, MG, mg_methods);
-	printf("BEGING ***>>>>>\n"); dumpstack(L);
+	//printf("BEGING ***>>>>>\n"); dumpstack(L);
 
 	// open modules
 	mg_open_mg_addr(L);
@@ -201,5 +282,11 @@ int luaopen_mg_lua(lua_State *L)
 	mg_open_mg_util(L);
 	mg_open_mg_string(L);
 	mg_open_mg_str(L);
+	mg_open_mg_url(L);
+	mg_open_mg_logging(L);
+	mg_open_mg_fs(L);
+	mg_open_mg_fd(L);
+	mg_open_mg_queue(L);
+
 	return 1;
 }

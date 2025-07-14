@@ -4,6 +4,7 @@
 #define MG_CONN "connection"
 
 typedef struct mg_connection mg_connection;
+#include "mg_addr.h"
 
 // C++ GAURDS FOR C LIBS
 #ifndef __cplusplus
@@ -20,6 +21,7 @@ extern "C" {
 #endif
 // MONGOOSE C LIB
 #include "../includes/libmongoose/src/mongoose.h"
+#include "mg_iobuf.h"
 
 #ifdef __cplusplus
 }

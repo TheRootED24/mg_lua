@@ -1,9 +1,10 @@
 #ifndef MG_MQTT_H
 #define MG_MQTT_H
 
-#include "mg_lua.h"
+#include "mg_lua_cb.h"
 #include "mg_mqtt_opts.h"
 #include "mg_mqtt_message.h"
+#include "mg_mgr.h"
 
 #define MG_MQTT "mqtt"
 

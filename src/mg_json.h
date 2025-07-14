@@ -4,6 +4,7 @@
 #include "mg_lua.h"
 #include "mg_connection.h"
 #include "mg_string.h"
+#include "mg_str.h"
 
 #define MG_JSON "json"
 

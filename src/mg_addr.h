@@ -3,8 +3,6 @@
 
 #define MG_ADDR "mg_addr"
 
-typedef struct mg_addr mg_addr;
-
 // C++ GAURDS FOR C LIBS
 #ifndef __cplusplus
 // LUA LIBS FOR gcc
@@ -24,6 +22,8 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
+typedef struct mg_addr mg_addr;
 
 void mg_open_mg_addr(lua_State *L);
 int newaddr (lua_State *L);

@@ -14,13 +14,13 @@ int new_mg_str (lua_State *L) {
 
 	lua_settop(L, 0);
 	struct mg_str *str = (struct mg_str *)lua_newuserdata(L, sizeof(struct mg_str));
-	lua_insert(L, 1);
+	//lua_insert(L, 1);
 	luaL_getmetatable(L, "LuaBook.mg_str");
 	lua_setmetatable(L, -2);
 
 	if(nargs) {
 		str->buf = buf;
-	 	str->len = a;
+		str->len = a;
 	}
 
 	if(!str) lua_pushnil(L);
@@ -43,16 +43,18 @@ static int _mg_str_buf(lua_State *L) {
 	}
 
 	lua_pushlstring(L, str->buf, str->len);
+
 	return 1;
 }
 
 static int _mg_str_len(lua_State *L) {
 	struct mg_str *str = check_mg_str(L);
 	lua_pushinteger(L, str->len);
+
 	return 1;
 }
 
-static void dumpstack (lua_State *L) {
+/*static void dumpstack (lua_State *L) {
   int top=lua_gettop(L);
   for (int i = 1; i <= top; i++) {
     printf("%d\t%s\t", i, luaL_typename(L,i));
@@ -74,7 +76,7 @@ static void dumpstack (lua_State *L) {
         break;
     }
   }
-}
+}*/
 
 static const struct luaL_reg mg_str_lib_f [] = {
 	{"new", 	new_mg_str	},
@@ -82,20 +84,19 @@ static const struct luaL_reg mg_str_lib_f [] = {
 };
 
 static const struct luaL_reg mg_str_lib_m [] = {
-	{"new",			new_mg_str	},
-	{"buf",			_mg_str_buf },
-	{"len",			_mg_str_len	},
+	{"new",		new_mg_str	},
+	{"buf",		_mg_str_buf	},
+	{"len",		_mg_str_len	},
 	{NULL, NULL}
 };
 
 void  mg_open_mg_str (lua_State *L) {
-	printf("START MG.STR: \n");
-	dumpstack(L);
+	//printf("START MG.STR: \n"); dumpstack(L);
 	lua_newtable(L);
 	luaL_register(L, NULL, mg_str_lib_m);
 	lua_setfield(L, -2, "str");
 
-	// http_message
+	// mg_str
 	luaL_newmetatable(L, "LuaBook.mg_str");
 	lua_pushstring(L, "__index");
 	lua_pushvalue(L, -2);  /* pushes the metatable */
@@ -103,6 +104,6 @@ void  mg_open_mg_str (lua_State *L) {
 	luaL_openlib(L, NULL, mg_str_lib_m, 0);
 	luaL_openlib(L, "mg_str", mg_str_lib_f, 0);
 	lua_pop(L, 2);
-	printf("END MG.STR\n"); dumpstack(L);
+	//printf("END MG.STR\n"); dumpstack(L);
 
 }

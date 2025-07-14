@@ -5,8 +5,9 @@
 
 typedef struct mg_rpc_req rpc_req;
 
-#include "mg_lua.h"
+#include "mg_lua_cb.h"
 #include "mg_rpc.h"
+#include "mg_iobuf.h"
 
 // C++ GAURDS FOR C LIBS
 #ifndef __cplusplus

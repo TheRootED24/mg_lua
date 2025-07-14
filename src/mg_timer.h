@@ -4,6 +4,7 @@
 #include "mg_lua.h"
 
 #define MGTIMER "mg_timer"
+#include "mg_lua_cb.h"
 
 typedef struct mg_timer mg_timer;
 
