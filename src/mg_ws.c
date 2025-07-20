@@ -34,7 +34,7 @@ static int _mg_ws_send(lua_State *L) {
 	//printf("buf: %s len: %ld op: %d\n", buf, len, op);
 	size_t sent = mg_ws_send(conn, (const void*)buf, len, op);
 	lua_pushnumber(L, sent);
-	
+
 	return 1;
 }
 
@@ -64,7 +64,7 @@ static int _mg_ws_wrap(lua_State *L) {
 	return 1;
 }
 
-static void dumpstack (lua_State *L) {
+/*static void dumpstack (lua_State *L) {
   int top=lua_gettop(L);
   for (int i = 1; i <= top; i++) {
     printf("%d\t%s\t", i, luaL_typename(L,i));
@@ -86,24 +86,24 @@ static void dumpstack (lua_State *L) {
         break;
     }
   }
-}
+}*/
 
 static const struct luaL_reg mg_ws_lib_m [] = {
-	{"connect",			_mg_ws_connect	},
-	{"upgrade",			_mg_ws_upgrade	},
-	{"send",			_mg_ws_send,	},
-	{"printf", 			_mg_ws_printf	},
-	{"vprintf",			_mg_ws_vprintf	},
-	{"wrap",			_mg_ws_wrap		},
+	{"connect",	_mg_ws_connect	},
+	{"upgrade",	_mg_ws_upgrade	},
+	{"send",	_mg_ws_send,	},
+	{"printf", 	_mg_ws_printf	},
+	{"vprintf",	_mg_ws_vprintf	},
+	{"wrap",	_mg_ws_wrap	},
 	{NULL, NULL}
 };
 
 void mg_open_mg_ws(lua_State *L) {
-	printf("START MG.WS: \n"); dumpstack(L);
+	//printf("START MG.WS: \n"); dumpstack(L);
 	lua_newtable(L);
 	luaL_register(L, NULL, mg_ws_lib_m);
 	lua_setfield(L, -2, "ws");
-	// mg_mgr
+	// mg_ws
 	luaL_newmetatable(L, "LuaBook.mg_ws");
 	lua_pushstring(L, "__index");
 	lua_pushvalue(L, -2);  /* pushes the metatable */
@@ -112,5 +112,5 @@ void mg_open_mg_ws(lua_State *L) {
 
 	mg_open_mg_ws_message(L);
 	lua_pop(L, 1);
-	printf("END MG.WS: \n"); dumpstack(L);
+	//printf("END MG.WS: \n"); dumpstack(L);
 }

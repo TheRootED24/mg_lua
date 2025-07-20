@@ -45,7 +45,7 @@ static int _mg_timer_add(lua_State *L) {
 	new_mg_timer(L);
 	mg_timer *tmr = mg_timer_add(mgr, period_ms, flags, dummy, GL);
 	if(!tmr) lua_pushnil(L);
-	
+
 	return 1;
 }
 
@@ -79,7 +79,7 @@ static int _mg_timer_poll(lua_State *L) {
 	return 0;
 }
 
-static void dumpstack (lua_State *L) {
+/*static void dumpstack (lua_State *L) {
   int top=lua_gettop(L);
   for (int i = 1; i <= top; i++) {
     printf("%d\t%s\t", i, luaL_typename(L,i));
@@ -101,7 +101,7 @@ static void dumpstack (lua_State *L) {
         break;
     }
   }
-}
+}*/
 
 static const struct luaL_reg mg_timer_lib_f [] = {
 	{"new", 	new_mg_timer	},
@@ -118,12 +118,11 @@ static const struct luaL_reg mg_timer_lib_m [] = {
 };
 
 void mg_open_mg_timer(lua_State *L) {
-	// mg_timer
-	printf("START MG.TIMER: \n"); dumpstack(L);
+	//printf("START MG.TIMER: \n"); dumpstack(L);
 	lua_newtable(L);
 	luaL_register(L, NULL, mg_timer_lib_m);
 	lua_setfield(L, -2, "timer");
-
+	// mg_timer
 	luaL_newmetatable(L, "LuaBook.mg_timer");
 	lua_pushstring(L, "__index");
 	lua_pushvalue(L, -2);  /* pushes the metatable */
@@ -131,5 +130,5 @@ void mg_open_mg_timer(lua_State *L) {
 	luaL_openlib(L, NULL, mg_timer_lib_m, 0);
 	luaL_openlib(L, MGTIMER, mg_timer_lib_f, 0);
 	lua_pop(L, 2);
-	printf("END MG.TIMER: \n"); dumpstack(L);
+	//printf("END MG.TIMER: \n"); dumpstack(L);
 }

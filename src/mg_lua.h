@@ -21,6 +21,8 @@
 #include "mg_rpc.h"
 #include "mg_utility.h"
 #include "mg_string.h"
+#include "mg_url.h"
+#include "mg_logging.h"
 
 // C++ GAURDS FOR C LIBS
 #ifndef __cplusplus

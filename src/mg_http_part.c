@@ -56,7 +56,7 @@ static int _http_part_body(lua_State *L) {
 	return 1;
 }
 
-static void dumpstack (lua_State *L) {
+/*static void dumpstack (lua_State *L) {
   int top=lua_gettop(L);
   for (int i = 1; i <= top; i++) {
     printf("%d\t%s\t", i, luaL_typename(L,i));
@@ -78,7 +78,7 @@ static void dumpstack (lua_State *L) {
         break;
     }
   }
-}
+}*/
 
 
 static const struct luaL_reg http_part_lib_f [] = {
@@ -96,11 +96,11 @@ static const struct luaL_reg http_part_lib_m [] = {
 };
 
 void mg_open_mg_http_part(lua_State *L) {
-	printf("START MG.HTTP.PART: \n");dumpstack(L);
+	//printf("START MG.HTTP.PART: \n");dumpstack(L);
 	lua_newtable(L);
 	luaL_register(L, NULL, http_part_lib_m);
 	lua_setfield(L, -2, "part");
-	// mg_mgr
+	// mg_http_part
 	luaL_newmetatable(L, "LuaBook.http_part");
 	lua_pushstring(L, "__index");
 	lua_pushvalue(L, -2);  /* pushes the metatable */
@@ -108,6 +108,5 @@ void mg_open_mg_http_part(lua_State *L) {
 	luaL_openlib(L, NULL, http_part_lib_m, 0);
 	luaL_openlib(L, "mg_http_part", http_part_lib_f, 0);
 	lua_pop(L, 2);
-	printf("END MG.HTTP.PART: \n");dumpstack(L);
-	//lua_pop(L, -1);
+	//printf("END MG.HTTP.PART: \n");dumpstack(L);
 }

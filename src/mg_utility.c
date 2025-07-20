@@ -307,10 +307,12 @@ static int _mg_print_hex(lua_State *L) {
 
 // size_t mg_print_ip(void (*out)(char, void *), void *param, va_list *ap);
 static int _mg_print_ip(lua_State *L) {
-	if(L)
-		return 0;
+	mg_addr *addr = (mg_addr*)lua_topointer(L, 1);
+	char buf[12] = {0};
+	size_t ret = mg_snprintf(buf, sizeof(buf), "%M", mg_print_ip4, &addr->ip);
+	lua_pushlstring(L, buf, ret);
 
-	return 0;
+	return 1;
 }
 
 // size_t mg_print_ip_port(void (*out)(char, void *), void *param, va_list *ap);
@@ -345,7 +347,7 @@ static int _mg_print_mac (lua_State *L) {
 	return 0;
 }
 
-static void dumpstack (lua_State *L) {
+/*static void dumpstack (lua_State *L) {
   int top=lua_gettop(L);
   for (int i = 1; i <= top; i++) {
     printf("%d\t%s\t", i, luaL_typename(L,i));
@@ -367,41 +369,34 @@ static void dumpstack (lua_State *L) {
         break;
     }
   }
-}
+}*/
 
 static const struct luaL_reg mg_util_lib_m [] = {
-	{"call",			_mg_call			},
-	{"error",			_mg_error			},
-
+	{"call",		_mg_call		},
+	{"error",		_mg_error		},
 	{"new_md5_ctx",		new_mg_md5_ctx		},
 	{"md5_init",		_mg_md5_init		},
 	{"md5_update",		_mg_md5_update		},
 	{"md5_final",		_mg_md5_final		},
-
 	{"new_sha1_ctx",	new_mg_sha1_ctx		},
 	{"sha1_init",		_mg_sha1_init		},
 	{"sha1_update",		_mg_sha1_update		},
 	{"sha1_final",		_mg_sha1_final		},
-
 	{"base64_update",	_mg_base64_update	},
 	{"base64_final",	_mg_base64_final	},
 	{"base64_encode",	_mg_base64_encode	},
 	{"base64_decode",	_mg_base64_decode	},
 	{"base64_encode",	_mg_base64_encode	},
-
-	{"random",			_mg_random			},
+	{"random",		_mg_random		},
 	{"random_str",		_mg_random_str		},
-
-	{"ntohs",			_mg_ntohs			},
-	{"htonl",			_mg_ntohl			},
-	{"htons",			_mg_htons			},
-	{"htonl",			_mg_htonl			},
-
-	{"crc32",			_mg_crc32			},
+	{"ntohs",		_mg_ntohs		},
+	{"htonl",		_mg_ntohl		},
+	{"htons",		_mg_htons		},
+	{"htonl",		_mg_htonl		},
+	{"crc32",		_mg_crc32		},
 	{"check_ip_acl",	_mg_check_ip_acl	},
 	{"url_decode",		_mg_url_decode		},
 	{"url_encode",		_mg_url_encode		},
-
 	{"print_base64",	_mg_print_base64	},
 	{"print_esc",		_mg_print_esc		},
 	{"print_hex",		_mg_print_hex		},
@@ -414,15 +409,15 @@ static const struct luaL_reg mg_util_lib_m [] = {
 };
 
 void mg_open_mg_util(lua_State *L) {
-	printf("START MG.UTIL: \n"); dumpstack(L);
+	//printf("START MG.UTIL: \n"); dumpstack(L);
 	lua_newtable(L);
 	luaL_register(L, NULL, mg_util_lib_m);
 	lua_setfield(L, -2, "util");
-	// mg_mgr
+	// mg_util
 	luaL_newmetatable(L, "LuaBook.mg_util");
 	lua_pushstring(L, "__index");
 	lua_pushvalue(L, -2);  /* pushes the metatable */
 	lua_settable(L, -3);  /* metatable.__index = metatable */
 	lua_pop(L, 1);
-	printf("END MG.UTIL: \n"); dumpstack(L);
+	//printf("END MG.UTIL: \n"); dumpstack(L);
 }

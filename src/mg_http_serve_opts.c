@@ -11,11 +11,10 @@ struct mg_http_serve_opts {
   struct mg_fs *fs;           // Filesystem implementation. Use NULL for POSIX
 };
 */
-//static const char *web_root = ".";
 
 int newopts (lua_State *L) {
 	http_serve_opts *opts = NULL;
-	//const char *root_dir 		= luaL_optstring(L, 1, ".");
+	const char *root_dir 		= luaL_optstring(L, 1, ".");
 	//const char *ssi_pattern 	= NULL; //luaL_optstring(L, 2, NULL);
 	//const char *extra_headers 	= NULL; //luaL_optstring(L, 3, NULL);
 	//const char *mime_types 		= NULL; //luaL_optstring(L, 4, NULL);
@@ -26,7 +25,7 @@ int newopts (lua_State *L) {
 	luaL_getmetatable(L, "LuaBook.http_serve_opts");
 	lua_setmetatable(L, -2);
 
-	opts->root_dir 		= ".";
+	opts->root_dir 		= root_dir;
 
 	if(!opts) lua_pushnil(L);
 
@@ -90,7 +89,7 @@ static int _opts_page404(lua_State *L) {
 	return 1;
 };
 
-static void dumpstack (lua_State *L) {
+/*static void dumpstack (lua_State *L) {
   int top=lua_gettop(L);
   for (int i = 1; i <= top; i++) {
     printf("%d\t%s\t", i, luaL_typename(L,i));
@@ -112,7 +111,7 @@ static void dumpstack (lua_State *L) {
         break;
     }
   }
-}
+}*/
 
 static int _opts_fs(lua_State *L) {
 	//int nargs = lua_gettop(L);
@@ -143,12 +142,12 @@ static const struct luaL_reg http_opts_lib_m [] = {
 };
 
 void mg_open_mg_http_serve_opts(lua_State *L) {
-	printf("START MG.HTTP.OPTS: \n");
-	dumpstack(L);
+	//printf("START MG.HTTP.OPTS: \n");
+	//dumpstack(L);
 	lua_newtable(L);
 	luaL_register(L, NULL, http_opts_lib_m);
 	lua_setfield(L, -2, "serve_opts");
-	// mg_mgr
+	// mg_http_serve_opts
 	luaL_newmetatable(L, "LuaBook.http_opts");
 	lua_pushstring(L, "__index");
 	lua_pushvalue(L, -2);  /* pushes the metatable */
@@ -157,6 +156,5 @@ void mg_open_mg_http_serve_opts(lua_State *L) {
 	luaL_openlib(L, "mg_http_opts", http_opts_lib_f, 0);
 	lua_pop(L, 2);
 
-
-	printf("END MG.HTTP.OPTS: \n"); dumpstack(L);
+	//printf("END MG.HTTP.OPTS: \n"); dumpstack(L);
 }

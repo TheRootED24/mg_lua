@@ -17,8 +17,9 @@ int newmessage (lua_State *L) {
 	int nargs = lua_gettop(L);
 
 	if(nargs > 0) {
+		//hm = (http_message*)lua_touserdata(L, 1);
 		hm = (http_message*)lua_topointer(L, 1);
-		lua_pop(L, 1);
+		//lua_pop(L, 1);
 		lua_pushlightuserdata(L, hm);
 	 }
 	else
@@ -34,6 +35,7 @@ int newmessage (lua_State *L) {
 http_message *checkmessage(lua_State *L) {
 	void *ud = luaL_checkudata(L, 1, "LuaBook.http_message");
 	luaL_argcheck(L, ud != NULL, 1, "`mg_http_message' expected");
+
 	return(http_message *)ud;
 }
 
@@ -179,7 +181,7 @@ static int _call_message(lua_State *L) {
 	return 8;
 }
 
-static void dumpstack (lua_State *L) {
+/*static void dumpstack (lua_State *L) {
   int top=lua_gettop(L);
   for (int i = 1; i <= top; i++) {
     printf("%d\t%s\t", i, luaL_typename(L,i));
@@ -201,7 +203,7 @@ static void dumpstack (lua_State *L) {
         break;
     }
   }
-}
+}*/
 
 static const struct luaL_reg messagelib_f [] = {
 	{"new", 		newmessage	},
@@ -226,9 +228,9 @@ static const struct luaL_reg messagelib_m [] = {
 };
 
 void  mg_open_mg_http_message (lua_State *L) {
-	printf("START MG.HTTP.MESSAGE: \n");
+	//printf("START MG.HTTP.MESSAGE: \n");
 	lua_getfield(L, -1, "http");
-	dumpstack(L);
+	//dumpstack(L);
 	lua_newtable(L);
 	luaL_register(L, NULL, messagelib_m);
 	lua_setfield(L, -2, "message");
@@ -241,7 +243,7 @@ void  mg_open_mg_http_message (lua_State *L) {
 	luaL_openlib(L, NULL, messagelib_m, 0);
 	luaL_openlib(L, "mg_http_message", messagelib_f, 0);
 	lua_pop(L, 2);
-	printf("END MG.HTTP.MESSAGE:\n"); dumpstack(L);
+	//printf("END MG.HTTP.MESSAGE:\n"); dumpstack(L);
 
 }
 // require "mg" for k,v in pairs(mg) do print(k,v) end

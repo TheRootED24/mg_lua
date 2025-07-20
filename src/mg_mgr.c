@@ -13,7 +13,7 @@ int newmgr (lua_State *L) {
 mg_mgr *checkmgr(lua_State *L) {
 	void *ud = luaL_checkudata(L, 1, "LuaBook.mg_mgr");
 	luaL_argcheck(L, ud != NULL, 1, "`mg_mgr' expected");
-	
+
 	return (mg_mgr*)ud;
 }
 
@@ -52,7 +52,7 @@ static const struct luaL_reg mgrlib_m [] = {
 	{NULL, NULL}
 };
 
-static void dumpstack (lua_State *L) {
+/*static void dumpstack (lua_State *L) {
   int top=lua_gettop(L);
   for (int i = 1; i <= top; i++) {
     printf("%d\t%s\t", i, luaL_typename(L,i));
@@ -74,10 +74,10 @@ static void dumpstack (lua_State *L) {
         break;
     }
   }
-}
+}*/
 
 void mg_open_mg_mgr (lua_State *L) {
-	printf("START MG.MGR: \n"); dumpstack(L);
+	//printf("START MG.MGR: \n"); dumpstack(L);
 	lua_newtable(L);
 	luaL_register(L, NULL, mgrlib_m);
 	//dumpstack(L);
@@ -90,5 +90,5 @@ void mg_open_mg_mgr (lua_State *L) {
 	luaL_openlib(L, NULL, mgrlib_m, 0);
 	luaL_openlib(L, "mg_mgr", mgrlib_f, 0);
 	lua_pop(L, 2);
-	printf("END MG.MGR: \n"); dumpstack(L);
+	//printf("END MG.MGR: \n"); dumpstack(L);
 }

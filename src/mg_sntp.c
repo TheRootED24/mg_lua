@@ -24,7 +24,7 @@ static int _mg_sntp_request(lua_State *L) {
 	return 0;
 }
 
-static void dumpstack (lua_State *L) {
+/*static void dumpstack (lua_State *L) {
   int top=lua_gettop(L);
   for (int i = 1; i <= top; i++) {
     printf("%d\t%s\t", i, luaL_typename(L,i));
@@ -46,24 +46,24 @@ static void dumpstack (lua_State *L) {
         break;
     }
   }
-}
+}*/
 
 static const struct luaL_reg mg_sntp_lib_m [] = {
-	{"connect",			_mg_sntp_connect		},
-	{"request",			_mg_sntp_request		},
+	{"connect",	_mg_sntp_connect		},
+	{"request",	_mg_sntp_request		},
 	{NULL, NULL}
 };
 
 void mg_open_mg_sntp(lua_State *L) {
-	printf("START MG.SNTP: \n"); dumpstack(L);
+	//printf("START MG.SNTP: \n"); dumpstack(L);
 	lua_newtable(L);
 	luaL_register(L, NULL, mg_sntp_lib_m);
 	lua_setfield(L, -2, "sntp");
-	// mg_mgr
+	// mg_sntp
 	luaL_newmetatable(L, "LuaBook.mg_sntp");
 	lua_pushstring(L, "__index");
 	lua_pushvalue(L, -2);  /* pushes the metatable */
 	lua_settable(L, -3);  /* metatable.__index = metatable */
 	lua_pop(L, 1);
-	printf("END MG.SNTP: \n"); dumpstack(L);
+	//printf("END MG.SNTP: \n"); dumpstack(L);
 }

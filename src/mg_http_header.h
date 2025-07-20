@@ -4,6 +4,7 @@
 #define MG_HTTP_HEADER "header"
 
 typedef struct mg_http_header http_header;
+#include "mg_str.h"
 
 // C++ GAURDS FOR C LIBS
 #ifndef __cplusplus

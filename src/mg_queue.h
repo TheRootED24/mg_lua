@@ -5,11 +5,6 @@
 
 typedef struct mg_queue mg_queue;
 
-#include "mg_rpc_req.h"
-#include "mg_connection.h"
-#include "mg_mgr.h"
-#include "mg_lua.h"
-
 // C++ GAURDS FOR C LIBS
 #ifndef __cplusplus
 // LUA LIBS FOR gcc

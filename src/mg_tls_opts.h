@@ -1,8 +1,6 @@
 #ifndef MG_TLS_OPTS_H
 #define MG_TLS_OPTS_H
 
-#include "mg_tls.h"
-
 #define MG_TLS_OPTS "mg_tls_opts"
 
 typedef struct mg_tls_opts tls_opts;

@@ -6,7 +6,7 @@ int newiobuf (lua_State *L) {
 	luaL_getmetatable(L, "LuaBook.mg_iobuf");
 	lua_setmetatable(L, -2);
 	if(!io) lua_pushnil(L);
-	
+
 	return 1;  /* new userdatum is already on the stack */
 }
 
@@ -63,7 +63,7 @@ static int _mg_iobuf_free(lua_State *L) {
 	return 0;
 }
 
-static void dumpstack (lua_State *L) {
+/*static void dumpstack (lua_State *L) {
   int top=lua_gettop(L);
   for (int i = 1; i <= top; i++) {
     printf("%d\t%s\t", i, luaL_typename(L,i));
@@ -85,7 +85,7 @@ static void dumpstack (lua_State *L) {
         break;
     }
   }
-}
+}*/
 
 static const struct luaL_reg mg_iobuf_lib_f [] = {
 	{"new", 	newiobuf	},
@@ -102,12 +102,11 @@ static const struct luaL_reg mg_iobuf_lib_m [] = {
 };
 
 void mg_open_mg_iobuf(lua_State *L) {
-	// mg_iobuf
-	printf("START MG.IOBUF: \n"); dumpstack(L);
+	//printf("START MG.IOBUF: \n"); dumpstack(L);
 	lua_newtable(L);
 	luaL_register(L, NULL, mg_iobuf_lib_m);
 	lua_setfield(L, -2, "iobuf");
-
+	// mg_iobuf
 	luaL_newmetatable(L, "LuaBook.mg_iobuf");
 	lua_pushstring(L, "__index");
 	lua_pushvalue(L, -2);  /* pushes the metatable */
@@ -115,5 +114,5 @@ void mg_open_mg_iobuf(lua_State *L) {
 	luaL_openlib(L, NULL, mg_iobuf_lib_m, 0);
 	luaL_openlib(L, MG_IOBUF, mg_iobuf_lib_f, 0);
 	lua_pop(L, 2);
-	printf("END MG.IOBUF: \n"); dumpstack(L);
+	//printf("END MG.IOBUF: \n"); dumpstack(L);
 }

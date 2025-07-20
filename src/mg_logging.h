@@ -1,13 +1,7 @@
-#ifndef MG_JSON_H
-#define MG_JSON_H
+#ifndef MG_LOGGING_H
+#define MG_LOGGING_H
 
-#include "mg_lua.h"
-#include "mg_connection.h"
-#include "mg_string.h"
-#include "mg_str.h"
-
-#define MG_JSON "json"
-
+#define MG_LOGGING "log"
 
 // C++ GAURDS FOR C LIBS
 #ifndef __cplusplus
@@ -29,6 +23,6 @@ extern "C" {
 }
 #endif
 
-void mg_open_mg_json (lua_State *L);
+void mg_open_mg_logging (lua_State *L);
 
 #endif

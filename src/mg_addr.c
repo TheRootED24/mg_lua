@@ -2,14 +2,22 @@
 
 // MG_ADDR USERDATUM
 int newaddr (lua_State *L) {
-	mg_addr *addr = (mg_addr*)lua_newuserdata(L, sizeof(mg_addr));
-	//lua_pushlightuserdata(L, addr);
+	mg_addr *addr;
+	int nargs = lua_gettop(L);
+
+	if(nargs > 0) {
+		addr = (mg_addr*)lua_touserdata(L, 1);
+	 }
+	else
+		addr = (mg_addr*)lua_newuserdata(L, sizeof(mg_addr));
+
 	luaL_getmetatable(L, "LuaBook.mg_addr");
 	lua_setmetatable(L, -2);
 	if(!addr) lua_pushnil(L);
 
 	return 1;  /* new userdatum is already on the stack */
 }
+
 
 mg_addr *checkaddr(lua_State *L) {
 	void *ud = luaL_checkudata(L, 1, "LuaBook.mg_addr");
@@ -46,7 +54,7 @@ static int _addr_is_ip6(lua_State *L) {
 	return 1;
 }
 
-static void dumpstack (lua_State *L) {
+/*static void dumpstack (lua_State *L) {
   int top=lua_gettop(L);
   for (int i = 1; i <= top; i++) {
     printf("%d\t%s\t", i, luaL_typename(L,i));
@@ -68,7 +76,7 @@ static void dumpstack (lua_State *L) {
         break;
     }
   }
-}
+}*/
 
 static const struct luaL_reg mg_addr_lib_f [] = {
 	{"new", 	newaddr	},
@@ -86,7 +94,7 @@ static const struct luaL_reg mg_addr_lib_m [] = {
 
 void mg_open_mg_addr(lua_State *L) {
 	// mg_addr
-	printf("START MG.ADDR: \n"); dumpstack(L);
+	//printf("START MG.ADDR: \n"); dumpstack(L);
 	lua_newtable(L);
 	luaL_register(L, NULL, mg_addr_lib_m);
 	lua_setfield(L, -2, "addr");
@@ -97,5 +105,5 @@ void mg_open_mg_addr(lua_State *L) {
 	luaL_openlib(L, NULL, mg_addr_lib_m, 0);
 	luaL_openlib(L, "mg_addr", mg_addr_lib_f, 0);
 	lua_pop(L, 2);
-	printf("END MG.DNS: \n"); dumpstack(L);
+	//printf("END MG.DNS: \n"); dumpstack(L);
 }
