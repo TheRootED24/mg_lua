@@ -15,13 +15,14 @@ int new_tls_opts (lua_State *L) {
 	luaL_getmetatable(L, "LuaBook.tls_opts");
 	lua_setmetatable(L, -2);
 	if(!opts) lua_pushnil(L);
-	
+
 	return 1;  /* new userdatum is already on the stack */
 }
 
 tls_opts *check_tls_opts(lua_State *L) {
 	void *ud = luaL_checkudata(L, 1, "LuaBook.tls_opts");
 	luaL_argcheck(L, ud != NULL, 1, "`tls_opts' expected");
+
 	return(tls_opts*)ud;
 }
 
@@ -32,6 +33,7 @@ static int _mg_tls_opts_ca(lua_State *L) {
 		opts->ca = mg_str(luaL_checkstring(L, -1));
 
 	lua_pushlstring(L, opts->ca.buf, opts->ca.len);
+
 	return 1;
 }
 
@@ -42,6 +44,7 @@ static int _mg_tls_opts_cert(lua_State *L) {
 		opts->cert = mg_str(luaL_checkstring(L, -1));
 
 	lua_pushlstring(L, opts->cert.buf, opts->cert.len);
+
 	return 1;
 }
 
@@ -52,6 +55,7 @@ static int _mg_tls_opts_key(lua_State *L) {
 		opts->key = mg_str(luaL_checkstring(L, -1));
 
 	lua_pushlstring(L, opts->key.buf, opts->key.len);
+
 	return 1;
 }
 
@@ -62,10 +66,11 @@ static int _mg_tls_opts_name(lua_State *L) {
 		opts->name = mg_str(luaL_checkstring(L, -1));
 
 	lua_pushlstring(L, opts->name.buf, opts->name.len);
+
 	return 1;
 }
 
-static void dumpstack (lua_State *L) {
+/*static void dumpstack (lua_State *L) {
   int top=lua_gettop(L);
   for (int i = 1; i <= top; i++) {
     printf("%d\t%s\t", i, luaL_typename(L,i));
@@ -87,7 +92,7 @@ static void dumpstack (lua_State *L) {
         break;
     }
   }
-}
+}*/
 
 static const struct luaL_reg tls_opts_lib_f [] = {
 	{"new", 	new_tls_opts	},
@@ -95,7 +100,7 @@ static const struct luaL_reg tls_opts_lib_f [] = {
 };
 
 static const struct luaL_reg tls_opts_lib_m [] = {
-	{"init",	_mg_tls_init		},
+	{"new", 	new_tls_opts		},
 	{"ca",		_mg_tls_opts_ca		},
 	{"cert",	_mg_tls_opts_cert	},
 	{"key",		_mg_tls_opts_key	},
@@ -104,14 +109,14 @@ static const struct luaL_reg tls_opts_lib_m [] = {
 };
 
 void  mg_open_mg_tls_opts (lua_State *L) {
-	printf("START MG.TLS.OPTS: \n");
+	//printf("START MG.TLS.OPTS: \n");
 	lua_getfield(L, -1, "tls");
-	dumpstack(L);
+	//dumpstack(L);
 	lua_newtable(L);
 	luaL_register(L, NULL, tls_opts_lib_m);
 	lua_setfield(L, -2, "opts");
 
-	// http_message
+	// mg_tls_opts
 	luaL_newmetatable(L, "LuaBook.tls_opts");
 	lua_pushstring(L, "__index");
 	lua_pushvalue(L, -2);  /* pushes the metatable */
@@ -119,7 +124,5 @@ void  mg_open_mg_tls_opts (lua_State *L) {
 	luaL_openlib(L, NULL, tls_opts_lib_m, 0);
 	luaL_openlib(L, "mg_tls_opts", tls_opts_lib_f, 0);
 	lua_pop(L, 2);
-
-	printf("END MG.TL.OPTS:\n"); dumpstack(L);
-
+	//printf("END MG.TL.OPTS:\n"); dumpstack(L);
 }

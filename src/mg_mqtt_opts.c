@@ -146,7 +146,7 @@ static int _mqtt_opts_num_will_props(lua_State *L) {
 	return 1;
 }
 
-static void dumpstack (lua_State *L) {
+/*static void dumpstack (lua_State *L) {
   int top=lua_gettop(L);
   for (int i = 1; i <= top; i++) {
     printf("%d\t%s\t", i, luaL_typename(L,i));
@@ -168,7 +168,7 @@ static void dumpstack (lua_State *L) {
         break;
     }
   }
-}
+}*/
 
 static const struct luaL_reg mqtt_opts_lib_f [] = {
 	{"new", 		new_mqtt_opts	},
@@ -176,22 +176,18 @@ static const struct luaL_reg mqtt_opts_lib_f [] = {
 };
 
 static const struct luaL_reg mqtt_opts_lib_m [] = {
-	//{"__tostring",	_print_message	},
-	//{"__call",		_call_message	},
-	//{"table", 		_message_table	},
-	//{"json", 			_message_json	},
-	{"new", 			new_mqtt_opts				},
-	{"user", 			_mqtt_opts_user				},
-	{"pass", 			_mqtt_opts_pass				},
+	{"new", 		new_mqtt_opts			},
+	{"user", 		_mqtt_opts_user			},
+	{"pass", 		_mqtt_opts_pass			},
 	{"client_id", 		_mqtt_opts_client_id		},
-	{"topic", 			_mqtt_opts_topic			},
-	{"message", 		_mqtt_opts_meassage			},
-	{"qos", 			_mqtt_opts_qos				},
+	{"topic", 		_mqtt_opts_topic		},
+	{"message", 		_mqtt_opts_meassage		},
+	{"qos", 		_mqtt_opts_qos			},
 	{"keepalive", 		_mqtt_opts_keepalive		},
 	{"retransmit_id",	_mqtt_opts_retransmit_id	},
-	{"retain", 			_mqtt_opts_retain			},
-	{"clean", 			_mqtt_opts_clean			},
-	{"version", 		_mqtt_opts_version			},
+	{"retain", 		_mqtt_opts_retain		},
+	{"clean", 		_mqtt_opts_clean		},
+	{"version", 		_mqtt_opts_version		},
 	{"num_props", 		_mqtt_opts_num_props		},
 	{"num_will_props", 	_mqtt_opts_num_will_props	},
 	{NULL, NULL}
@@ -199,8 +195,7 @@ static const struct luaL_reg mqtt_opts_lib_m [] = {
 
 // must be called after open mqtt message !!
 void  mg_open_mg_mqtt_opts (lua_State *L) {
-	printf("START MG.MQTT.OPTS \n");
-	dumpstack(L);
+	//printf("START MG.MQTT.OPTS \n"); dumpstack(L);
 	lua_newtable(L);
 	luaL_register(L, NULL, mqtt_opts_lib_m);
 	lua_setfield(L, -2, "opts");
@@ -213,5 +208,5 @@ void  mg_open_mg_mqtt_opts (lua_State *L) {
 	luaL_openlib(L, NULL, mqtt_opts_lib_m, 0);
 	luaL_openlib(L, "mg_mqtt_opts", mqtt_opts_lib_f, 0);
 	lua_pop(L, 2);
-	printf("END MG.MQTT.OPTS:\n"); dumpstack(L);
+	//printf("END MG.MQTT.OPTS:\n"); dumpstack(L);
 }

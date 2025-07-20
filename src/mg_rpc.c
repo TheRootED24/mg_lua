@@ -82,7 +82,7 @@ static int _mg_rpc_list(lua_State *L) {
 	return 0;
 }
 
-static void dumpstack (lua_State *L) {
+/*static void dumpstack (lua_State *L) {
   int top=lua_gettop(L);
   for (int i = 1; i <= top; i++) {
     printf("%d\t%s\t", i, luaL_typename(L,i));
@@ -104,7 +104,7 @@ static void dumpstack (lua_State *L) {
         break;
     }
   }
-}
+}*/
 
 static const struct luaL_reg mg_rpc_lib_m [] = {
 	{"new",			new_mg_rpc	},
@@ -117,11 +117,11 @@ static const struct luaL_reg mg_rpc_lib_m [] = {
 };
 
 void mg_open_mg_rpc(lua_State *L) {
-	printf("START MG.RPC: \n"); dumpstack(L);
+	//printf("START MG.RPC: \n"); dumpstack(L);
 	lua_newtable(L);
 	luaL_register(L, NULL, mg_rpc_lib_m);
 	lua_setfield(L, -2, "rpc");
-	// mg_mgr
+	// mg_rpc
 	luaL_newmetatable(L, "LuaBook.mg_rpc");
 	lua_pushstring(L, "__index");
 	lua_pushvalue(L, -2);  /* pushes the metatable */
@@ -130,5 +130,5 @@ void mg_open_mg_rpc(lua_State *L) {
 
 	mg_open_mg_rpc_req(L);
 	lua_pop(L, 1);
-	printf("END MG.RPC: \n"); dumpstack(L);
+	//printf("END MG.RPC: \n"); dumpstack(L);
 }

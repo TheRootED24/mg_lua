@@ -16,7 +16,7 @@ mqtt_message *check_mqtt_message(lua_State *L) {
 	return(mqtt_message *)ud;
 }
 
-static void dumpstack (lua_State *L) {
+/*static void dumpstack (lua_State *L) {
   int top=lua_gettop(L);
   for (int i = 1; i <= top; i++) {
     printf("%d\t%s\t", i, luaL_typename(L,i));
@@ -38,7 +38,7 @@ static void dumpstack (lua_State *L) {
         break;
     }
   }
-}
+}*/
 
 static const struct luaL_reg mqtt_message_lib_f [] = {
 	{"new", 		new_mqtt_message	},
@@ -46,18 +46,14 @@ static const struct luaL_reg mqtt_message_lib_f [] = {
 };
 
 static const struct luaL_reg mqtt_message_lib_m [] = {
-	//{"__tostring",	_print_message	},
-	//{"__call",		_call_message	},
-	//{"table", 		_message_table	},
-	//{"json", 		_message_json	},
 	{"new", 		new_mqtt_message	},
 	{NULL, NULL}
 };
 
 void  mg_open_mg_mqtt_message (lua_State *L) {
-	printf("START MG.MQTT.MESSAGE: \n");
+	//printf("START MG.MQTT.MESSAGE: \n");
 	lua_getfield(L, -1, "mqtt");
-	dumpstack(L);
+	//dumpstack(L);
 	lua_newtable(L);
 	luaL_register(L, NULL, mqtt_message_lib_m);
 	lua_setfield(L, -2, "message");
@@ -71,6 +67,6 @@ void  mg_open_mg_mqtt_message (lua_State *L) {
 	luaL_openlib(L, "mg_mqtt_message", mqtt_message_lib_f, 0);
 	lua_pop(L, 2);
 
-	printf("END MG.MQTT.MESSAGE:\n"); dumpstack(L);
+	//printf("END MG.MQTT.MESSAGE:\n"); dumpstack(L);
 
 }

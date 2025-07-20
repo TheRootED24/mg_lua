@@ -102,7 +102,7 @@ static int _mg_mqtt_disconnect(lua_State *L) {
 	return 0;
 }
 
-static void dumpstack (lua_State *L) {
+/*static void dumpstack (lua_State *L) {
   int top=lua_gettop(L);
   for (int i = 1; i <= top; i++) {
     printf("%d\t%s\t", i, luaL_typename(L,i));
@@ -124,7 +124,7 @@ static void dumpstack (lua_State *L) {
         break;
     }
   }
-}
+}*/
 
 static const struct luaL_reg mg_mqtt_lib_f [] = {
 	{"connect",			_mg_mqtt_connect		},
@@ -135,7 +135,6 @@ static const struct luaL_reg mg_mqtt_lib_f [] = {
 static const struct luaL_reg mg_mqtt_lib_m [] = {
 	{"listen",			_mg_mqtt_listen			},
 	{"connect",			_mg_mqtt_connect		},
-
 	{"login",			_mg_mqtt_login			},
 	{"pub", 			_mg_mqtt_pub			},
 	{"sub", 			_mg_mqtt_sub			},
@@ -147,11 +146,11 @@ static const struct luaL_reg mg_mqtt_lib_m [] = {
 };
 
 void mg_open_mg_mqtt(lua_State *L) {
-	printf("START MG.MQTT: \n"); dumpstack(L);
+	//printf("START MG.MQTT: \n"); dumpstack(L);
 	lua_newtable(L);
 	luaL_register(L, NULL, mg_mqtt_lib_m);
 	lua_setfield(L, -2, "mqtt");
-	// mg_mgr
+	// mg_mqtt
 	luaL_newmetatable(L, "LuaBook.mg_mqtt");
 	lua_pushstring(L, "__index");
 	lua_pushvalue(L, -2);  /* pushes the metatable */
@@ -163,5 +162,5 @@ void mg_open_mg_mqtt(lua_State *L) {
 	mg_open_mg_mqtt_message(L);
 	mg_open_mg_mqtt_opts(L);
 	lua_pop(L, 1);
-	printf("END MG.MQTT: \n"); dumpstack(L);
+	//printf("END MG.MQTT: \n"); dumpstack(L);
 }

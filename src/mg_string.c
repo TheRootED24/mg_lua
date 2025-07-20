@@ -104,7 +104,7 @@ static int _mg_aton(lua_State *L) {
 	return 1;
 }
 
-static void dumpstack (lua_State *L) {
+/*static void dumpstack (lua_State *L) {
   int top=lua_gettop(L);
   for (int i = 1; i <= top; i++) {
     printf("%d\t%s\t", i, luaL_typename(L,i));
@@ -126,7 +126,7 @@ static void dumpstack (lua_State *L) {
         break;
     }
   }
-}
+}*/
 
 static const struct luaL_reg mg_string_lib_m [] = {
 	{"casecmp",			_mg_casecmp			},
@@ -143,7 +143,7 @@ static const struct luaL_reg mg_string_lib_m [] = {
 };
 
 void mg_open_mg_string(lua_State *L) {
-	printf("START MG.STRING: \n"); dumpstack(L);
+	//printf("START MG.STRING: \n"); dumpstack(L);
 	lua_newtable(L);
 	luaL_register(L, NULL, mg_string_lib_m);
 	lua_setfield(L, -2, "string");
@@ -153,6 +153,5 @@ void mg_open_mg_string(lua_State *L) {
 	lua_pushvalue(L, -2);  /* pushes the metatable */
 	lua_settable(L, -3);  /* metatable.__index = metatable */
 	lua_pop(L, 1);
-
-	printf("END MG.STRING: \n"); dumpstack(L);
+	//printf("END MG.STRING: \n"); dumpstack(L);
 }

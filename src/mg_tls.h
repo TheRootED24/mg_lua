@@ -29,6 +29,6 @@ extern "C" {
 #endif
 
 void  mg_open_mg_tls (lua_State *L);
-int _mg_tls_init(lua_State *L);
+
 
 #endif

@@ -11,26 +11,35 @@ struct mg_http_header {
 typedef struct mg_http_header http_header;
 
 int newheader (lua_State *L) {
-	const char *name = NULL;
-	const char *value = NULL;
+	http_header *hdr = NULL;
 
 	int nargs = lua_gettop(L);
-	if(nargs == 2) {
-		name = luaL_checkstring(L, 1);
-		value = luaL_checkstring(L, 2);
-		lua_settop(L, 0);
+	if(nargs == 1) {
+		if(lua_islightuserdata(L, 1))
+			hdr = (http_header*)lua_touserdata(L, 1);
 	}
+	else if(nargs == 2) {
+		hdr = (http_header *)lua_newuserdata(L, sizeof(http_header));
 
-	http_header *hdr = (http_header *)lua_newuserdata(L, sizeof(http_header));
+		if(lua_islightuserdata(L, 1)) {
+			hdr->name = *check_mg_str(L);
+			lua_remove(L, 1);
+		}
+
+		if(lua_islightuserdata(L, 1)) {
+			hdr->value = *check_mg_str(L);
+			lua_remove(L, 1);
+		}
+
+	}
+	else
+		hdr = (http_header *)lua_newuserdata(L, sizeof(http_header));
+
 	luaL_getmetatable(L, "LuaBook.http_header");
 	lua_setmetatable(L, -2);
 
-	if(name && value) {
-		hdr->name = mg_str(name);
-		hdr->value = mg_str(value);
-	}
 	if(!hdr) lua_pushnil(L);
-	
+
 	return 1;  /* new userdatum is already on the stack */
 }
 
@@ -93,7 +102,7 @@ static int _call_header(lua_State *L) {
 	return 2;
 }
 
-static void dumpstack (lua_State *L) {
+/*static void dumpstack (lua_State *L) {
   int top=lua_gettop(L);
   for (int i = 1; i <= top; i++) {
     printf("%d\t%s\t", i, luaL_typename(L,i));
@@ -115,7 +124,7 @@ static void dumpstack (lua_State *L) {
         break;
     }
   }
-}
+}*/
 
 static const struct luaL_reg http_header_lib_f [] = {
 	{"new", newheader },
@@ -133,12 +142,11 @@ static const struct luaL_reg http_header_lib_m [] = {
 };
 
 void mg_open_mg_http_header(lua_State *L) {
-	printf("START MG.HTTP.HEADER: \n");
-	dumpstack(L);
+	//printf("START MG.HTTP.HEADER: \n"); dumpstack(L);
 	lua_newtable(L);
 	luaL_register(L, NULL, http_header_lib_m);
 	lua_setfield(L, -2, "header");
-	// mg_mgr
+	// mg_http_header
 	luaL_newmetatable(L, "LuaBook.http_header");
 	lua_pushstring(L, "__index");
 	lua_pushvalue(L, -2);  /* pushes the metatable */
@@ -146,6 +154,6 @@ void mg_open_mg_http_header(lua_State *L) {
 	luaL_openlib(L, NULL, http_header_lib_m, 0);
 	luaL_openlib(L, "mg_http_header", http_header_lib_f, 0);
 	lua_pop(L, 2);
-	printf("END MG.HTTP.HEADER \n"); dumpstack(L);
+	//printf("END MG.HTTP.HEADER \n"); dumpstack(L);
 
 }

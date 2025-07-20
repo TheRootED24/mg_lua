@@ -33,7 +33,7 @@ static int _mg_dns_conn(lua_State *L) {
 	return 1;
 }
 
-static void dumpstack (lua_State *L) {
+/*static void dumpstack (lua_State *L) {
   int top=lua_gettop(L);
   for (int i = 1; i <= top; i++) {
     printf("%d\t%s\t", i, luaL_typename(L,i));
@@ -55,7 +55,7 @@ static void dumpstack (lua_State *L) {
         break;
     }
   }
-}
+}*/
 
 static const struct luaL_reg mg_dns_lib_f [] = {
 	{"new", 	newdns	},
@@ -71,7 +71,7 @@ static const struct luaL_reg mg_dns_lib_m [] = {
 
 void mg_open_mg_dns (lua_State *L) {
 	// mg_dns
-	printf("START MG.DNS: \n"); dumpstack(L);
+	//printf("START MG.DNS: \n"); dumpstack(L);
 	lua_newtable(L);
 	luaL_register(L, NULL, mg_dns_lib_m);
 	lua_setfield(L, -2, "dns");
@@ -83,6 +83,6 @@ void mg_open_mg_dns (lua_State *L) {
 	luaL_openlib(L, NULL, mg_dns_lib_m, 0);
 	luaL_openlib(L, "mg_dns", mg_dns_lib_f, 0);
 	lua_pop(L, 2);
-	printf("END MG.DNS: \n"); dumpstack(L);
+	//printf("END MG.DNS: \n"); dumpstack(L);
 
 }
