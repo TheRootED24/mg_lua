@@ -8,7 +8,7 @@
 #include "mg_http_message.h"
 #include "mg_connection.h"
 #include "mg_mgr.h"
-#include "mg_lua.h"
+#include "mg_lua_cb.h"
 
 // C++ GAURDS FOR C LIBS
 #ifndef __cplusplus

@@ -45,12 +45,14 @@ static int _addr_port(lua_State *L) {
 static int _addr_scope_id(lua_State *L) {
 	mg_addr *addr = checkaddr(L);
 	lua_pushinteger(L, addr->scope_id);
+
 	return 1;
 }
 
 static int _addr_is_ip6(lua_State *L) {
 	mg_addr *addr = checkaddr(L);
 	lua_pushboolean(L, addr->is_ip6);
+
 	return 1;
 }
 
@@ -79,25 +81,25 @@ static int _addr_is_ip6(lua_State *L) {
 }*/
 
 static const struct luaL_reg mg_addr_lib_f [] = {
-	{"new", 	newaddr	},
+	{"new", 	newaddr		},
 	{NULL, NULL}
 };
 
 static const struct luaL_reg mg_addr_lib_m [] = {
-	{"new", 	newaddr	},
-	{"ip",			_addr_ip		},
-	{"port",		_addr_port		},
+	{"new", 	newaddr		},
+	{"ip",		_addr_ip	},
+	{"port",	_addr_port	},
 	{"scope_id",	_addr_scope_id	},
-	{"is_ip6",		_addr_is_ip6	},
+	{"is_ip6",	_addr_is_ip6	},
 	{NULL, NULL}
 };
 
 void mg_open_mg_addr(lua_State *L) {
-	// mg_addr
 	//printf("START MG.ADDR: \n"); dumpstack(L);
 	lua_newtable(L);
 	luaL_register(L, NULL, mg_addr_lib_m);
 	lua_setfield(L, -2, "addr");
+	// mg_addr
 	luaL_newmetatable(L, "LuaBook.mg_addr");
 	lua_pushstring(L, "__index");
 	lua_pushvalue(L, -2);  /* pushes the metatable */

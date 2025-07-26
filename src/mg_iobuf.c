@@ -1,9 +1,16 @@
 #include"mg_iobuf.h"
 
 // MG_IOBUF USERDATUM
-int newiobuf (lua_State *L) {
-	mg_iobuf *io = (mg_iobuf*)lua_newuserdata(L, sizeof(mg_iobuf));
-	luaL_getmetatable(L, "LuaBook.mg_iobuf");
+int newiobuf(lua_State *L) {
+	mg_iobuf *io;
+	int nargs = lua_gettop(L);
+
+	if(nargs > 0)
+		io = (mg_iobuf*)lua_touserdata(L, 1);
+	else
+		io = (mg_iobuf*)lua_newuserdata(L, sizeof(mg_iobuf));
+
+	luaL_getmetatable(L, "LuaBook.mg_connection");
 	lua_setmetatable(L, -2);
 	if(!io) lua_pushnil(L);
 
@@ -21,26 +28,24 @@ mg_iobuf *checkiobuf(lua_State *L) {
 static int _mg_iobuf_init(lua_State *L) {
 	mg_iobuf *io = checkiobuf(L);
 	bool ok = mg_iobuf_init(io, luaL_checklong(L, 2), luaL_checklong(L, 3));
-	if(ok)
-		lua_pushboolean(L, ok);
+	lua_pushboolean(L, ok);
 
-	return ok;
+	return 1;
 }
 
 // int mg_iobuf_resize(struct mg_iobuf *io, size_t size);
 static int _mg_iobuf_resize(lua_State *L) {
 	mg_iobuf *io = checkiobuf(L);
 	bool ok = (bool) mg_iobuf_resize(io, luaL_checklong(L, 2));
-	if(ok)
-		lua_pushinteger(L, ok);
+	lua_pushinteger(L, ok);
 
-	return ok;
+	return 1;
 }
 
 // size_t mg_iobuf_add(struct mg_iobuf *io, size_t offset, const void *buf, size_t len);
 static int _mg_iobuf_add(lua_State *L) {
 	mg_iobuf *io = checkiobuf(L);
-	size_t wsize = mg_iobuf_add(io, luaL_checklong(L, 2), lua_topointer(L, 3), luaL_checklong(L, 4));
+	size_t wsize = mg_iobuf_add(io, luaL_checklong(L, 2), (const void*)lua_topointer(L, 3), luaL_checklong(L, 4));
 	lua_pushnumber(L, wsize);
 
 	return 1;
@@ -93,11 +98,11 @@ static const struct luaL_reg mg_iobuf_lib_f [] = {
 };
 
 static const struct luaL_reg mg_iobuf_lib_m [] = {
-	{"init",		_mg_iobuf_init	},
-	{"resize",		_mg_iobuf_resize},
-	{"add",			_mg_iobuf_add	},
-	{"del",			_mg_iobuf_del	},
-	{"free",		_mg_iobuf_free	},
+	{"init",	_mg_iobuf_init		},
+	{"add",		_mg_iobuf_add		},
+	{"resize",	_mg_iobuf_resize	},
+	{"del",		_mg_iobuf_del		},
+	{"free",	_mg_iobuf_free		},
 	{NULL, NULL}
 };
 

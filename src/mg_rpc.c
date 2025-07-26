@@ -23,6 +23,7 @@ int new_mg_rpc (lua_State *L) {
 mg_rpc *check_mg_rpc (lua_State *L) {
 	void *ud = luaL_checkudata(L, 1, "LuaBook.mg_rpc");
 	luaL_argcheck(L, ud != NULL, 1, "`mg_rpc' expected");
+
 	return(mg_rpc*)ud;
 }
 
@@ -41,6 +42,7 @@ static int _rpc_method (lua_State *L) {
 		rpc->method = mg_str(luaL_checkstring(L, 1));
 
 	lua_pushlstring(L, rpc->method.buf, rpc->method.len);
+
 	return 1;
 }
 
@@ -49,6 +51,7 @@ static int _mg_rpc_add(lua_State *L) {
 	mg_rpc *head = check_mg_rpc(L);
 	struct mg_str method_pattern = mg_str(luaL_checkstring(L, 2));
 	mg_rpc_add(&head, method_pattern, dummy2, NULL);
+
 	return 0;
 }
 

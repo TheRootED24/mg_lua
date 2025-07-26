@@ -46,6 +46,7 @@ int newheader (lua_State *L) {
 http_header *checkheader(lua_State *L) {
 	void *ud = luaL_checkudata(L, 1, "LuaBook.http_header");
 	luaL_argcheck(L, ud != NULL, 1, "`mg_http_header' expected");
+
 	return (http_header*)ud;
 
 }
@@ -57,6 +58,7 @@ static int _name(lua_State *L) {
 		hdr->name = mg_str(luaL_checkstring(L, -1));
 
 	lua_pushlstring(L, hdr->name.buf, hdr->name.len);
+
 	return 1;
 }
 
@@ -67,6 +69,7 @@ static int _value(lua_State *L) {
 		hdr->value = mg_str(luaL_checkstring(L, -1));
 
 	lua_pushlstring(L, hdr->value.buf, hdr->value.len);
+
 	return 1;
 }
 
@@ -81,6 +84,7 @@ static int _header_json(lua_State *L) {
 	http_header *hdr = checkheader(L);
 
 	lua_pushfstring(L, "{\"name\": \"%s\", \"value\":\"%s\"}",  hdr->name.buf, hdr->value.buf);
+
 	return 1;
 }
 
@@ -91,6 +95,7 @@ static int _header_table(lua_State *L) {
 	lua_setfield(L, -2, "name");
 	lua_pushlstring(L, hdr->value.buf, hdr->value.len);
 	lua_setfield(L, -2, "value");
+
 	return 1;
 }
 
@@ -99,6 +104,7 @@ static int _call_header(lua_State *L) {
 
 	lua_pushlstring(L, hdr->name.buf, hdr->name.len);
 	lua_pushlstring(L, hdr->value.buf, hdr->value.len);
+
 	return 2;
 }
 
@@ -127,17 +133,17 @@ static int _call_header(lua_State *L) {
 }*/
 
 static const struct luaL_reg http_header_lib_f [] = {
-	{"new", newheader },
+	{"new", 	newheader },
 	{NULL, NULL}
 };
 
 static const struct luaL_reg http_header_lib_m [] = {
 	{"__tostring",	_print_header	},
-	{"__call",		_call_header	},
-	{"table", 		_header_table	},
-	{"json", 		_header_json	},
-	{"name", 		_name		},
-	{"value", 		_value		},
+	{"__call",	_call_header	},
+	{"table", 	_header_table	},
+	{"json", 	_header_json	},
+	{"name", 	_name		},
+	{"value", 	_value		},
 	{NULL, NULL}
 };
 

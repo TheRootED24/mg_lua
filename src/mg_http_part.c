@@ -23,6 +23,7 @@ int newpart (lua_State *L) {
 http_part *checkpart(lua_State *L) {
 	void *ud = luaL_checkudata(L, 1, "LuaBook.http_part");
 	luaL_argcheck(L, ud != NULL, 1, "`mg_http_part' expected");
+
 	return(http_part*)ud;
 }
 
@@ -33,6 +34,7 @@ static int _http_part_name(lua_State *L) {
 		hp->name = mg_str(luaL_checkstring(L, -1));
 
 	lua_pushlstring(L, hp->name.buf, hp->name.len);
+
 	return 1;
 }
 
@@ -43,6 +45,7 @@ static int _http_part_filename(lua_State *L) {
 		hp->filename = mg_str(luaL_checkstring(L, -1));
 
 	lua_pushlstring(L, hp->filename.buf, hp->filename.len);
+
 	return 1;
 }
 
@@ -53,6 +56,7 @@ static int _http_part_body(lua_State *L) {
 		hp->body = mg_str(luaL_checkstring(L, -1));
 
 	lua_pushlstring(L, hp->body.buf, hp->body.len);
+
 	return 1;
 }
 
@@ -80,18 +84,15 @@ static int _http_part_body(lua_State *L) {
   }
 }*/
 
-
 static const struct luaL_reg http_part_lib_f [] = {
-	{"new", newpart },
+	{"new", 	newpart	},
 	{NULL, NULL}
 };
 
 static const struct luaL_reg http_part_lib_m [] = {
-	//{"__tostring",	_print_header	},
-	//{"__call",		_call_header	},
-	{"name", 			_http_part_name	},
-	{"filename", 		_http_part_filename	},
-	{"body", 			_http_part_body	},
+	{"name", 	_http_part_name		},
+	{"filename", 	_http_part_filename	},
+	{"body", 	_http_part_body		},
 	{NULL, NULL}
 };
 

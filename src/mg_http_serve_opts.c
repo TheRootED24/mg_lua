@@ -25,7 +25,7 @@ int newopts (lua_State *L) {
 	luaL_getmetatable(L, "LuaBook.http_serve_opts");
 	lua_setmetatable(L, -2);
 
-	opts->root_dir 		= root_dir;
+	opts->root_dir = root_dir;
 
 	if(!opts) lua_pushnil(L);
 
@@ -46,6 +46,7 @@ static int _opts_root_dir(lua_State *L) {
 		opts->root_dir = luaL_checkstring(L, -1);
 
 	lua_pushstring(L, opts->root_dir);
+
 	return 1;
 };
 
@@ -56,6 +57,7 @@ static int _opts_ssi_pattern(lua_State *L) {
 		opts->ssi_pattern = luaL_checkstring(L, -1);
 
 	lua_pushstring(L, opts->ssi_pattern);
+
 	return 1;
 };
 
@@ -66,6 +68,7 @@ static int _opts_extra_headers(lua_State *L) {
 		opts->extra_headers = luaL_checkstring(L, -1);
 
 	lua_pushstring(L, opts->extra_headers);
+
 	return 1;
 };
 
@@ -76,6 +79,7 @@ static int _opts_mime_types(lua_State *L) {
 		opts->mime_types= luaL_checkstring(L, -1);
 
 	lua_pushstring(L, opts->mime_types);
+
 	return 1;
 };
 
@@ -86,6 +90,7 @@ static int _opts_page404(lua_State *L) {
 		opts->page404 = luaL_checkstring(L, -1);
 
 	lua_pushstring(L, opts->page404);
+
 	return 1;
 };
 
@@ -120,30 +125,29 @@ static int _opts_fs(lua_State *L) {
 		opts->fs = (void*)lua_topointer(L, -1);
 
 	lua_pushlightuserdata(L, opts->fs);
+
 	return 1;
 };
 
 static const struct luaL_reg http_opts_lib_f [] = {
-	{"new", newopts },
+	{"new",		newopts },
 	{NULL, NULL}
 };
 
 static const struct luaL_reg http_opts_lib_m [] = {
-	//{"__tostring",	_print_header	},
-	//{"__call",		_call_header	},
-	{"new", 			newopts 			},
+
+	{"new", 		newopts 		},
 	{"root_dir", 		_opts_root_dir		},
 	{"ssi_pattern", 	_opts_ssi_pattern	},
 	{"extra_headers", 	_opts_extra_headers	},
 	{"mime_types", 		_opts_mime_types	},
 	{"page404", 		_opts_page404		},
-	{"fs", 				_opts_fs			},
+	{"fs", 			_opts_fs		},
 	{NULL, NULL}
 };
 
 void mg_open_mg_http_serve_opts(lua_State *L) {
-	//printf("START MG.HTTP.OPTS: \n");
-	//dumpstack(L);
+	//printf("START MG.HTTP.OPTS: \n"); dumpstack(L);
 	lua_newtable(L);
 	luaL_register(L, NULL, http_opts_lib_m);
 	lua_setfield(L, -2, "serve_opts");
@@ -155,6 +159,5 @@ void mg_open_mg_http_serve_opts(lua_State *L) {
 	luaL_openlib(L, NULL, http_opts_lib_m, 0);
 	luaL_openlib(L, "mg_http_opts", http_opts_lib_f, 0);
 	lua_pop(L, 2);
-
 	//printf("END MG.HTTP.OPTS: \n"); dumpstack(L);
 }

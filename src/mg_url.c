@@ -75,12 +75,12 @@ static int _mg_url_uri(lua_State *L) {
 }*/
 
 static const struct luaL_reg mg_url_lib_m [] = {
-	{"port",		_mg_url_port	},
-	{"is_ssl",		_mg_url_is_ssl	},
-	{"host",		_mg_url_host	},
-	{"user",		_mg_url_user	},
-	{"pass",		_mg_url_pass	},
-	{"uri",			_mg_url_uri	},
+	{"port",	_mg_url_port	},
+	{"is_ssl",	_mg_url_is_ssl	},
+	{"host",	_mg_url_host	},
+	{"user",	_mg_url_user	},
+	{"pass",	_mg_url_pass	},
+	{"uri",		_mg_url_uri	},
 	{NULL, NULL}
 };
 

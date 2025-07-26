@@ -69,7 +69,7 @@ static int _mg_json_get_str(lua_State *L) {
 		free(res);
 		return 2;
 	}
-	else 
+	else
 		lua_pushnil(L);
 
 	return 1;
@@ -88,7 +88,7 @@ static int _mg_json_get_hex(lua_State *L) {
 		free(res);
 		return 2;
 	}
-	else 
+	else
 		lua_pushnil(L);
 
 	return 1;
@@ -107,7 +107,7 @@ static int _mg_json_get_b64(lua_State *L) {
 		free(res);
 		return 2;
 	}
-	else 
+	else
 		lua_pushnil(L);
 
 	return 1;
@@ -141,7 +141,6 @@ static int _mg_json_next(lua_State *L) {
 	struct mg_str *val = (struct mg_str *)lua_topointer(L, 4);
 
 	size_t next = mg_json_next(*obj, ofs, key, val);
-
 	lua_pushnumber(L, next);
 
 	return 1;
@@ -190,7 +189,7 @@ void mg_open_mg_json(lua_State *L) {
 	lua_newtable(L);
 	luaL_register(L, NULL, mg_json_lib_m);
 	lua_setfield(L, -2, "json");
-	// mg_mgr
+	// mg_json
 	luaL_newmetatable(L, "LuaBook.mg_json");
 	lua_pushstring(L, "__index");
 	lua_pushvalue(L, -2);  /* pushes the metatable */

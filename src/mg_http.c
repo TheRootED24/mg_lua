@@ -28,24 +28,13 @@ void fn_servh(mg_connection *c, int ev, void *ev_data) {
 	}
 }
 
-void fn_lua(mg_connection *c, int ev, void *ev_data) {
-	lua_State_t *GL = (lua_State_t*)c->fn_data;
-	lua_State *L = GL->L;
-	lua_getglobal(L, GL->callback);
-	lua_pushlightuserdata(L, c);
-	lua_pushinteger(L, ev);
-	lua_pushlightuserdata(L, ev_data);
-	//dumpstack(L);
-	lua_pcall(L, 3, 0, 0);
-}
-
 // struct mg_connection *mg_http_listen(struct mg_mgr *mgr, const char *url, mg_event_handler_t fn, void *fn_data);
 static int _mg_http_listen(lua_State *L) {
-	mg_mgr *mgr = checkmgr(L);
+	mg_mgr *mgr = check_mg_mgr(L);
 	const char *s_url = luaL_checkstring(L, 2);
 	const char * cb = luaL_checkstring(L, 3);
 
-	mg_event_handler_t fn = (mg_event_handler_t)fn_lua;
+	mg_event_handler_t fn = (mg_event_handler_t)fn_lua_cb;
 	lua_State_t *GL = ((lua_State_t*)lua_newuserdata(L, sizeof(lua_State_t)));
 	GL->L = L; // pass the lua_State pointer to fn_serv
 	GL->callback = cb;
@@ -54,7 +43,6 @@ static int _mg_http_listen(lua_State *L) {
 	mg_connection *c = (mg_connection*)mg_http_listen(mgr, s_url, fn, GL);
 	lua_pushlightuserdata(L, c);
 	newconn(L); // push a new connection udata on stack
-	//mg_connection *conn =
 	checkconn(L); // check conn is ready
 
 	return 1;
@@ -62,21 +50,19 @@ static int _mg_http_listen(lua_State *L) {
 
 // struct mg_connection *mg_http_connect(struct mg_mgr *, const char *url, mg_event_handler_t fn, void *fn_data);
 static int _mg_http_connect(lua_State *L) {
-	mg_mgr *mgr = checkmgr(L);
+	mg_mgr *mgr = check_mg_mgr(L);
 	const char *s_url = luaL_checkstring(L, 2);
 	const char * cb = luaL_checkstring(L, 3);
 
-	mg_event_handler_t fn = (mg_event_handler_t)fn_lua;
+	mg_event_handler_t fn = (mg_event_handler_t)fn_lua_cb;
 	lua_State_t *GL = ((lua_State_t*)lua_newuserdata(L, sizeof(lua_State_t)));
 	GL->L = L; // pass the lua_State pointer to fn_serv
 	GL->callback = cb;
 
-	lua_settop(L, 0); // clear the stack
+	//lua_settop(L, 0); // clear the stack
 	mg_connection *c = (mg_connection*)mg_http_connect(mgr, s_url, fn, GL);
-	printf("connecct dammit !!\n");
 	lua_pushlightuserdata(L, c);
 	newconn(L); // push a new connection udata on stack
-	//mg_connection *conn =
 	checkconn(L); // check conn is ready
 
 	return 1;

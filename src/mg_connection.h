@@ -21,6 +21,7 @@ extern "C" {
 #endif
 // MONGOOSE C LIB
 #include "../includes/libmongoose/src/mongoose.h"
+#include "mg_iobuf.h"
 
 #ifdef __cplusplus
 }

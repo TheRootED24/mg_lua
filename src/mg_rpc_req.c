@@ -25,6 +25,7 @@ int new_rpc_req (lua_State *L) {
 rpc_req *check_rpc_req (lua_State *L) {
 	void *ud = luaL_checkudata(L, 1, "LuaBook.rpc_request");
 	luaL_argcheck(L, ud != NULL, 1, "`rpc_request' expected");
+
 	return(rpc_req*)ud;
 }
 
@@ -35,6 +36,7 @@ static int _mg_rpc_req_frame (lua_State *L) {
 		req->frame = mg_str(luaL_checkstring(L, -1));
 
 	lua_pushlstring(L, req->frame.buf, req->frame.len);
+
 	return 1;
 }
 
@@ -63,7 +65,7 @@ static int _mg_rpc_req_frame (lua_State *L) {
 }*/
 
 static const struct luaL_reg rpc_req_lib_f [] = {
-	{"new", 	new_rpc_req	},
+	{"new", 	new_rpc_req		},
 	{NULL, NULL}
 };
 

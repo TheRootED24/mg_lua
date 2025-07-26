@@ -5,8 +5,7 @@ static int _mg_call(lua_State *L)
 {
 	mg_connection *conn = checkconn(L);
 	int ev = luaL_checkinteger(L, 2);
-	void *ev_data = (void*)lua_topointer(L, 3);
-	ev_data = ev_data ? ev_data : NULL;
+	uint8_t *ev_data = (uint8_t*)lua_tostring(L, 2);
 	mg_call(conn, ev, ev_data);
 
 	return 0;
@@ -22,7 +21,7 @@ static int _mg_error (lua_State *L)
 	return 0;
 }
 
-/*  MD% CTX */
+/*  MD5 CTX */
 int new_mg_md5_ctx(lua_State *L)
 {
 	mg_md5_ctx *md5 = (mg_md5_ctx *)lua_newuserdata(L, sizeof(mg_md5_ctx));
@@ -198,7 +197,6 @@ static int _mg_random_str (lua_State *L) {
 	return 1;
 }
 
-
 // uint16_t mg_ntohs(uint16_t net);
 static int _mg_ntohs (lua_State *L) {
 	uint16_t net = (uint16_t)luaL_checkinteger(L, 1);
@@ -347,7 +345,7 @@ static int _mg_print_mac (lua_State *L) {
 	return 0;
 }
 
-/*static void dumpstack (lua_State *L) {
+static int dumpstack (lua_State *L) {
   int top=lua_gettop(L);
   for (int i = 1; i <= top; i++) {
     printf("%d\t%s\t", i, luaL_typename(L,i));
@@ -369,7 +367,8 @@ static int _mg_print_mac (lua_State *L) {
         break;
     }
   }
-}*/
+  return 0;
+}
 
 static const struct luaL_reg mg_util_lib_m [] = {
 	{"call",		_mg_call		},
@@ -405,6 +404,7 @@ static const struct luaL_reg mg_util_lib_m [] = {
 	{"print_ip4",		_mg_print_ip4		},
 	{"print_ip6",		_mg_print_ip6		},
 	{"print_mac",		_mg_print_mac		},
+	{"dumpstack",		dumpstack		},
 	{NULL, NULL}
 };
 
@@ -413,7 +413,7 @@ void mg_open_mg_util(lua_State *L) {
 	lua_newtable(L);
 	luaL_register(L, NULL, mg_util_lib_m);
 	lua_setfield(L, -2, "util");
-	// mg_util
+	// mg_utility
 	luaL_newmetatable(L, "LuaBook.mg_util");
 	lua_pushstring(L, "__index");
 	lua_pushvalue(L, -2);  /* pushes the metatable */

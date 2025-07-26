@@ -95,7 +95,7 @@ static int _mg_tls_opts_name(lua_State *L) {
 }*/
 
 static const struct luaL_reg tls_opts_lib_f [] = {
-	{"new", 	new_tls_opts	},
+	{"new", 	new_tls_opts		},
 	{NULL, NULL}
 };
 
@@ -125,4 +125,5 @@ void  mg_open_mg_tls_opts (lua_State *L) {
 	luaL_openlib(L, "mg_tls_opts", tls_opts_lib_f, 0);
 	lua_pop(L, 2);
 	//printf("END MG.TL.OPTS:\n"); dumpstack(L);
+
 }

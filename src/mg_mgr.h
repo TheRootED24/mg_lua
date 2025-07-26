@@ -28,6 +28,7 @@ extern "C" {
 #endif
 
 void mg_open_mg_mgr (lua_State *L);
-mg_mgr *checkmgr(lua_State *L);
-int newmgr (lua_State *L);
+mg_mgr *check_mg_mgr(lua_State *L);
+int _mg_mgr_new (lua_State *L);
+
 #endif

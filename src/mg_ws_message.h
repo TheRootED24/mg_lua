@@ -31,6 +31,7 @@ extern "C" {
 }
 #endif
 
+typedef struct mg_ws_message ws_message;
 void mg_open_mg_ws_message(lua_State *L);
 
 #endif

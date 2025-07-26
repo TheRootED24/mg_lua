@@ -32,18 +32,29 @@ int new_mg_timer(lua_State *L) {
 mg_timer *check_mg_timer(lua_State *L) {
 	void *ud = luaL_checkudata(L, 1, "LuaBook.mg_timer");
 	luaL_argcheck(L, ud != NULL, 1, "`mg_timer' expected");
+
 	return(mg_timer*)ud;
 }
 
 // struct mg_timer *mg_timer_add(struct mg_mgr *mgr, uint64_t period_ms, unsigned flags, void (*fn)(void *), void *fn_data);
 static int _mg_timer_add(lua_State *L) {
-	mg_mgr *mgr = checkmgr(L);
-	uint64_t period_ms = luaL_checknumber(L, 2);
-	unsigned flags = luaL_checkint(L, 3);
+	void *arg = NULL;
+	int nargs = lua_gettop(L);
+	mg_mgr *mgr = check_mg_mgr(L);
+	uint64_t period_ms = luaL_checkinteger(L, 2);
+	unsigned flags = MG_TIMER_REPEAT | MG_TIMER_RUN_NOW;
+	const char *cb = luaL_checkstring(L, 3);
+
+	if(nargs > 3)
+		arg = (void*)lua_topointer(L, 4);
+
 	lua_State_t *GL = ((lua_State_t*)lua_newuserdata(L, sizeof(lua_State_t)));
 	GL->L = L; // pass the lua_State pointer to fn_serv
+	GL->callback = cb;
+	GL->fn_data = arg;
+
 	new_mg_timer(L);
-	mg_timer *tmr = mg_timer_add(mgr, period_ms, flags, dummy, GL);
+	mg_timer *tmr = mg_timer_add(mgr, period_ms, flags, fn_lua_timer, GL);
 	if(!tmr) lua_pushnil(L);
 
 	return 1;
@@ -56,9 +67,14 @@ static int _mg_timer_init(lua_State *L) {
 	mg_timer *t = check_mg_timer(L);
 	uint64_t period_ms = luaL_checknumber(L, 2);
 	unsigned flags = luaL_checkint(L, 3);
+	const char *cb = luaL_checkstring(L, 4);
+
 	lua_State_t *GL = ((lua_State_t*)lua_newuserdata(L, sizeof(lua_State_t)));
-	GL->L = L; // pass the lua_State pointer to fn_serv
-	mg_timer_init(&head, t, period_ms, flags, dummy, GL );
+	GL->L = L; 		// pass the lua_State pointer to fn_serv
+	GL->callback = cb;	 // pass the lua callbaack
+	GL->fn_data = NULL;
+	mg_timer_init(&head, t, period_ms, flags, fn_lua_timer, GL );
+
 	return 0;
 }
 
@@ -68,6 +84,7 @@ static int _mg_timer_free(lua_State *L) {
 	lua_remove(L, 1);
 	mg_timer *t = check_mg_timer(L);
 	mg_timer_free(&head, t);
+
 	return 0;
 }
 
@@ -76,6 +93,7 @@ static int _mg_timer_poll(lua_State *L) {
 	mg_timer *head = check_mg_timer(L);
 	uint64_t uptime_ms = luaL_checknumber(L, 2);
 	mg_timer_poll(&head, uptime_ms);
+
 	return 0;
 }
 

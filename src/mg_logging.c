@@ -91,7 +91,7 @@ void mg_open_mg_logging (lua_State *L) {
 	lua_newtable(L);
 	luaL_register(L, NULL, mg_log_lib_m);
 	lua_setfield(L, -2, "log");
-	// mg_log
+	// mg_logging
 	luaL_newmetatable(L, "LuaBook.mg_log");
 	lua_pushstring(L, "__index");
 	lua_pushvalue(L, -2);  /* pushes the metatable */

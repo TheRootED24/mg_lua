@@ -6,7 +6,26 @@ int newconn (lua_State *L) {
 	int nargs = lua_gettop(L);
 
 	if(nargs > 0)
-		conn = (mg_connection*)lua_topointer(L, 1);
+		conn = (mg_connection*)lua_touserdata(L, 1);
+	else
+		conn = (mg_connection*)lua_newuserdata(L, sizeof(mg_connection));
+
+	luaL_getmetatable(L, "LuaBook.mg_connection");
+	lua_setmetatable(L, -2);
+	if(!conn) lua_pushnil(L);
+
+	return 1;  /* new userdatum is already on the stack */
+}
+
+int presv_conn (lua_State *L) {
+	mg_connection *conn;
+	int nargs = lua_gettop(L);
+
+	if(nargs > 0){
+		conn = (mg_connection*)calloc(1, sizeof(mg_connection));
+		*conn = *(mg_connection*)lua_topointer(L, 1);
+		lua_pushlightuserdata(L, conn);
+	}
 	else
 		conn = (mg_connection*)lua_newuserdata(L, sizeof(mg_connection));
 
@@ -39,9 +58,9 @@ static int _mg_connection_mgr(lua_State *L) {
 	//lua_pop(L, 1);
 	if(NULL != conn->mgr->conns)
 	{
-		newconn(L);
-		mg_connection *conns = checkconn(L);
-		*conns->mgr->conns = *conn->mgr->conns;
+		//newconn(L);
+		mg_connection *conns = conn->mgr->conns;
+		lua_pushlightuserdata(L, conns);
 	}
 	else
 		lua_pushnil(L);
@@ -55,6 +74,43 @@ static int _mg_connection_loc(lua_State *L) {
 
 	return 1;
 }
+
+static int _mg_connection_send(lua_State *L) {
+	int nargs = lua_gettop(L);
+	mg_connection *conn = checkconn(L);
+	mg_iobuf io = conn->send;
+	if(nargs > 1) {
+		if(strcmp(luaL_checkstring(L, 2), "len") == 0)
+			lua_pushinteger(L, io.len);
+		if(strcmp(luaL_checkstring(L, 2), "size") == 0)
+			lua_pushinteger(L, io.size);
+		if(strcmp(luaL_checkstring(L, 2), "align") == 0)
+			lua_pushinteger(L, io.align);
+
+		return 1;
+	}
+	else
+	{
+		lua_pushlstring(L, (const char*)io.buf, io.len);
+		lua_pushinteger(L, io.len);
+		lua_pushinteger(L, io.size);
+		lua_pushinteger(L, io.align);
+	}
+	
+	return 4;
+}
+
+static int _mg_connection_recv(lua_State *L) {
+	mg_connection *conn = checkconn(L);
+	mg_iobuf io = conn->recv;
+
+	lua_pushlightuserdata(L, &io);
+	newiobuf(L);
+	checkiobuf(L);
+
+	return 1;
+}
+
 
 static int _mg_connection_loc_ip(lua_State *L) {
 	mg_connection *conn = checkconn(L);
@@ -104,14 +160,35 @@ static int _mg_connection_rem(lua_State *L) {
 static int _mg_connection_fd(lua_State *L) {
 	mg_connection *conn = checkconn(L);
 	lua_pushlightuserdata(L, conn->fd);
+
 	return 1;
 }
 
 static int _mg_connection_id(lua_State *L) {
 	mg_connection *conn = checkconn(L);
 	lua_pushnumber(L, conn->id);
+
 	return 1;
 }
+
+static int _mg_connection_data(lua_State *L) {
+	int nargs = lua_gettop(L);
+	mg_connection *conn = checkconn(L);
+	size_t maxlen = sizeof(conn->data);
+
+	if(nargs > 1){
+		char *data = (char*)luaL_checkstring(L, 2);
+		size_t len = (size_t)luaL_checkinteger(L, 3);
+
+		if(data && len < maxlen -1 )
+			strncpy(conn->data, data, len);
+	}
+
+	if(conn)
+		lua_pushstring(L, conn->data);
+
+	return 1;
+};
 
 static int _is_accepted(lua_State *L) {
 	int nargs = lua_gettop(L);
@@ -132,6 +209,7 @@ static int _is_arplooking(lua_State *L) {
 		conn->is_arplooking = luaL_checkinteger(L, -1);
 
 	lua_pushinteger(L, conn->is_arplooking);
+
 	return 1;
 };
 
@@ -142,6 +220,7 @@ static int _is_client(lua_State *L) {
 		conn->is_client = luaL_checkinteger(L, -1);
 
 	lua_pushinteger(L, conn->is_client);
+
 	return 1;
 };
 
@@ -152,6 +231,7 @@ static int _is_closing(lua_State *L) {
 		conn->is_closing = luaL_checkinteger(L, -1);
 
 	lua_pushinteger(L, conn->is_closing);
+
 	return 1;
 };
 
@@ -162,6 +242,7 @@ static int _is_draininig(lua_State *L) {
 		conn->is_draining = luaL_checkinteger(L, -1);
 
 	lua_pushinteger(L, conn->is_draining);
+
 	return 1;
 };
 
@@ -172,6 +253,7 @@ static int _is_full(lua_State *L) {
 		conn->is_full = luaL_checkinteger(L, -1);
 
 	lua_pushinteger(L, conn->is_full);
+
 	return 1;
 };
 
@@ -192,6 +274,7 @@ static int _is_listening(lua_State *L) {
 		conn->is_listening = luaL_checkinteger(L, -1);
 
 	lua_pushinteger(L, conn->is_listening);
+
 	return 1;
 };
 
@@ -202,6 +285,7 @@ static int _is_mqtt5(lua_State *L) {
 		conn->is_mqtt5 = luaL_checkinteger(L, -1);
 
 	lua_pushinteger(L, conn->is_mqtt5);
+
 	return 1;
 };
 
@@ -212,6 +296,7 @@ static int _is_readable(lua_State *L) {
 		conn->is_readable = luaL_checkinteger(L, -1);
 
 	lua_pushinteger(L, conn->is_readable);
+
 	return 1;
 };
 
@@ -222,6 +307,7 @@ static int _is_resolving(lua_State *L) {
 		conn->is_resolving = luaL_checkinteger(L, -1);
 
 	lua_pushinteger(L, conn->is_resolving);
+
 	return 1;
 };
 
@@ -232,6 +318,7 @@ static int _is_resp(lua_State *L) {
 		conn->is_resp = luaL_checkinteger(L, -1);
 
 	lua_pushinteger(L, conn->is_resp);
+
 	return 1;
 };
 
@@ -242,6 +329,7 @@ static int _is_tls(lua_State *L) {
 		conn->is_tls = luaL_checkinteger(L, -1);
 
 	lua_pushinteger(L, conn->is_tls);
+
 	return 1;
 };
 
@@ -252,6 +340,7 @@ static int _is_tls_hs(lua_State *L) {
 		conn->is_tls_hs = luaL_checkinteger(L, -1);
 
 	lua_pushinteger(L, conn->is_tls_hs);
+
 	return 1;
 };
 
@@ -262,6 +351,7 @@ static int _is_tls_throttled(lua_State *L) {
 		conn->is_tls_throttled = luaL_checkinteger(L, -1);
 
 	lua_pushinteger(L, conn->is_tls_throttled);
+
 	return 1;
 };
 
@@ -272,6 +362,7 @@ static int _is_udp(lua_State *L) {
 		conn->is_udp= luaL_checkinteger(L, -1);
 
 	lua_pushinteger(L, conn->is_udp);
+
 	return 1;
 };
 
@@ -282,6 +373,7 @@ static int _is_websocket(lua_State *L) {
 		conn->is_websocket= luaL_checkinteger(L, -1);
 
 	lua_pushinteger(L, conn->is_websocket);
+
 	return 1;
 };
 
@@ -292,6 +384,7 @@ static int _is_writable(lua_State *L) {
 		conn->is_writable= luaL_checkinteger(L, -1);
 
 	lua_pushinteger(L, conn->is_writable);
+
 	return 1;
 };
 
@@ -326,8 +419,11 @@ static const struct luaL_reg mg_connection_lib_f [] = {
 
 static const struct luaL_reg mg_connection_lib_m [] = {
 	{"new", 		newconn			},
+	{"send", 		_mg_connection_send	},
+	{"recv", 		_mg_connection_recv	},
 	{"next",		_mg_connection_next	},
 	{"mgr",			_mg_connection_mgr	},
+	{"data",		_mg_connection_data	},
 	{"loc",			_mg_connection_loc	},
 	{"loc_ip",		_mg_connection_loc_ip	},
 	{"loc_port",		_mg_connection_loc_port	},

@@ -43,12 +43,14 @@ static int _mg_str_buf(lua_State *L) {
 	}
 
 	lua_pushlstring(L, str->buf, str->len);
+
 	return 1;
 }
 
 static int _mg_str_len(lua_State *L) {
 	struct mg_str *str = check_mg_str(L);
 	lua_pushinteger(L, str->len);
+
 	return 1;
 }
 
@@ -82,9 +84,9 @@ static const struct luaL_reg mg_str_lib_f [] = {
 };
 
 static const struct luaL_reg mg_str_lib_m [] = {
-	{"new",			new_mg_str	},
-	{"buf",			_mg_str_buf },
-	{"len",			_mg_str_len	},
+	{"new",		new_mg_str	},
+	{"buf",		_mg_str_buf	},
+	{"len",		_mg_str_len	},
 	{NULL, NULL}
 };
 
@@ -103,4 +105,5 @@ void  mg_open_mg_str (lua_State *L) {
 	luaL_openlib(L, "mg_str", mg_str_lib_f, 0);
 	lua_pop(L, 2);
 	//printf("END MG.STR\n"); dumpstack(L);
+
 }

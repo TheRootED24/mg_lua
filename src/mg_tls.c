@@ -6,7 +6,7 @@ static int _mg_tls_init(lua_State *L) {
 	lua_remove(L, 1);
 	tls_opts *opts = check_tls_opts(L);
 	mg_tls_init(conn, opts);
-
+  
 	return 0;
 }
 

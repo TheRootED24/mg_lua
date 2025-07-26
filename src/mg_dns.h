@@ -1,12 +1,9 @@
 #ifndef MG_DNS_H
 #define MG_DNS_H
 
-#include "mg_lua.h"
-#include "mg_connection.h"
-
 #define MG_DNS "mg_dns"
 
-typedef struct mg_dns mg_dns;
+
 
 // C++ GAURDS FOR C LIBS
 #ifndef __cplusplus
@@ -27,6 +24,8 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
+typedef struct mg_dns mg_dns;
 
 void mg_open_mg_dns(lua_State *L);
 

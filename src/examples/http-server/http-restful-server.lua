@@ -94,7 +94,7 @@ local function main(...)
 	-- Setup listener
 	local con = mg.http.listen(mgr, "http://0.0.0.0:8000", "CALLBACK")
 	local con2 = mg.http.listen(mgr, "https://0.0.0.0:8443", "CALLBACK")
-	
+
 	-- Start Event loop (~1 min)
 	for i = 1, 60 do
 		mg.mgr.poll(mgr, 1000)
