@@ -3,16 +3,6 @@
 
 #define MG_STRING "string"
 
-#include "mg_addr.h"
-#include "mg_string.h"
-#include "mg_http_header.h"
-#include "mg_http_message.h"
-#include "mg_http_serve_opts.h"
-#include "mg_http_part.h"
-#include "mg_mgr.h"
-#include "mg_iobuf.h"
-#include "mg_lua.h"
-
 // C++ GAURDS FOR C LIBS
 #ifndef __cplusplus
 // LUA LIBS FOR gcc
@@ -28,6 +18,9 @@ extern "C" {
 #endif
 // MONGOOSE C LIB
 #include "../includes/libmongoose/src/mongoose.h"
+#include "mg_str.h"
+#include "mg_mgr.h"
+#include "mg_iobuf.h"
 
 #ifdef __cplusplus
 }

@@ -1,10 +1,7 @@
-#ifndef MG_HTTP_SERV_OPTS_H
-#define MG_HTTP_SERV_OPTS_H
+#ifndef MG_HTTP_PART_H
+#define MG_HTTP_PART_H
 
-#define MG_HTTP_SERV_OPTS "serve_opts"
-#include "mg_http_header.h"
-
-typedef struct mg_http_part http_part;
+#define MG_HTTP_PART "http_part"
 
 // C++ GAURDS FOR C LIBS
 #ifndef __cplusplus
@@ -25,7 +22,11 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
+typedef struct mg_http_part http_part;
+
 void mg_open_mg_http_part(lua_State *L);
-int newpart (lua_State *L);
-http_part *checkpart(lua_State *L);
+int new_mg_http_part (lua_State *L);
+http_part *check_mg_http_part(lua_State *L, int pos);
+
 #endif

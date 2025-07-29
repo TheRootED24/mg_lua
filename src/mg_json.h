@@ -1,13 +1,7 @@
 #ifndef MG_JSON_H
 #define MG_JSON_H
 
-#include "mg_lua.h"
-#include "mg_connection.h"
-#include "mg_string.h"
-#include "mg_str.h"
-
 #define MG_JSON "json"
-
 
 // C++ GAURDS FOR C LIBS
 #ifndef __cplusplus
@@ -24,6 +18,8 @@ extern "C" {
 #endif
 // MONGOOSE C LIB
 #include "../includes/libmongoose/src/mongoose.h"
+#include "mg_string.h"
+#include "mg_str.h"
 
 #ifdef __cplusplus
 }

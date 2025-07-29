@@ -44,8 +44,12 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/hostle/mg_lua/src/mg_ws_message.c" "src/CMakeFiles/mg_lua.dir/mg_ws_message.c.o" "gcc" "src/CMakeFiles/mg_lua.dir/mg_ws_message.c.o.d"
   )
 
-# Targets to which this target links.
-set(CMAKE_TARGET_LINKED_INFO_FILES
+# Targets to which this target links which contain Fortran sources.
+set(CMAKE_Fortran_TARGET_LINKED_INFO_FILES
+  )
+
+# Targets to which this target links which contain Fortran sources.
+set(CMAKE_Fortran_TARGET_FORWARD_LINKED_INFO_FILES
   )
 
 # Fortran module output directory.

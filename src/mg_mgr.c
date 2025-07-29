@@ -4,8 +4,10 @@ int _mg_mgr_new (lua_State *L) {
 	mg_mgr *mgr = NULL;
 	int nargs = lua_gettop(L);
 
-	if(nargs > 0)
+	if(nargs > 0) {
 		mgr = (mg_mgr*)lua_touserdata(L, 1);
+		lua_pushlightuserdata(L, mgr);
+	}
 	else
 		mgr = (mg_mgr*)lua_newuserdata(L, sizeof(mg_mgr));
 
@@ -66,43 +68,17 @@ static const struct luaL_reg mg_mgr_lib_f [] = {
 };
 
 static const struct luaL_reg mg_mgr_lib_m [] = {
-	{"new", 		_mg_mgr_new		},
-	{"conns", 		_mg_mgr_conns	},
-	{"init",		_mg_mgr_init	},
-	{"poll",		_mg_mgr_poll	},
-	{"free",		_mg_mgr_free	},
+	{"new", 	_mg_mgr_new	},
+	{"conns", 	_mg_mgr_conns	},
+	{"init",	_mg_mgr_init	},
+	{"poll",	_mg_mgr_poll	},
+	{"free",	_mg_mgr_free	},
 	{NULL, NULL}
 };
 
-/*static void dumpstack (lua_State *L) {
-  int top=lua_gettop(L);
-  for (int i = 1; i <= top; i++) {
-    printf("%d\t%s\t", i, luaL_typename(L,i));
-    switch (lua_type(L, i)) {
-      case LUA_TNUMBER:
-        printf("%g\n",lua_tonumber(L,i));
-        break;
-      case LUA_TSTRING:
-        printf("%s\n",lua_tostring(L,i));
-        break;
-      case LUA_TBOOLEAN:
-        printf("%s\n", (lua_toboolean(L, i) ? "true" : "false"));
-        break;
-      case LUA_TNIL:
-        printf("%s\n", "nil");
-        break;
-      default:
-        printf("%p\n",lua_topointer(L,i));
-        break;
-    }
-  }
-}*/
-
 void mg_open_mg_mgr (lua_State *L) {
-	//printf("START MG.MGR: \n"); dumpstack(L);
 	lua_newtable(L);
 	luaL_register(L, NULL, mg_mgr_lib_m);
-	//dumpstack(L);
 	lua_setfield(L, -2, "mgr");
 	// mg_mgr
 	luaL_newmetatable(L, "LuaBook.mg_mgr");
@@ -112,5 +88,4 @@ void mg_open_mg_mgr (lua_State *L) {
 	luaL_openlib(L, NULL, mg_mgr_lib_m, 0);
 	luaL_openlib(L, "mg_mgr", mg_mgr_lib_f, 0);
 	lua_pop(L, 2);
-	//printf("END MG.MGR: \n"); dumpstack(L);
 }

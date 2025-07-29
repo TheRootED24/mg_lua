@@ -3,8 +3,6 @@
 
 #define MG_DNS "mg_dns"
 
-
-
 // C++ GAURDS FOR C LIBS
 #ifndef __cplusplus
 // LUA LIBS FOR gcc
@@ -28,5 +26,7 @@ extern "C" {
 typedef struct mg_dns mg_dns;
 
 void mg_open_mg_dns(lua_State *L);
+int new_mg_dns (lua_State *L);
+mg_dns *check_mg_dns(lua_State *L, int pos);
 
 #endif

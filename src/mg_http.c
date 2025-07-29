@@ -1,33 +1,5 @@
 #include "mg_http.h"
 
-void fn_servh(mg_connection *c, int ev, void *ev_data) {
-	if (ev == MG_EV_OPEN) {
-		c->is_hexdumping = 1;
-	} else if (ev == MG_EV_HTTP_MSG) {
-		struct mg_http_message *hm = (struct mg_http_message *) ev_data;
-		if (mg_match(hm->uri, mg_str("/websocket"), NULL)) {
-			// Upgrade to websocket. From now on, a connection is a full-duplex
-			// Websocket connection, which will receive MG_EV_WS_MSG events.
-			mg_ws_upgrade(c, hm, NULL);
-		} else if (mg_match(hm->uri, mg_str("/rest"), NULL)) {
-			// Serve REST response
-			mg_http_reply(c, 200, "", "{\"result\": %d}\n", 123);
-		} else {
-			// Serve static files
-			struct mg_http_serve_opts opts = {.root_dir = "."};
-			mg_http_serve_dir(c, ev_data, &opts);
-		}
-	} else if (ev == MG_EV_WS_MSG) {
-		// Got websocket frame. Received data is wm->data. Echo it back!
-		struct mg_ws_message *wm = (struct mg_ws_message *) ev_data;
-		//lua_State_t *GL = (lua_State_t*)c->fn_data;
-		//lua_pushlstring(GL->L, wm->data.buf, (int)wm->data.len);
-		//lua_pushnumber(GL->L, (int)wm->data.len);
-		//do_callback(GL->L);
-		mg_ws_send(c, wm->data.buf, wm->data.len, WEBSOCKET_OP_TEXT);
-	}
-}
-
 // struct mg_connection *mg_http_listen(struct mg_mgr *mgr, const char *url, mg_event_handler_t fn, void *fn_data);
 static int _mg_http_listen(lua_State *L) {
 	mg_mgr *mgr = check_mg_mgr(L);
@@ -42,8 +14,8 @@ static int _mg_http_listen(lua_State *L) {
 	lua_settop(L, 0); // clear the stack
 	mg_connection *c = (mg_connection*)mg_http_listen(mgr, s_url, fn, GL);
 	lua_pushlightuserdata(L, c);
-	newconn(L); // push a new connection udata on stack
-	checkconn(L); // check conn is ready
+	new_mg_connection(L); // push a new connection udata on stack
+	check_mg_connection(L, 1); // check conn is ready
 
 	return 1;
 }
@@ -62,15 +34,15 @@ static int _mg_http_connect(lua_State *L) {
 	//lua_settop(L, 0); // clear the stack
 	mg_connection *c = (mg_connection*)mg_http_connect(mgr, s_url, fn, GL);
 	lua_pushlightuserdata(L, c);
-	newconn(L); // push a new connection udata on stack
-	checkconn(L); // check conn is ready
+	new_mg_connection(L); // push a new connection udata on stack
+	check_mg_connection(L, 1); // check conn is ready
 
 	return 1;
 }
 
 // int mg_http_status(const struct mg_http_message *hm);
 static int _mg_http_status(lua_State *L) {
-	const http_message *hm = checkmessage(L);
+	const http_message *hm = check_mg_http_message(L, 1);
 
 	lua_pushinteger(L, luaL_checkinteger(L, mg_http_status(hm)));
 
@@ -89,7 +61,7 @@ static int _mg_http_parse(lua_State *L) {
 	const char *str = luaL_checkstring(L, 1);
 	size_t size = luaL_checklong(L, 2);
 	lua_pushvalue(L, 3);
-	http_message *hm = checkmessage(L);
+	http_message *hm = check_mg_http_message(L, 1);
 
 	lua_pushinteger(L, luaL_checkinteger(L, mg_http_parse(str, size, hm)));
 
@@ -171,35 +143,12 @@ static int _mg_http_get_header_var(lua_State *L) {
 	return 1;
 }
 
-/*static void dumpstack (lua_State *L) {
-	int top=lua_gettop(L);
-	for (int i = 1; i <= top; i++) {
-		printf("%d\t%s\t", i, luaL_typename(L,i));
-		switch (lua_type(L, i)) {
-			case LUA_TNUMBER:
-				printf("%g\n",lua_tonumber(L,i));
-				break;
-			case LUA_TSTRING:
-				printf("%s\n",lua_tostring(L,i));
-				break;
-			case LUA_TBOOLEAN:
-				printf("%s\n", (lua_toboolean(L, i) ? "true" : "false"));
-				break;
-			case LUA_TNIL:
-				printf("%s\n", "nil");
-				break;
-			default:
-				printf("%p\n",lua_topointer(L,i));
-				break;
-		}
-	}
-}*/
-
 static const struct luaL_reg mg_http_lib_f [] = {
-	{"new", newconn	},
+	{"listen",		_mg_http_listen		},
+	{"connect",		_mg_http_connect	},
+	{"status",		_mg_http_status		},
 	{NULL, NULL}
 };
-
 
 static const struct luaL_reg mg_http_lib_m [] = {
 	{"listen",		_mg_http_listen		},
@@ -218,7 +167,6 @@ static const struct luaL_reg mg_http_lib_m [] = {
 };
 
 void mg_open_mg_http(lua_State *L) {
-	//printf("START MG.HTTP: \n"); dumpstack(L);
 	lua_newtable(L);
 	luaL_register(L, NULL, mg_http_lib_m);
 	lua_setfield(L, -2, "http");
@@ -230,11 +178,10 @@ void mg_open_mg_http(lua_State *L) {
 	luaL_openlib(L, NULL, mg_http_lib_m, 0);
 	luaL_openlib(L, "mg_http", mg_http_lib_f, 0);
 	lua_pop(L, 2);
-
+	// open sub-modules
 	mg_open_mg_http_message(L);
 	mg_open_mg_http_header(L);
 	mg_open_mg_http_part(L);
 	mg_open_mg_http_serve_opts(L);
 	lua_pop(L, 1);
-	//printf("END MG.HTTP: \n"); dumpstack(L);
 }

@@ -1,0 +1,8 @@
+{
+	"files.associations": {
+		"lauxlib.h": "c",
+		"lua.hpp": "c",
+		"mg_connection.h": "c",
+		"mongoose.h": "c"
+	}
+}

@@ -3,9 +3,6 @@
 
 #define MG_CONN "connection"
 
-typedef struct mg_connection mg_connection;
-#include "mg_addr.h"
-
 // C++ GAURDS FOR C LIBS
 #ifndef __cplusplus
 // LUA LIBS FOR gcc
@@ -22,13 +19,16 @@ extern "C" {
 // MONGOOSE C LIB
 #include "../includes/libmongoose/src/mongoose.h"
 #include "mg_iobuf.h"
+#include "mg_addr.h"
 
 #ifdef __cplusplus
 }
 #endif
 
+typedef struct mg_connection mg_connection;
+
 void mg_open_mg_connection(lua_State *L);
-int newconn (lua_State *L);
-mg_connection *checkconn(lua_State *L);
+int new_mg_connection (lua_State *L);
+mg_connection *check_mg_connection(lua_State *L, int pos);
 
 #endif

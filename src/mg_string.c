@@ -91,7 +91,7 @@ static int _mg_path_is_sane(lua_State *L) {
 static int _mg_pfn_iobuf(lua_State *L) {
 	int ch = (char)luaL_checkint(L, 1);
 	lua_remove(L, 1);
-	mg_iobuf *io = checkiobuf(L);
+	mg_iobuf *io = check_mg_iobuf(L, 1);
 	mg_pfn_iobuf(ch, io);
 
 	return 0;
@@ -103,35 +103,11 @@ static int _mg_aton(lua_State *L) {
 	mg_addr *addr;
 	str = *check_mg_str(L);
 	lua_remove(L, 1);
-	addr = checkaddr(L);
+	addr = check_mg_addr(L, 1);
 	lua_pushboolean(L, mg_aton(str, addr));
 
 	return 1;
 }
-
-/*static void dumpstack (lua_State *L) {
-  int top=lua_gettop(L);
-  for (int i = 1; i <= top; i++) {
-    printf("%d\t%s\t", i, luaL_typename(L,i));
-    switch (lua_type(L, i)) {
-      case LUA_TNUMBER:
-        printf("%g\n",lua_tonumber(L,i));
-        break;
-      case LUA_TSTRING:
-        printf("%s\n",lua_tostring(L,i));
-        break;
-      case LUA_TBOOLEAN:
-        printf("%s\n", (lua_toboolean(L, i) ? "true" : "false"));
-        break;
-      case LUA_TNIL:
-        printf("%s\n", "nil");
-        break;
-      default:
-        printf("%p\n",lua_topointer(L,i));
-        break;
-    }
-  }
-}*/
 
 static const struct luaL_reg mg_string_lib_m [] = {
 	{"casecmp",		_mg_casecmp	},
@@ -148,7 +124,6 @@ static const struct luaL_reg mg_string_lib_m [] = {
 };
 
 void mg_open_mg_string(lua_State *L) {
-	//printf("START MG.STRING: \n"); dumpstack(L);
 	lua_newtable(L);
 	luaL_register(L, NULL, mg_string_lib_m);
 	lua_setfield(L, -2, "string");
@@ -158,5 +133,4 @@ void mg_open_mg_string(lua_State *L) {
 	lua_pushvalue(L, -2);  /* pushes the metatable */
 	lua_settable(L, -3);  /* metatable.__index = metatable */
 	lua_pop(L, 1);
-	//printf("END MG.STRING: \n"); dumpstack(L);
 }

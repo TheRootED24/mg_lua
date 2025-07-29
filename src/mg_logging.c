@@ -51,30 +51,6 @@ static int _mg_log_set_fn(lua_State *L) {
 	return 0;
 }
 
-/*static void dumpstack (lua_State *L) {
-  int top=lua_gettop(L);
-  for (int i = 1; i <= top; i++) {
-    printf("%d\t%s\t", i, luaL_typename(L,i));
-    switch (lua_type(L, i)) {
-      case LUA_TNUMBER:
-        printf("%g\n",lua_tonumber(L,i));
-        break;
-      case LUA_TSTRING:
-        printf("%s\n",lua_tostring(L,i));
-        break;
-      case LUA_TBOOLEAN:
-        printf("%s\n", (lua_toboolean(L, i) ? "true" : "false"));
-        break;
-      case LUA_TNIL:
-        printf("%s\n", "nil");
-        break;
-      default:
-        printf("%p\n",lua_topointer(L,i));
-        break;
-    }
-  }
-}*/
-
 static const struct luaL_reg mg_log_lib_m [] = {
 	{"error",		_error		},
 	{"info",		_info		},
@@ -87,7 +63,6 @@ static const struct luaL_reg mg_log_lib_m [] = {
 };
 
 void mg_open_mg_logging (lua_State *L) {
-	//printf("START MG.LOGGING: \n"); dumpstack(L);
 	lua_newtable(L);
 	luaL_register(L, NULL, mg_log_lib_m);
 	lua_setfield(L, -2, "log");
@@ -97,5 +72,4 @@ void mg_open_mg_logging (lua_State *L) {
 	lua_pushvalue(L, -2);  /* pushes the metatable */
 	lua_settable(L, -3);  /* metatable.__index = metatable */
 	lua_pop(L, 1);
-	//printf("END MG.LOGGING \n"); dumpstack(L);
 }

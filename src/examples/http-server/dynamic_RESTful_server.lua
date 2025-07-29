@@ -1,8 +1,9 @@
+require "mg_types" -- enums for mg network event types
 local mg = require "mg_lua"
+local s_web_root = "examples/http-server/web_root/";
 
--- callback functions must be global 
+-- callback functions must be global
 CALLBACK = function(c, ev, ev_data)
-	require "mg_types" -- enums for mg network event types
 	if( ev == MG_EV_HTTP_MSG ) then
 		local hm = mg.http.message.new(ev_data)
 		if(mg.string.match(mg.str.new(hm:uri()), mg.str.new("/api/f1"))) then
@@ -17,14 +18,14 @@ CALLBACK = function(c, ev, ev_data)
 				mg.http.reply(c, 500, "", "Parameters missing\n");
 			end
 		else
-			local opts = mg.http.serve_opts.new("./web_root");
+			local opts = mg.http.serve_opts.new(s_web_root);
 			mg.http.serve_dir(c, hm, opts);
 		end
 	end
 end
 
 local function main(...)
-	local mgr = mg.mgr.new() 			-- Event manager
+	local mgr = mg.mgr.new() 	-- Event manager
 	mgr = mg.mgr.init(mgr)		-- Initialize event manager
 
 	-- Setup listener

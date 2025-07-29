@@ -67,30 +67,6 @@ static int _message_flags(lua_State *L) {
 	return 1;
 }
 
-/*static void dumpstack (lua_State *L) {
-  int top=lua_gettop(L);
-  for (int i = 1; i <= top; i++) {
-    printf("%d\t%s\t", i, luaL_typename(L,i));
-    switch (lua_type(L, i)) {
-      case LUA_TNUMBER:
-        printf("%g\n",lua_tonumber(L,i));
-        break;
-      case LUA_TSTRING:
-        printf("%s\n",lua_tostring(L,i));
-        break;
-      case LUA_TBOOLEAN:
-        printf("%s\n", (lua_toboolean(L, i) ? "true" : "false"));
-        break;
-      case LUA_TNIL:
-        printf("%s\n", "nil");
-        break;
-      default:
-        printf("%p\n",lua_topointer(L,i));
-        break;
-    }
-  }
-}*/
-
 static const struct luaL_reg ws_message_lib_f [] = {
 	{"new", 	new_ws_msg	},
 	{NULL, NULL}
@@ -106,13 +82,10 @@ static const struct luaL_reg ws_message_lib_m [] = {
 };
 
 void  mg_open_mg_ws_message (lua_State *L) {
-	//printf("START MG.WS.MESSAGE: \n");
 	lua_getfield(L, -1, "ws");
-	//dumpstack(L);
 	lua_newtable(L);
 	luaL_register(L, NULL, ws_message_lib_m);
 	lua_setfield(L, -2, "message");
-
 	// mg_ws_message
 	luaL_newmetatable(L, "LuaBook.ws_message");
 	lua_pushstring(L, "__index");
@@ -121,7 +94,4 @@ void  mg_open_mg_ws_message (lua_State *L) {
 	luaL_openlib(L, NULL, ws_message_lib_m, 0);
 	luaL_openlib(L, "mg_ws_message", ws_message_lib_f, 0);
 	lua_pop(L, 2);
-
-	//printf("END MG.WS.MESSAGE:\n"); dumpstack(L);
-
 }

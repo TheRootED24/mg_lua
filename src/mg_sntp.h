@@ -1,11 +1,7 @@
 #ifndef MG_SNTP_H
 #define MG_SNTP_H
 
-#include "mg_lua.h"
-#include "mg_connection.h"
-
 #define MG_SNTP "sntp"
-
 
 // C++ GAURDS FOR C LIBS
 #ifndef __cplusplus
@@ -22,6 +18,9 @@ extern "C" {
 #endif
 // MONGOOSE C LIB
 #include "../includes/libmongoose/src/mongoose.h"
+#include "mg_connection.h"
+#include "mg_mgr.h"
+#include "mg_lua_cb.h"
 
 #ifdef __cplusplus
 }

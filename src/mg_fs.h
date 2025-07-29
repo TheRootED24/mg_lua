@@ -3,9 +3,6 @@
 
 #define MG_FS "mg_fs"
 
-#include "mg_fd.h"
-#include "mg_fs_file.h"
-
 // C++ GAURDS FOR C LIBS
 #ifndef __cplusplus
 // LUA LIBS FOR gcc
@@ -21,6 +18,8 @@ extern "C" {
 #endif
 // MONGOOSE C LIB
 #include "../includes/libmongoose/src/mongoose.h"
+#include "mg_fd.h"
+#include "mg_fs_file.h"
 
 #ifdef __cplusplus
 }

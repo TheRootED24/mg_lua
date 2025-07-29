@@ -26,6 +26,6 @@ extern "C" {
 typedef struct mg_fd mg_fd;
 
 void mg_open_mg_fd (lua_State *L);
-mg_fd *check_mg_fd(lua_State *L);
+mg_fd *check_mg_fd(lua_State *L, int pos);
 
 #endif

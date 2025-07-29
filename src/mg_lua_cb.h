@@ -3,12 +3,6 @@
 
 #define MG_LUA_CB "mg_lua_cb"
 
-#include "mg_mgr.h"
-#include "mg_connection.h"
-#include "mg_timer.h"
-#include "mg_rpc.h"
-#include "mg_rpc_req.h"
-
 // C++ GAURDS FOR C LIBS
 #ifndef __cplusplus
 // LUA LIBS FOR gcc
@@ -24,6 +18,11 @@ extern "C" {
 #endif
 // MONGOOSE C LIB
 #include "../includes/libmongoose/src/mongoose.h"
+#include "mg_mgr.h"
+#include "mg_connection.h"
+#include "mg_timer.h"
+#include "mg_rpc.h"
+#include "mg_rpc_req.h"
 
 #ifdef __cplusplus
 }

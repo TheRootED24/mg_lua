@@ -1,9 +1,6 @@
 #include "mg_json.h"
 
-/*
-ret vals >> enum { MG_JSON_TOO_DEEP = -1, MG_JSON_INVALID = -2, MG_JSON_NOT_FOUND = -3 };
-int mg_json_get(struct mg_str json, const char *path, int *toklen);
-*/
+// int mg_json_get(struct mg_str json, const char *path, int *toklen);
 static int _mg_json_get(lua_State *L) {
 	struct mg_str *json = check_mg_str(L);
 	const char *path = luaL_checkstring(L, 2);
@@ -20,6 +17,7 @@ static int _mg_json_get_tok(lua_State *L) {
 	const char *path = luaL_checkstring(L, 2);
 	struct mg_str str =  mg_json_get_tok(*json, path);
 	lua_pushlstring(L, str.buf, str.len);
+
 	return 1;
 }
 
@@ -58,7 +56,6 @@ static int _mg_json_get_long(lua_State *L) {
 }
 
 // char *mg_json_get_str(struct mg_str json, const char *path);
-// **MUST BE FREE'd
 static int _mg_json_get_str(lua_State *L) {
 	struct mg_str *json = check_mg_str(L); //mg_str(luaL_checkstring(L, 1));
 	const char *path = luaL_checkstring(L, 2);
@@ -76,7 +73,6 @@ static int _mg_json_get_str(lua_State *L) {
 }
 
 // char *mg_json_get_hex(struct mg_str json, const char *path, int *len);
-// **MUST BE FREE'd
 static int _mg_json_get_hex(lua_State *L) {
 	struct mg_str *json = check_mg_str(L); //mg_str(luaL_checkstring(L, 1));
 	const char *path = luaL_checkstring(L, 2);
@@ -95,7 +91,6 @@ static int _mg_json_get_hex(lua_State *L) {
 }
 
 // char *mg_json_get_b64(struct mg_str json, const char *path, int *len);
-// **MUST BE FREE'd
 static int _mg_json_get_b64(lua_State *L) {
 	struct mg_str *json = check_mg_str(L); //mg_str(luaL_checkstring(L, 1));
 	const char *path = luaL_checkstring(L, 2);
@@ -146,30 +141,6 @@ static int _mg_json_next(lua_State *L) {
 	return 1;
 }
 
-/*static void dumpstack (lua_State *L) {
-  int top=lua_gettop(L);
-  for (int i = 1; i <= top; i++) {
-    printf("%d\t%s\t", i, luaL_typename(L,i));
-    switch (lua_type(L, i)) {
-      case LUA_TNUMBER:
-        printf("%g\n",lua_tonumber(L,i));
-        break;
-      case LUA_TSTRING:
-        printf("%s\n",lua_tostring(L,i));
-        break;
-      case LUA_TBOOLEAN:
-        printf("%s\n", (lua_toboolean(L, i) ? "true" : "false"));
-        break;
-      case LUA_TNIL:
-        printf("%s\n", "nil");
-        break;
-      default:
-        printf("%p\n",lua_topointer(L,i));
-        break;
-    }
-  }
-}*/
-
 static const struct luaL_reg mg_json_lib_m [] = {
 	{"get",		_mg_json_get		},
 	{"get_tok",	_mg_json_get_tok	},
@@ -185,7 +156,6 @@ static const struct luaL_reg mg_json_lib_m [] = {
 };
 
 void mg_open_mg_json(lua_State *L) {
-	//printf("START MG.JSON: \n"); dumpstack(L);
 	lua_newtable(L);
 	luaL_register(L, NULL, mg_json_lib_m);
 	lua_setfield(L, -2, "json");
@@ -195,5 +165,4 @@ void mg_open_mg_json(lua_State *L) {
 	lua_pushvalue(L, -2);  /* pushes the metatable */
 	lua_settable(L, -3);  /* metatable.__index = metatable */
 	lua_pop(L, 1);
-	//printf("END MG.JSON: \n"); dumpstack(L);
 }

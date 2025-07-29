@@ -2,6 +2,8 @@
 local mg = require "mg_lua"
 require "mg_types"
 
+local s_web_root = "examples/http-server/";
+
 local function proto(t)
 	if(t:is_udp() == 1) then
 		return "UDP"
@@ -68,12 +70,12 @@ CALLBACK = function(c, ev, ev_data)
 
 			mg.printf(conn, "HTTP/1.1 200 OK\r\nTransfer-Encoding: chunked\r\n\r\n");
 			mg.http.printf_chunk(conn, "ID\tPROTO\t\tTYPE\t\tLOCAL\t\tREMOTE\n");
-
+			local payload;
 			local t = conn:mgr()
 			while(t) do
-			local payload = string.format("%u\t%s\t\t%s\t%s\t\t%s\n", t:id(), proto(t), ptype(t), t:loc_ip(), t:rem_ip())
-			mg.http.printf_chunk(conn, payload)
-			t = t:next();
+				payload = string.format("%u\t%s\t\t%s\t%s\t\t%s\n", t:id(), proto(t), ptype(t), t:loc_ip(), t:rem_ip())
+				mg.http.printf_chunk(conn, payload)
+				t = t:next();
 			end
 			mg.http.printf_chunk(conn, "");  --Don't forget the last empty chunk
 
@@ -81,7 +83,7 @@ CALLBACK = function(c, ev, ev_data)
 			mg.http.reply(c, 200, "", string.format("{%q: %s}\n", "result", hm:uri()));
 		else
 			local conn = mg.connection.new(c);
-			local opts = mg.http.serve_opts.new("./web_root");
+			local opts = mg.http.serve_opts.new(s_web_root);
 			mg.http.serve_dir(c, hm, opts);
 		end
 	end

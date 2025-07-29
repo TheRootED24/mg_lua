@@ -20,8 +20,8 @@ static int _mg_mqtt_connect(lua_State *L) {
 	lua_settop(L, 0); // clear the stack
 	mg_connection *c = (mg_connection*)mg_mqtt_connect(mgr, s_url, opts, fn, GL);
 	lua_pushlightuserdata(L, c);
-	//newconn(L); // push a new connection udata on stack
-	checkconn(L); // check conn is ready
+	new_mg_connection(L); // push a new connection udata on stack
+	check_mg_connection(L, 1); // check conn is ready
 
 	return 1;
 }
@@ -39,15 +39,15 @@ static int _mg_mqtt_listen(lua_State *L) {
 	lua_settop(L, 0); // clear the stack
 	mg_connection *c = (mg_connection*)mg_mqtt_listen(mgr, s_url, fn, GL);
 	lua_pushlightuserdata(L, c);
-	//newconn(L); // push a new connection udata on stack
-	checkconn(L); // check conn is ready
+	new_mg_connection(L); // push a new connection udata on stack
+	check_mg_connection(L, 1); // check conn is ready
 
 	return 1;
 }
 
 // void mg_mqtt_login(struct mg_connection *c, const struct mg_mqtt_opts *opts);
 static int _mg_mqtt_login(lua_State *L) {
-	mg_connection *conn = checkconn(L);
+	mg_connection *conn = check_mg_connection(L, 1);
 	lua_remove(L, 1);
 	mqtt_opts *opts = check_mqtt_opts(L);
 	mg_mqtt_login(conn, opts);
@@ -57,18 +57,18 @@ static int _mg_mqtt_login(lua_State *L) {
 
 // uint16_t mg_mqtt_pub(struct mg_connection *c, const struct mg_mqtt_opts *opts);
 static int _mg_mqtt_pub(lua_State *L) {
-	mg_connection *conn = checkconn(L);
+	mg_connection *conn = check_mg_connection(L, 1);
 	lua_remove(L, 1);
 	mqtt_opts *opts = check_mqtt_opts(L);
 	uint16_t ret = mg_mqtt_pub(conn, (const mqtt_opts*)opts);
 	lua_pushinteger(L, ret);
-	
+
 	return 1;
 }
 
 // void mg_mqtt_sub(struct mg_connection *, const struct mg_mqtt_opts *opts);
 static int _mg_mqtt_sub(lua_State *L) {
-	mg_connection *conn = checkconn(L);
+	mg_connection *conn = check_mg_connection(L, 1);
 	lua_remove(L, 1);
 	mqtt_opts *opts = check_mqtt_opts(L);
 	mg_mqtt_sub(conn, opts);
@@ -78,7 +78,7 @@ static int _mg_mqtt_sub(lua_State *L) {
 
 // void mg_mqtt_send_header(struct mg_connection *c, uint8_t cmd, uint8_t flags, uint32_t len);
 static int _mg_mqtt_send_header(lua_State *L) {
-	mg_connection *conn = checkconn(L);
+	mg_connection *conn = check_mg_connection(L, 1);
 	uint8_t cmd = luaL_checkinteger(L, 2);
 	uint8_t flags = luaL_checkinteger(L, 2);
 	uint32_t len = luaL_checkint32(L, 2);
@@ -89,7 +89,7 @@ static int _mg_mqtt_send_header(lua_State *L) {
 
 // void mg_mqtt_ping(struct mg_connection *c);
 static int _mg_mqtt_ping(lua_State *L) {
-	mg_connection *conn = checkconn(L);
+	mg_connection *conn = check_mg_connection(L, 1);
 	mg_mqtt_ping(conn);
 
 	return 0;
@@ -109,37 +109,13 @@ static int _mg_mqtt_parse(lua_State *L) {
 
 // void mg_mqtt_disconnect(struct mg_connection *c, const struct mg_mqtt_opts *opts);
 static int _mg_mqtt_disconnect(lua_State *L) {
-	mg_connection *conn = checkconn(L);
+	mg_connection *conn = check_mg_connection(L, 1);
 	lua_remove(L, 1);
 	mqtt_opts *opts = check_mqtt_opts(L);
 	mg_mqtt_disconnect(conn, opts);
 
 	return 0;
 }
-
-/*static void dumpstack (lua_State *L) {
-  int top=lua_gettop(L);
-  for (int i = 1; i <= top; i++) {
-    printf("%d\t%s\t", i, luaL_typename(L,i));
-    switch (lua_type(L, i)) {
-      case LUA_TNUMBER:
-        printf("%g\n",lua_tonumber(L,i));
-        break;
-      case LUA_TSTRING:
-        printf("%s\n",lua_tostring(L,i));
-        break;
-      case LUA_TBOOLEAN:
-        printf("%s\n", (lua_toboolean(L, i) ? "true" : "false"));
-        break;
-      case LUA_TNIL:
-        printf("%s\n", "nil");
-        break;
-      default:
-        printf("%p\n",lua_topointer(L,i));
-        break;
-    }
-  }
-}*/
 
 static const struct luaL_reg mg_mqtt_lib_f [] = {
 	{"connect",	_mg_mqtt_connect	},
@@ -161,7 +137,6 @@ static const struct luaL_reg mg_mqtt_lib_m [] = {
 };
 
 void mg_open_mg_mqtt(lua_State *L) {
-	//printf("START MG.MQTT: \n"); dumpstack(L);
 	lua_newtable(L);
 	luaL_register(L, NULL, mg_mqtt_lib_m);
 	lua_setfield(L, -2, "mqtt");
@@ -177,5 +152,4 @@ void mg_open_mg_mqtt(lua_State *L) {
 	mg_open_mg_mqtt_message(L);
 	mg_open_mg_mqtt_opts(L);
 	lua_pop(L, 1);
-	//printf("END MG.MQTT: \n"); dumpstack(L);
 }

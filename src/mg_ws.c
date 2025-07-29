@@ -16,7 +16,6 @@ static int _mg_ws_connect(lua_State *L) {
 	if(nargs > 3) {
 		//fmt = luaL_checkstring(L, 4);
 		argstr = luaL_checkstring(L, 4);
-		printf("ARGSTR: %s\n", argstr);
 		c = mg_ws_connect(mgr, s_url, fn, GL, "%s", argstr);
 	}
 	else
@@ -24,10 +23,9 @@ static int _mg_ws_connect(lua_State *L) {
 
 	lua_settop(L, 0); // clear the stack
 
-	//c->is_websocket = 1;
 	lua_pushlightuserdata(L, c);
-	newconn(L); // push a new connection udata on stack
-	checkconn(L); // check conn is ready
+	new_mg_connection(L); // push a new connection udata on stack
+	check_mg_connection(L, 1); // check conn is ready
 
 	return 1; // return the udata on the stack
 }
@@ -45,8 +43,6 @@ static int _mg_ws_upgrade(lua_State *L) {
 	else
 		mg_ws_upgrade(conn, hm, fmt);
 
-	//conn->is_websocket = 1;
-
 	return 0;
 }
 
@@ -63,9 +59,7 @@ static int _mg_ws_send(lua_State *L) {
 	return 1;
 }
 
-// TODO VARIADIC ARG HANDLER
 // size_t mg_ws_printf(struct mg_connection *, int op, const char *fmt, ...);
-
 static int _mg_ws_printf(lua_State *L) {
 	mg_connection *conn = (mg_connection*)lua_topointer(L, 1);
 	int op = luaL_checkinteger(L, 2);
@@ -88,38 +82,14 @@ static int _mg_ws_vprintf(lua_State *L) {
 
 // size_t mg_ws_wrap(struct mg_connection *c, size_t len, int op)
 static int _mg_ws_wrap(lua_State *L) {
-	mg_connection *conn = checkconn(L);
+	mg_connection *conn = check_mg_connection(L, 1);
 	size_t len = (size_t)luaL_checkinteger(L, 2);
 	int op = luaL_checkinteger(L, 3);
 	size_t sent = mg_ws_wrap(conn, len, op);
 	lua_pushnumber(L, sent);
-	
+
 	return 1;
 }
-
-/*static void dumpstack (lua_State *L) {
-  int top=lua_gettop(L);
-  for (int i = 1; i <= top; i++) {
-    printf("%d\t%s\t", i, luaL_typename(L,i));
-    switch (lua_type(L, i)) {
-      case LUA_TNUMBER:
-        printf("%g\n",lua_tonumber(L,i));
-        break;
-      case LUA_TSTRING:
-        printf("%s\n",lua_tostring(L,i));
-        break;
-      case LUA_TBOOLEAN:
-        printf("%s\n", (lua_toboolean(L, i) ? "true" : "false"));
-        break;
-      case LUA_TNIL:
-        printf("%s\n", "nil");
-        break;
-      default:
-        printf("%p\n",lua_topointer(L,i));
-        break;
-    }
-  }
-}*/
 
 static const struct luaL_reg mg_ws_lib_m [] = {
 	{"connect",	_mg_ws_connect	},
@@ -132,7 +102,6 @@ static const struct luaL_reg mg_ws_lib_m [] = {
 };
 
 void mg_open_mg_ws(lua_State *L) {
-	//printf("START MG.WS: \n"); dumpstack(L);
 	lua_newtable(L);
 	luaL_register(L, NULL, mg_ws_lib_m);
 	lua_setfield(L, -2, "ws");
@@ -142,8 +111,7 @@ void mg_open_mg_ws(lua_State *L) {
 	lua_pushvalue(L, -2);  /* pushes the metatable */
 	lua_settable(L, -3);  /* metatable.__index = metatable */
 	lua_pop(L, 1);
-
+	// open sub-module
 	mg_open_mg_ws_message(L);
 	lua_pop(L, 1);
-	//printf("END MG.WS: \n"); dumpstack(L);
 }

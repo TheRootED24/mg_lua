@@ -1,11 +1,7 @@
 #ifndef MG_TIME_H
 #define MG_TIME_H
 
-#include "mg_lua.h"
-
-
 #define MGTIME "time"
-
 
 // C++ GAURDS FOR C LIBS
 #ifndef __cplusplus
