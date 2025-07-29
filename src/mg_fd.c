@@ -1,6 +1,6 @@
 #include "mg_fd.h"
 
-int new_mg_fd (lua_State *L) {
+int _mg_fd_new (lua_State *L) {
 	mg_fd *fd = (mg_fd*)lua_newuserdata(L, sizeof(mg_fd));
 	luaL_getmetatable(L, "LuaBook.mg_fd");
 	lua_setmetatable(L, -2);
@@ -17,12 +17,12 @@ mg_fd *check_mg_fd(lua_State *L, int pos) {
 };
 
 static const struct luaL_reg mg_fd_lib_f [] = {
-	{"new", 	new_mg_fd	},
+	{"new", 	_mg_fd_new	},
 	{NULL, NULL}
 };
 
 static const struct luaL_reg mg_fd_lib_m [] = {
-	{"new",		new_mg_fd	},
+	{"new",		_mg_fd_new	},
 	{NULL, NULL}
 };
 

@@ -7,11 +7,11 @@ struct mg_http_message {
   struct mg_http_header headers[MG_MAX_HTTP_HEADERS];  // Headers
   struct mg_str body;                                  // Body
   struct mg_str head;                                  // Request + headers
-  struct mg_str message;  // Request + headers + body
+  struct mg_str message;                               // Request + headers + body
 };
 */
 
-int new_mg_http_message (lua_State *L) {
+int _mg_http_message_new (lua_State *L) {
 	http_message *hm;
 	int nargs = lua_gettop(L);
 
@@ -192,7 +192,7 @@ static int _call_message(lua_State *L) {
 };
 
 static const struct luaL_reg messagelib_f [] = {
-	{"new", 	new_mg_http_message	},
+	{"new", 	_mg_http_message_new	},
 	{NULL, NULL}
 };
 
@@ -201,7 +201,7 @@ static const struct luaL_reg messagelib_m [] = {
 	{"__call",	_call_message		},
 	{"table", 	_message_table		},
 	{"json", 	_message_json		},
-	{"new", 	new_mg_http_message	},
+	{"new", 	_mg_http_message_new	},
 	{"method", 	_method			},
 	{"uri", 	_uri			},
 	{"query", 	_query			},
@@ -224,6 +224,6 @@ void  mg_open_mg_http_message (lua_State *L) {
 	lua_pushvalue(L, -2);  /* pushes the metatable */
 	lua_settable(L, -3);  /* metatable.__index = metatable */
 	luaL_openlib(L, NULL, messagelib_m, 0);
-	luaL_openlib(L, "mg_http_message", messagelib_f, 0);
+	luaL_openlib(L, "http_message", messagelib_f, 0);
 	lua_pop(L, 2);
 };

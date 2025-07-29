@@ -26,7 +26,7 @@ extern "C" {
 typedef struct mg_addr mg_addr;
 
 void mg_open_mg_addr(lua_State *L);
-int new_mg_addr (lua_State *L);
+int _mg_addr_new (lua_State *L);
 mg_addr *check_mg_addr(lua_State *L, int pos);
 
 #endif

@@ -10,7 +10,7 @@ struct mg_http_part {
 };
 */
 
-int new_mg_http_part (lua_State *L) {
+int _mg_http_part_new (lua_State *L) {
 	http_part *hp = (http_part *)lua_newuserdata(L, sizeof(http_part));
 
 	luaL_getmetatable(L, "LuaBook.http_part");
@@ -61,7 +61,7 @@ static int _http_part_body(lua_State *L) {
 };
 
 static const struct luaL_reg http_part_lib_f [] = {
-	{"new", 	new_mg_http_part	},
+	{"new", 	_mg_http_part_new	},
 	{NULL, NULL}
 };
 
@@ -82,6 +82,6 @@ void mg_open_mg_http_part(lua_State *L) {
 	lua_pushvalue(L, -2);  /* pushes the metatable */
 	lua_settable(L, -3);  /* metatable.__index = metatable */
 	luaL_openlib(L, NULL, http_part_lib_m, 0);
-	luaL_openlib(L, "mg_http_part", http_part_lib_f, 0);
+	luaL_openlib(L, "http_part", http_part_lib_f, 0);
 	lua_pop(L, 2);
 };

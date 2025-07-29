@@ -2,7 +2,7 @@
 
 static struct mg_rpc *s_rpc_head = NULL;
 
-int new_mg_rpc (lua_State *L) {
+int _mg_rpc_new (lua_State *L) {
 	mg_rpc *rpc = (mg_rpc *)lua_newuserdata(L, sizeof(mg_rpc));
 	memset(rpc, 0, sizeof(mg_rpc));
 
@@ -14,9 +14,9 @@ int new_mg_rpc (lua_State *L) {
 	return 1 ;  /* new userdatum is already on the stack */
 };
 
-mg_rpc *check_mg_rpc (lua_State *L) {
-	void *ud = luaL_checkudata(L, 1, "LuaBook.mg_rpc");
-	luaL_argcheck(L, ud != NULL, 1, "`mg_rpc' expected");
+mg_rpc *check_mg_rpc (lua_State *L, int pos) {
+	void *ud = luaL_checkudata(L, pos, "LuaBook.mg_rpc");
+	luaL_argcheck(L, ud != NULL, pos, "`mg_rpc' expected");
 
 	return(mg_rpc*)ud;
 };
@@ -32,7 +32,7 @@ static int _rpc_head_init(lua_State *L) {
 
 static int _rpc_method (lua_State *L) {
 	int nargs = lua_gettop(L);
-	mg_rpc *rpc = check_mg_rpc(L);
+	mg_rpc *rpc = check_mg_rpc(L, 1);
 	if(nargs > 1)
 		rpc->method = mg_str(luaL_checkstring(L, 1));
 
@@ -76,7 +76,7 @@ static int _mg_rpc_process(lua_State *L) {
 
 // void mg_rpc_list(struct mg_rpc_req *r);
 static int _mg_rpc_list(lua_State *L) {
-	rpc_req *req = check_rpc_req(L);
+	rpc_req *req = check_rpc_req(L, 1);
 	mg_rpc_list(req);
 
 	return 0;
@@ -84,7 +84,7 @@ static int _mg_rpc_list(lua_State *L) {
 
 // void mg_rpc_ok(struct mg_rpc_req *, const char *fmt, ...);
 static int _mg_rpc_ok(lua_State *L) {
-	rpc_req *req = check_rpc_req(L);
+	rpc_req *req = check_rpc_req(L, 1);
 	const char *fmt = luaL_checkstring(L, 2);
 	const char * argstr = luaL_checkstring(L, 3);
 
@@ -94,7 +94,7 @@ static int _mg_rpc_ok(lua_State *L) {
 };
 
 static const struct luaL_reg mg_rpc_lib_m [] = {
-	{"new",			new_mg_rpc	},
+	{"new",			_mg_rpc_new	},
 	{"init_head",		_rpc_head_init	},
 	{"add",			_mg_rpc_add	},
 	{"del",			_mg_rpc_del,	},
@@ -115,7 +115,7 @@ void mg_open_mg_rpc(lua_State *L) {
 	lua_pushvalue(L, -2);  /* pushes the metatable */
 	lua_settable(L, -3);  /* metatable.__index = metatable */
 	lua_pop(L, 1);
-	// open syb-modules
+	// open sub-modules
 	mg_open_mg_rpc_req(L);
 	lua_pop(L, 1);
 };

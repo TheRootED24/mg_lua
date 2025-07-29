@@ -10,7 +10,7 @@ struct mg_addr {
 */
 
 // MG_ADDR USERDATUM
-int new_mg_addr (lua_State *L) {
+int _mg_addr_new (lua_State *L) {
 	mg_addr *addr;
 	int nargs = lua_gettop(L);
 
@@ -66,12 +66,12 @@ static int _addr_is_ip6(lua_State *L) {
 }
 
 static const struct luaL_reg mg_addr_lib_f [] = {
-	{"new", 	new_mg_addr	},
+	{"new", 	_mg_addr_new	},
 	{NULL, NULL}
 };
 
 static const struct luaL_reg mg_addr_lib_m [] = {
-	{"new", 	new_mg_addr	},
+	{"new", 	_mg_addr_new	},
 	{"ip",		_addr_ip	},
 	{"port",	_addr_port	},
 	{"scope_id",	_addr_scope_id	},

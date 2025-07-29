@@ -22,7 +22,7 @@ static int _mg_error (lua_State *L)
 };
 
 /*  MD5 CTX */
-int new_mg_md5_ctx(lua_State *L)
+int _mg_md5_ctx_new(lua_State *L)
 {
 	mg_md5_ctx *md5 = (mg_md5_ctx *)lua_newuserdata(L, sizeof(mg_md5_ctx));
 
@@ -34,17 +34,17 @@ int new_mg_md5_ctx(lua_State *L)
 	return 1; /* new userdatum is already on the stack */
 };
 
-mg_md5_ctx *check_mg_md5_ctx(lua_State *L)
+mg_md5_ctx *check_mg_md5_ctx(lua_State *L, int pos)
 {
-	void *ud = luaL_checkudata(L, 1, "LuaBook.mg_md5_ctx");
-	luaL_argcheck(L, ud != NULL, 1, "`mg_md5_ctx' expected");
+	void *ud = luaL_checkudata(L, pos, "LuaBook.mg_md5_ctx");
+	luaL_argcheck(L, ud != NULL, pos, "`mg_md5_ctx' expected");
 	return (mg_md5_ctx *)ud;
 };
 
 // void mg_md5_init(mg_md5_ctx *c);
 static int _mg_md5_init(lua_State *L)
 {
-	mg_md5_ctx *md5 = check_mg_md5_ctx(L);
+	mg_md5_ctx *md5 = check_mg_md5_ctx(L, 1);
 	mg_md5_init(md5);
 
 	return 0;
@@ -53,7 +53,7 @@ static int _mg_md5_init(lua_State *L)
 // void mg_md5_update(mg_md5_ctx *c, const unsigned char *data, size_t len);
 static int _mg_md5_update(lua_State *L)
 {
-	mg_md5_ctx *md5 = check_mg_md5_ctx(L);
+	mg_md5_ctx *md5 = check_mg_md5_ctx(L, 1);
 	const unsigned char *data = (unsigned char *)luaL_checkstring(L, 2);
 	size_t len = luaL_checkinteger(L, 3);
 	mg_md5_update(md5, data, len);
@@ -64,7 +64,7 @@ static int _mg_md5_update(lua_State *L)
 // void mg_md5_final(mg_md5_ctx *c, unsigned char buf[16]);
 static int _mg_md5_final(lua_State *L)
 {
-	mg_md5_ctx *md5 = check_mg_md5_ctx(L);
+	mg_md5_ctx *md5 = check_mg_md5_ctx(L, 1);
 	unsigned char buf[16] = {0};
 	mg_md5_final(md5, buf);
 
@@ -72,7 +72,7 @@ static int _mg_md5_final(lua_State *L)
 };
 
 /*  SHA1 CTX */
-int new_mg_sha1_ctx(lua_State *L)
+int _mg_sha1_ctx_new(lua_State *L)
 {
 	mg_sha1_ctx *sha1 = (mg_sha1_ctx *)lua_newuserdata(L, sizeof(mg_sha1_ctx));
 
@@ -84,17 +84,18 @@ int new_mg_sha1_ctx(lua_State *L)
 	return 1; /* new userdatum is already on the stack */
 };
 
-mg_sha1_ctx *check_mg_sha1_ctx(lua_State *L)
+mg_sha1_ctx *check_mg_sha1_ctx(lua_State *L, int pos)
 {
-	void *ud = luaL_checkudata(L, 1, "LuaBook.mg_sha1_ctx");
-	luaL_argcheck(L, ud != NULL, 1, "`mg_sha1_ctx' expected");
+	void *ud = luaL_checkudata(L, pos, "LuaBook.mg_sha1_ctx");
+	luaL_argcheck(L, ud != NULL, pos, "`mg_sha1_ctx' expected");
+
 	return (mg_sha1_ctx *)ud;
 };
 
 // void mg_sha1_init(mg_sha1_ctx *c);
 static int _mg_sha1_init(lua_State *L)
 {
-	mg_sha1_ctx *sha1 = check_mg_sha1_ctx(L);
+	mg_sha1_ctx *sha1 = check_mg_sha1_ctx(L, 1);
 	mg_sha1_init(sha1);
 
 	return 0;
@@ -103,7 +104,7 @@ static int _mg_sha1_init(lua_State *L)
 // void mg_sha1_update(mg_sha1_ctx *c, const unsigned char *data, size_t len);
 static int _mg_sha1_update(lua_State *L)
 {
-	mg_sha1_ctx *sha1 = check_mg_sha1_ctx(L);
+	mg_sha1_ctx *sha1 = check_mg_sha1_ctx(L, 1);
 	const unsigned char *data = (unsigned char *)luaL_checkstring(L, 2);
 	size_t len = luaL_checkinteger(L, 3);
 	mg_sha1_update(sha1, data, len);
@@ -114,7 +115,7 @@ static int _mg_sha1_update(lua_State *L)
 // void mg_sha1_final(unsigned char digest[20], mg_sha1_ctx *c);
 static int _mg_sha1_final(lua_State *L)
 {
-	mg_sha1_ctx *sha1 = check_mg_sha1_ctx(L);
+	mg_sha1_ctx *sha1 = check_mg_sha1_ctx(L, 1);
 	unsigned char buf[20] = {0};
 	mg_sha1_final(buf, sha1);
 
@@ -347,11 +348,11 @@ static int _mg_print_mac (lua_State *L) {
 static const struct luaL_reg mg_util_lib_m [] = {
 	{"call",		_mg_call		},
 	{"error",		_mg_error		},
-	{"new_md5_ctx",		new_mg_md5_ctx		},
+	{"md5_ctx_new",		_mg_md5_ctx_new		},
 	{"md5_init",		_mg_md5_init		},
 	{"md5_update",		_mg_md5_update		},
 	{"md5_final",		_mg_md5_final		},
-	{"new_sha1_ctx",	new_mg_sha1_ctx		},
+	{"sha1_ctx_new",	_mg_sha1_ctx_new	},
 	{"sha1_init",		_mg_sha1_init		},
 	{"sha1_update",		_mg_sha1_update		},
 	{"sha1_final",		_mg_sha1_final		},

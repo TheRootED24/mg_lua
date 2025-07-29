@@ -14,7 +14,7 @@ struct mg_mqtt_message {
 };
 */
 
-int new_mqtt_message (lua_State *L) {
+int _mqtt_message_new (lua_State *L) {
 	mqtt_message *mm;
 	int nargs = lua_gettop(L);
 
@@ -139,12 +139,12 @@ static int _mqtt_message_props_size(lua_State *L) {
 };
 
 static const struct luaL_reg mqtt_message_lib_f [] = {
-	{"new", 	new_mqtt_message		},
+	{"new", 	_mqtt_message_new		},
 	{NULL, NULL}
 };
 
 static const struct luaL_reg mqtt_message_lib_m [] = {
-	{"new", 	new_mqtt_message		},
+	{"new", 	_mqtt_message_new		},
 	{"id", 		_mqtt_message_id		},
 	{"data", 	_mqtt_message_data		},
 	{"dgram", 	_mqtt_message_dgram		},

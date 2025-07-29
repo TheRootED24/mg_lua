@@ -26,7 +26,7 @@ extern "C" {
 typedef struct mg_http_part http_part;
 
 void mg_open_mg_http_part(lua_State *L);
-int new_mg_http_part (lua_State *L);
+int _mg_http_part_new (lua_State *L);
 http_part *check_mg_http_part(lua_State *L, int pos);
 
 #endif

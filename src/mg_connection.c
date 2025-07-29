@@ -1,7 +1,7 @@
 #include "mg_connection.h"
 
 // MG_CONNECTION USERDATUM
-int new_mg_connection (lua_State *L) {
+int _mg_connection_new (lua_State *L) {
 	mg_connection *conn;
 	int nargs = lua_gettop(L);
 
@@ -87,7 +87,7 @@ static int _mg_connection_recv(lua_State *L) {
 	mg_iobuf io = conn->recv;
 
 	lua_pushlightuserdata(L, &io);
-	new_mg_iobuf(L);
+	_mg_iobuf_new(L);
 	check_mg_iobuf(L, 1);
 
 	return 1;
@@ -371,12 +371,12 @@ static int _is_writable(lua_State *L) {
 };
 
 static const struct luaL_reg mg_connection_lib_f [] = {
-	{"new", 		new_mg_connection	},
+	{"new", 		_mg_connection_new	},
 	{NULL, NULL}
 };
 
 static const struct luaL_reg mg_connection_lib_m [] = {
-	{"new", 		new_mg_connection	},
+	{"new", 		_mg_connection_new	},
 	{"send", 		_mg_connection_send	},
 	{"recv", 		_mg_connection_recv	},
 	{"next",		_mg_connection_next	},

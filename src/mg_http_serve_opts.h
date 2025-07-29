@@ -26,7 +26,7 @@ extern "C" {
 typedef struct mg_http_serve_opts http_serve_opts;
 
 void mg_open_mg_http_serve_opts(lua_State *L);
-int newopts (lua_State *L);
-http_serve_opts *checkopts(lua_State *L);
+int _mg_http_serve_opts_new (lua_State *L);
+http_serve_opts *check_mg_http_serve_opts(lua_State *L, int pos);
 
 #endif

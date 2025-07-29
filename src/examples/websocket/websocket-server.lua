@@ -18,46 +18,48 @@ CALLBACK = function(c, ev, ev_data)
 		conn:is_hexdumping(0);
 
 	elseif (ev == MG_EV_HTTP_MSG) then
-		local conn = mg.connection.new(c);
 
 		local hm = mg.http.message.new(ev_data);
 
 		if(mg.string.match(mg.str.new(hm:uri()), mg.str.new("/websocket"))) then
-			mg.ws.upgrade(c, hm);
+			local conn = mg.connection.new(c);
+			conn:data("WS", 2);
+			mg.ws.upgrade(conn, hm);
 		elseif (mg.string.match(mg.str.new(hm:uri()), mg.str.new(("/rest")))) then
+			local conn = mg.connection.new(c);
 			mg.http.reply(conn, 200, "", string.format("{%q: %d}\n", "result", 123))
 		else
 			local opts = mg.http.serve_opts.new(s_web_root);
+			local conn = mg.connection.new(c);
 			mg.http.serve_dir(conn, hm, opts);
 		end
 
 	elseif (ev == MG_EV_WS_MSG) then
 
 		local conn = mg.connection.new(c);
-		--local data = conn:data("key")
-		--print(string.format("conn->id = %s", conn:data()))
-		--print(string.format("conn->id = %s", conn:is_websocket()))
-		--local wm = mg.ws.message.new(ev_data)
 		-- NOTE mg.ws.messages.new() must be called after gathering the connections
 		-- currently, conns are popped from stack upon call to message.new() ...
-		local t =conn:mgr()
+		local t = conn:mgr()
+		--/* load all marked "WS" connection into conns table */--
 		local conns = {}
 			while(t) do
 				print(t:id(), t:loc_ip(), t:rem_ip())
-				--if(t:is_websocket() == 1 ) then
+				if(t:data() == "WS" ) then
 					conns[ #conns + 1 ] = t;
-				--end
+				end
 			t = t:next();
 			end
 
 		local wm = mg.ws.message.new(ev_data)
-		for k,v in pairs(conns) do
-				mg.ws.send(v, wm:data(), wm:len(), WEBSOCKET_OP_TEXT);
+		--/* broadcast to marked "WS" connections */--
+		if(#conns > 1) then
+			for k,v in pairs(conns) do
+					mg.ws.send(v, wm:data(), wm:len(), WEBSOCKET_OP_TEXT);
+			end
+		else
+			--/* single connection reply */--
+			mg.ws.send(conn, wm:data(), wm:len(), WEBSOCKET_OP_TEXT);
 		end
-
-		--/* single connection reply */--
-		--local wm = mg.ws.message.new(ev_data);
-		--mg.ws.send(conn, wm:data(), wm:len(), WEBSOCKET_OP_TEXT);
 
 	end
 end

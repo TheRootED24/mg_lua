@@ -1,7 +1,7 @@
 #include"mg_iobuf.h"
 
 // MG_IOBUF USERDATUM
-int new_mg_iobuf(lua_State *L) {
+int _mg_iobuf_new(lua_State *L) {
 	mg_iobuf *io;
 	int nargs = lua_gettop(L);
 
@@ -113,13 +113,13 @@ static int _mg_iobuf_free(lua_State *L) {
 };
 
 static const struct luaL_reg mg_iobuf_lib_f [] = {
-	{"new", 	new_mg_iobuf		},
+	{"new", 	_mg_iobuf_new		},
 	{"init",	_mg_iobuf_init		},
 	{NULL, NULL}
 };
 
 static const struct luaL_reg mg_iobuf_lib_m [] = {
-	{"new", 	new_mg_iobuf		},
+	{"new", 	_mg_iobuf_new		},
 	{"init",	_mg_iobuf_init		},
 	{"add",		_mg_iobuf_add		},
 	{"resize",	_mg_iobuf_resize	},

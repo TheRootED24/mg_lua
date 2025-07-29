@@ -6,7 +6,7 @@ static int _mg_mqtt_connect(lua_State *L) {
 	lua_remove(L, 1);
 	const char *s_url = luaL_checkstring(L, 1);
 	lua_remove(L, 1);
-	mqtt_opts *opts = check_mqtt_opts(L);
+	mqtt_opts *opts = check_mqtt_opts(L, 1);
 	const char * cb = luaL_checkstring(L, 2);
 
 	mg_event_handler_t fn = (mg_event_handler_t)fn_lua_cb;
@@ -19,7 +19,7 @@ static int _mg_mqtt_connect(lua_State *L) {
 	lua_settop(L, 0); // clear the stack
 	mg_connection *c = (mg_connection*)mg_mqtt_connect(mgr, s_url, opts, fn, GL);
 	lua_pushlightuserdata(L, c);
-	new_mg_connection(L); // push a new connection udata on stack
+	_mg_connection_new(L); // push a new connection udata on stack
 	check_mg_connection(L, 1); // check conn is ready
 
 	return 1;
@@ -38,7 +38,7 @@ static int _mg_mqtt_listen(lua_State *L) {
 	lua_settop(L, 0); // clear the stack
 	mg_connection *c = (mg_connection*)mg_mqtt_listen(mgr, s_url, fn, GL);
 	lua_pushlightuserdata(L, c);
-	new_mg_connection(L); // push a new connection udata on stack
+	_mg_connection_new(L); // push a new connection udata on stack
 	check_mg_connection(L, 1); // check conn is ready
 
 	return 1;
@@ -48,7 +48,7 @@ static int _mg_mqtt_listen(lua_State *L) {
 static int _mg_mqtt_login(lua_State *L) {
 	mg_connection *conn = check_mg_connection(L, 1);
 	lua_remove(L, 1);
-	mqtt_opts *opts = check_mqtt_opts(L);
+	mqtt_opts *opts = check_mqtt_opts(L, 1);
 	mg_mqtt_login(conn, opts);
 
 	return 0;
@@ -58,7 +58,7 @@ static int _mg_mqtt_login(lua_State *L) {
 static int _mg_mqtt_pub(lua_State *L) {
 	mg_connection *conn = check_mg_connection(L, 1);
 	lua_remove(L, 1);
-	mqtt_opts *opts = check_mqtt_opts(L);
+	mqtt_opts *opts = check_mqtt_opts(L, 1);
 	uint16_t ret = mg_mqtt_pub(conn, (const mqtt_opts*)opts);
 	lua_pushinteger(L, ret);
 
@@ -69,7 +69,7 @@ static int _mg_mqtt_pub(lua_State *L) {
 static int _mg_mqtt_sub(lua_State *L) {
 	mg_connection *conn = check_mg_connection(L, 1);
 	lua_remove(L, 1);
-	mqtt_opts *opts = check_mqtt_opts(L);
+	mqtt_opts *opts = check_mqtt_opts(L, 1);
 	mg_mqtt_sub(conn, opts);
 
 	return 0;
@@ -110,7 +110,7 @@ static int _mg_mqtt_parse(lua_State *L) {
 static int _mg_mqtt_disconnect(lua_State *L) {
 	mg_connection *conn = check_mg_connection(L, 1);
 	lua_remove(L, 1);
-	mqtt_opts *opts = check_mqtt_opts(L);
+	mqtt_opts *opts = check_mqtt_opts(L, 1);
 	mg_mqtt_disconnect(conn, opts);
 
 	return 0;

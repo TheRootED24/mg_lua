@@ -1,6 +1,6 @@
 #include "mg_dns.h"
 
-int new_mg_dns (lua_State *L) {
+int _mg_dns_new (lua_State *L) {
 	mg_dns *dns;
 	int nargs = lua_gettop(L);
 
@@ -44,12 +44,12 @@ static int _mg_dns_conn(lua_State *L) {
 };
 
 static const struct luaL_reg mg_dns_lib_f [] = {
-	{"new", 	new_mg_dns	},
+	{"new", 	_mg_dns_new	},
 	{NULL, NULL}
 };
 
 static const struct luaL_reg mg_dns_lib_m [] = {
-	{"new", 	new_mg_dns	},
+	{"new", 	_mg_dns_new	},
 	{"url",		_mg_dns_url	},
 	{"conn",	_mg_dns_conn	},
 	{NULL, NULL}

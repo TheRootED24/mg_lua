@@ -38,11 +38,11 @@ static int _mg_listen(lua_State *L) {
 	GL->L = L; // pass the lua_State pointer to fn_serv
 	GL->callback = cb;
 
-	lua_settop(L, 0); // clear the stack
+	//lua_settop(L, 0); // clear the stack
 	mg_connection *c = (mg_connection*)mg_listen(mgr, s_url, fn, GL);
 	lua_pushlightuserdata(L, c);
-	new_mg_connection(L); // push a new connection udata on stack
-	check_mg_connection(L, 1); // check conn is ready
+	_mg_connection_new(L); // push a new connection udata on stack
+	check_mg_connection(L, -1); // check conn is ready
 
 	return 1;
 };
@@ -57,11 +57,11 @@ static int _mg_connect(lua_State *L) {
 	GL->L = L; // pass the lua_State pointer to fn_serv
 	GL->callback = cb;
 
-	lua_settop(L, 0); // clear the stack
+	//lua_settop(L, 0); // clear the stack
 	mg_connection *c = (mg_connection*)mg_connect(mgr, s_url, fn, GL);
 	lua_pushlightuserdata(L, c);
-	new_mg_connection(L); // push a new connection udata on stack
-	check_mg_connection(L, 1); // check conn is ready
+	_mg_connection_new(L); // push a new connection udata on stack
+	check_mg_connection(L, -1); // check conn is ready
 
 	return 1; // return the udata on the stack
 };
@@ -109,7 +109,7 @@ static int _mg_wrapfd(lua_State *L) {
 	lua_settop(L, 0); // clear the stack
 	mg_connection *c = (mg_connection*)mg_wrapfd(mgr, fd, fn, GL);
 	lua_pushlightuserdata(L, c);
-	new_mg_connection(L); // push a new connection udata on stack
+	_mg_connection_new(L); // push a new connection udata on stack
 	check_mg_connection(L, 1); // check conn is ready
 
 	return 1;

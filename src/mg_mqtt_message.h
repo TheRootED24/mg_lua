@@ -28,7 +28,7 @@ extern "C" {
 #endif
 
 void  mg_open_mg_mqtt_message (lua_State *L);
-int new_mqtt_message (lua_State *L);
+int _mqtt_message_new (lua_State *L);
 mqtt_message *check_mqtt_message(lua_State *L);
 
 #endif

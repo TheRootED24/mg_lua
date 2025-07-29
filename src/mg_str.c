@@ -1,6 +1,6 @@
 #include "mg_str.h"
 
-int new_mg_str (lua_State *L) {
+int _mg_str_new (lua_State *L) {
 	int a = 0, nargs = lua_gettop(L);
 	char *buf = NULL;
 
@@ -14,11 +14,10 @@ int new_mg_str (lua_State *L) {
 
 	lua_settop(L, 0);
 	mg_str *str = (mg_str *)lua_newuserdata(L, sizeof(mg_str));
-	//lua_insert(L, 1);
 	luaL_getmetatable(L, "LuaBook.mg_str");
 	lua_setmetatable(L, -2);
 
-	if(nargs) {
+	if(nargs && str) {
 		str->buf = buf;
 		str->len = a;
 	}
@@ -28,15 +27,16 @@ int new_mg_str (lua_State *L) {
 	return 1;  /* new userdatum is already on the stack */
 };
 
-mg_str *check_mg_str(lua_State *L) {
-	void *ud = luaL_checkudata(L, 1, "LuaBook.mg_str");
-	luaL_argcheck(L, ud != NULL, 1, "`mg_str' expected");
+mg_str *check_mg_str(lua_State *L, int pos) {
+	void *ud = luaL_checkudata(L, pos, "LuaBook.mg_str");
+	luaL_argcheck(L, ud != NULL, pos, "`mg_str' expected");
+
 	return(mg_str*)ud;
 };
 
 static int _mg_str_buf(lua_State *L) {
 	int index = lua_gettop(L);
-	mg_str *str = check_mg_str(L);
+	mg_str *str = check_mg_str(L , 1);
 	if(index > 1) {
 		str->buf = (char*)luaL_checkstring(L, -1);
 		str->len = strlen(str->buf);
@@ -48,19 +48,19 @@ static int _mg_str_buf(lua_State *L) {
 };
 
 static int _mg_str_len(lua_State *L) {
-	mg_str *str = check_mg_str(L);
+	mg_str *str = check_mg_str(L , 1);
 	lua_pushinteger(L, str->len);
 
 	return 1;
 };
 
 static const struct luaL_reg mg_str_lib_f [] = {
-	{"new", 	new_mg_str	},
+	{"new", 	_mg_str_new	},
 	{NULL, NULL}
 };
 
 static const struct luaL_reg mg_str_lib_m [] = {
-	{"new",		new_mg_str	},
+	{"new",		_mg_str_new	},
 	{"buf",		_mg_str_buf	},
 	{"len",		_mg_str_len	},
 	{NULL, NULL}

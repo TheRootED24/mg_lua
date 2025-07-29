@@ -13,8 +13,8 @@ static int _mg_casecmp(lua_State *L) {
 // int mg_strcmp(const struct mg_str str1, const struct mg_str str2);
 static int _mg_strcmp(lua_State *L) {
 	struct mg_str *s1, *s2;
-	s1 = check_mg_str(L); lua_remove(L, 1); // pop the first one off the stack
-	s2 = check_mg_str(L);
+	s1 = check_mg_str(L , 1); lua_remove(L, 1); // pop the first one off the stack
+	s2 = check_mg_str(L , 1);
 	lua_pushinteger(L, mg_strcmp(*s1, *s2));
 
 	return 1;
@@ -23,8 +23,8 @@ static int _mg_strcmp(lua_State *L) {
 // int mg_strcasecmp(const struct mg_str str1, const struct mg_str str2);
 static int _mg_strcasecmp(lua_State *L) {
 	struct mg_str *s1, *s2;
-	s1 = check_mg_str(L); lua_remove(L, 1); // pop the first one off the stack
-	s2 = check_mg_str(L);
+	s1 = check_mg_str(L , 1); lua_remove(L, 1); // pop the first one off the stack
+	s2 = check_mg_str(L , 1);
 	lua_pushinteger(L, mg_strcasecmp(*s1, *s2));
 
 	return 1;
@@ -32,9 +32,9 @@ static int _mg_strcasecmp(lua_State *L) {
 
 // struct mg_str mg_strdup(const struct mg_str s);
 static int _mg_strdup(lua_State *L) {
-	struct mg_str *str = check_mg_str(L);
-	lua_pop(L, 1); new_mg_str(L);
-	struct mg_str *s = check_mg_str(L);
+	struct mg_str *str = check_mg_str(L , 1);
+	lua_pop(L, 1); _mg_str_new(L);
+	struct mg_str *s = check_mg_str(L , 1);
 	*s = mg_strdup(*str);
 
 	return 1;
@@ -44,9 +44,9 @@ static int _mg_strdup(lua_State *L) {
 static int _mg_match(lua_State *L) {
 	int nargs = lua_gettop(L);
 	struct mg_str *str, *pat, *caps;
-	str = check_mg_str(L); lua_remove(L, 1); // pop the first one off the stack
-	pat = check_mg_str(L); lua_remove(L, 1); // pop the next one off the stack
-	caps = nargs == 3 ? check_mg_str(L) : NULL;
+	str = check_mg_str(L , 1); lua_remove(L, 1); // pop the first one off the stack
+	pat = check_mg_str(L , 1); lua_remove(L, 1); // pop the next one off the stack
+	caps = nargs == 3 ? check_mg_str(L , 1) : NULL;
 
 	lua_pushboolean(L, mg_match(*str, *pat, caps));
 
@@ -56,9 +56,9 @@ static int _mg_match(lua_State *L) {
 // bool mg_span(struct mg_str s, struct mg_str *a, struct mg_str *b, char delim);
 static int _mg_span(lua_State *L) {
 	struct mg_str *s, *a, *b;
-	s = check_mg_str(L); lua_remove(L, 1); // pop the first one off the stack
-	a = check_mg_str(L); lua_remove(L, 1); // pop the next one off the stack
-	b = check_mg_str(L); lua_remove(L, 1); // pop the next one off the stack
+	s = check_mg_str(L , 1); lua_remove(L, 1); // pop the first one off the stack
+	a = check_mg_str(L , 1); lua_remove(L, 1); // pop the next one off the stack
+	b = check_mg_str(L , 1); lua_remove(L, 1); // pop the next one off the stack
 	char d = (char) luaL_checkint(L, 1);
 
 	lua_pushboolean(L, mg_span(*s, a, b, d));
@@ -69,7 +69,7 @@ static int _mg_span(lua_State *L) {
 // bool mg_str_to_num(struct mg_str s, int base, void *val, size_t val_len);
 static int _mg_str_to_num(lua_State *L) {
 	struct mg_str s;
-	s = *check_mg_str(L);
+	s = *check_mg_str(L , 1);
 	int base = luaL_checkinteger(L, 2);
 	void *val = (void*)lua_topointer(L, 3);
 	size_t vlen = luaL_checklong(L, 4);
@@ -81,7 +81,7 @@ static int _mg_str_to_num(lua_State *L) {
 // bool mg_path_is_sane(struct mg_str path);
 static int _mg_path_is_sane(lua_State *L) {
 	struct mg_str path;
-	path = *check_mg_str(L);
+	path = *check_mg_str(L , 1);
 	lua_pushboolean(L, mg_path_is_sane(path));
 
 	return 1;
@@ -101,7 +101,7 @@ static int _mg_pfn_iobuf(lua_State *L) {
 static int _mg_aton(lua_State *L) {
 	struct mg_str str;
 	mg_addr *addr;
-	str = *check_mg_str(L);
+	str = *check_mg_str(L , 1);
 	lua_remove(L, 1);
 	addr = check_mg_addr(L, 1);
 	lua_pushboolean(L, mg_aton(str, addr));

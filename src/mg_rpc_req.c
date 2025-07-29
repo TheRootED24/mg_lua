@@ -11,7 +11,7 @@ struct mg_rpc_req {
 };
 */
 
-int new_rpc_req(lua_State *L) {
+int _mg_rpc_req_new (lua_State *L) {
 	int nargs = lua_gettop(L);
 	rpc_req * req = NULL;
 	if(nargs > 1 ) {
@@ -42,16 +42,16 @@ int new_rpc_req(lua_State *L) {
 	return 1;  /* new userdatum is already on the stack */
 };
 
-rpc_req *check_rpc_req (lua_State *L) {
-	void *ud = luaL_checkudata(L, 1, "LuaBook.rpc_request");
-	luaL_argcheck(L, ud != NULL, 1, "`rpc_request' expected");
+rpc_req *check_rpc_req (lua_State *L, int pos) {
+	void *ud = luaL_checkudata(L, pos, "LuaBook.rpc_request");
+	luaL_argcheck(L, ud != NULL, pos, "`rpc_request' expected");
 
 	return(rpc_req*)ud;
 };
 
 static int _mg_rpc_req_frame (lua_State *L) {
 	int nargs = lua_gettop(L);
-	rpc_req *req = check_rpc_req(L);
+	rpc_req *req = check_rpc_req(L, 1);
 	if(nargs > 1)
 		req->frame = mg_str(luaL_checkstring(L, 2));
 
@@ -61,12 +61,12 @@ static int _mg_rpc_req_frame (lua_State *L) {
 };
 
 static const struct luaL_reg rpc_req_lib_f [] = {
-	{"new", 	new_rpc_req		},
+	{"new", 	_mg_rpc_req_new		},
 	{NULL, NULL}
 };
 
 static const struct luaL_reg rpc_req_lib_m [] = {
-	{"new",		new_rpc_req		},
+	{"new",		_mg_rpc_req_new		},
 	{"frame",	_mg_rpc_req_frame	},
 	{NULL, NULL}
 };

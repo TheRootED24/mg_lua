@@ -9,7 +9,7 @@ struct mg_tls_opts {
 };
 */
 
-int new_tls_opts (lua_State *L) {
+int _mg_tls_opts_new (lua_State *L) {
 	tls_opts *opts = (tls_opts*)lua_newuserdata(L, sizeof(tls_opts));
 
 	luaL_getmetatable(L, "LuaBook.tls_opts");
@@ -19,16 +19,16 @@ int new_tls_opts (lua_State *L) {
 	return 1;  /* new userdatum is already on the stack */
 };
 
-tls_opts *check_tls_opts(lua_State *L) {
-	void *ud = luaL_checkudata(L, 1, "LuaBook.tls_opts");
-	luaL_argcheck(L, ud != NULL, 1, "`tls_opts' expected");
+tls_opts *check_mg_tls_opts(lua_State *L, int pos) {
+	void *ud = luaL_checkudata(L, pos, "LuaBook.tls_opts");
+	luaL_argcheck(L, ud != NULL, pos, "`tls_opts' expected");
 
 	return(tls_opts*)ud;
 };
 
 static int _mg_tls_opts_ca(lua_State *L) {
 	int nargs = lua_gettop(L);
-	tls_opts *opts = check_tls_opts(L);
+	tls_opts *opts = check_mg_tls_opts(L, 1);
 	if(nargs > 1)
 		opts->ca = mg_str(luaL_checkstring(L, -1));
 
@@ -39,7 +39,7 @@ static int _mg_tls_opts_ca(lua_State *L) {
 
 static int _mg_tls_opts_cert(lua_State *L) {
 	int nargs = lua_gettop(L);
-	tls_opts *opts = check_tls_opts(L);
+	tls_opts *opts = check_mg_tls_opts(L, 1);
 	if(nargs > 1)
 		opts->cert = mg_str(luaL_checkstring(L, -1));
 
@@ -50,7 +50,7 @@ static int _mg_tls_opts_cert(lua_State *L) {
 
 static int _mg_tls_opts_key(lua_State *L) {
 	int nargs = lua_gettop(L);
-	tls_opts *opts = check_tls_opts(L);
+	tls_opts *opts = check_mg_tls_opts(L, 1);
 	if(nargs > 1)
 		opts->key = mg_str(luaL_checkstring(L, -1));
 
@@ -61,7 +61,7 @@ static int _mg_tls_opts_key(lua_State *L) {
 
 static int _mg_tls_opts_name(lua_State *L) {
 	int nargs = lua_gettop(L);
-	tls_opts *opts = check_tls_opts(L);
+	tls_opts *opts = check_mg_tls_opts(L, 1);
 	if(nargs > 1)
 		opts->name = mg_str(luaL_checkstring(L, -1));
 
@@ -71,12 +71,12 @@ static int _mg_tls_opts_name(lua_State *L) {
 };
 
 static const struct luaL_reg tls_opts_lib_f [] = {
-	{"new", 	new_tls_opts		},
+	{"new", 	_mg_tls_opts_new	},
 	{NULL, NULL}
 };
 
 static const struct luaL_reg tls_opts_lib_m [] = {
-	{"new", 	new_tls_opts		},
+	{"new", 	_mg_tls_opts_new	},
 	{"ca",		_mg_tls_opts_ca		},
 	{"cert",	_mg_tls_opts_cert	},
 	{"key",		_mg_tls_opts_key	},

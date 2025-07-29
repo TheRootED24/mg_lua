@@ -27,7 +27,7 @@ extern "C" {
 typedef struct mg_timer mg_timer;
 
 void  mg_open_mg_timer (lua_State *L);
-int new_mg_timer (lua_State *L);
-mg_timer *check_mg_timer(lua_State *L);
+int _mg_timer_new (lua_State *L);
+mg_timer *check_mg_timer(lua_State *L, int pos);
 
 #endif

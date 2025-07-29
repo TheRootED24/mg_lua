@@ -8,7 +8,7 @@ struct mg_http_header {
 };
 */
 
-int new_mg_http_header (lua_State *L) {
+int _mg_http_header_new (lua_State *L) {
 	http_header *hdr = NULL;
 
 	int nargs = lua_gettop(L);
@@ -20,12 +20,12 @@ int new_mg_http_header (lua_State *L) {
 		hdr = (http_header *)lua_newuserdata(L, sizeof(http_header));
 
 		if(lua_islightuserdata(L, 1)) {
-			hdr->name = *check_mg_str(L);
+			hdr->name = *check_mg_str(L , 1);
 			lua_remove(L, 1);
 		}
 
 		if(lua_islightuserdata(L, 1)) {
-			hdr->value = *check_mg_str(L);
+			hdr->value = *check_mg_str(L , 1);
 			lua_remove(L, 1);
 		}
 
@@ -107,7 +107,7 @@ static int _call_header(lua_State *L) {
 };
 
 static const struct luaL_reg http_header_lib_f [] = {
-	{"new", 	new_mg_http_header	},
+	{"new", 	_mg_http_header_new	},
 	{NULL, NULL}
 };
 
@@ -131,6 +131,6 @@ void mg_open_mg_http_header(lua_State *L) {
 	lua_pushvalue(L, -2);  /* pushes the metatable */
 	lua_settable(L, -3);  /* metatable.__index = metatable */
 	luaL_openlib(L, NULL, http_header_lib_m, 0);
-	luaL_openlib(L, "mg_http_header", http_header_lib_f, 0);
+	luaL_openlib(L, "http_header", http_header_lib_f, 0);
 	lua_pop(L, 2);
 };

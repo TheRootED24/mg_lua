@@ -26,7 +26,7 @@ extern "C" {
 typedef struct mg_iobuf mg_iobuf;
 
 void mg_open_mg_iobuf(lua_State *L);
-int new_mg_iobuf (lua_State *L);
+int _mg_iobuf_new (lua_State *L);
 mg_iobuf *check_mg_iobuf(lua_State *L, int pos);
 
 #endif

@@ -28,7 +28,7 @@ extern "C" {
 typedef struct mg_connection mg_connection;
 
 void mg_open_mg_connection(lua_State *L);
-int new_mg_connection (lua_State *L);
+int _mg_connection_new (lua_State *L);
 mg_connection *check_mg_connection(lua_State *L, int pos);
 
 #endif

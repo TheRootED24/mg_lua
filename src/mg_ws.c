@@ -21,11 +21,11 @@ static int _mg_ws_connect(lua_State *L) {
 	else
 		c = mg_ws_connect(mgr, s_url, fn, GL, NULL);
 
-	lua_settop(L, 0); // clear the stack
+	//lua_settop(L, 0); // clear the stack
 
 	lua_pushlightuserdata(L, c);
-	new_mg_connection(L); // push a new connection udata on stack
-	check_mg_connection(L, 1); // check conn is ready
+	_mg_connection_new(L); // push a new connection udata on stack
+	check_mg_connection(L, -1); // check conn is ready
 
 	return 1; // return the udata on the stack
 };

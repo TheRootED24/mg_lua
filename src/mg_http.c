@@ -14,7 +14,7 @@ static int _mg_http_listen(lua_State *L) {
 	lua_settop(L, 0); // clear the stack
 	mg_connection *c = (mg_connection*)mg_http_listen(mgr, s_url, fn, GL);
 	lua_pushlightuserdata(L, c);
-	new_mg_connection(L); // push a new connection udata on stack
+	_mg_connection_new(L); // push a new connection udata on stack
 	check_mg_connection(L, 1); // check conn is ready
 
 	return 1;
@@ -34,7 +34,7 @@ static int _mg_http_connect(lua_State *L) {
 	//lua_settop(L, 0); // clear the stack
 	mg_connection *c = (mg_connection*)mg_http_connect(mgr, s_url, fn, GL);
 	lua_pushlightuserdata(L, c);
-	new_mg_connection(L); // push a new connection udata on stack
+	_mg_connection_new(L); // push a new connection udata on stack
 	check_mg_connection(L, 1); // check conn is ready
 
 	return 1;
@@ -90,7 +90,7 @@ static int _mg_http_write_chunk(lua_State *L) {
 // void mg_http_serve_dir(struct mg_connection *c, struct mg_http_message *hm, const struct mg_http_serve_opts *opts);
 static int _mg_http_serve_dir(lua_State *L) {
 	mg_connection *conn = NULL;
-	conn = (mg_connection*)lua_topointer(L, 1);
+	conn =check_mg_connection(L, 1);
 	http_message *hm = NULL;
 	hm = (http_message*)lua_topointer(L, 2);
 	http_serve_opts *opts = NULL;

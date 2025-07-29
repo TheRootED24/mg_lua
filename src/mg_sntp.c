@@ -14,7 +14,7 @@ static int _mg_sntp_connect(lua_State *L) {
 	lua_settop(L, 0); // clear the stack
 	mg_connection *c = (mg_connection*)mg_sntp_connect(mgr, s_url, fn, GL);
 	lua_pushlightuserdata(L, c);
-	new_mg_connection(L); // push a new connection udata on stack
+	_mg_connection_new(L); // push a new connection udata on stack
 	check_mg_connection(L, 1); // check conn is ready
 
 	return 1; // return the udata on the stack
