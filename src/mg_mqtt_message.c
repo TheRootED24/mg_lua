@@ -1,32 +1,5 @@
 #include "mg_mqtt_message.h"
 
-int new_mqtt_message (lua_State *L) {
-	mqtt_message *mm;
-	int nargs = lua_gettop(L);
-
-	if(nargs > 0) {
-		mm = (mqtt_message*)lua_touserdata(L, 1);
-		//mm = (mqtt_message*)lua_topointer(L, 1);
-		//lua_pop(L, 1);
-		//lua_pushlightuserdata(L, mm);
-	 }
-	else
-		mm = (mqtt_message*)lua_newuserdata(L, sizeof(mqtt_message));
-
-	luaL_getmetatable(L, "LuaBook.mqtt_message");
-	lua_setmetatable(L, -2);
-	if(!mm) lua_pushnil(L);
-
-	return 1;  /* new userdatum is already on the stack */
-}
-
-mqtt_message *check_mqtt_message(lua_State *L) {
-	void *ud = luaL_checkudata(L, 1, "LuaBook.mqtt_message");
-	luaL_argcheck(L, ud != NULL, 1, "`mg_mqtt_message' expected");
-
-	return(mqtt_message *)ud;
-}
-
 /*
 struct mg_mqtt_message {
   struct mg_str topic;  // Parsed topic for PUBLISH
@@ -39,8 +12,32 @@ struct mg_mqtt_message {
   size_t props_start;   // Offset to the start of the properties (MQTT5)
   size_t props_size;    // Length of the properties
 };
-
 */
+
+int new_mqtt_message (lua_State *L) {
+	mqtt_message *mm;
+	int nargs = lua_gettop(L);
+
+	if(nargs > 0) {
+		mm = (mqtt_message*)lua_touserdata(L, 1);
+		lua_pushlightuserdata(L, mm);
+	 }
+	else
+		mm = (mqtt_message*)lua_newuserdata(L, sizeof(mqtt_message));
+
+	luaL_getmetatable(L, "LuaBook.mqtt_message");
+	lua_setmetatable(L, -2);
+	if(!mm) lua_pushnil(L);
+
+	return 1;  /* new userdatum is already on the stack */
+};
+
+mqtt_message *check_mqtt_message(lua_State *L) {
+	void *ud = luaL_checkudata(L, 1, "LuaBook.mqtt_message");
+	luaL_argcheck(L, ud != NULL, 1, "`mg_mqtt_message' expected");
+
+	return(mqtt_message *)ud;
+};
 
 static int _mqtt_message_topic(lua_State *L) {
 	int nargs = lua_gettop(L);
@@ -51,7 +48,7 @@ static int _mqtt_message_topic(lua_State *L) {
 	lua_pushlstring(L, mm->topic.buf, mm->topic.len);
 
 	return 1;
-}
+};
 
 static int _mqtt_message_data(lua_State *L) {
 	int nargs = lua_gettop(L);
@@ -62,7 +59,7 @@ static int _mqtt_message_data(lua_State *L) {
 	lua_pushlstring(L, mm->data.buf, mm->data.len);
 
 	return 1;
-}
+};
 
 static int _mqtt_message_dgram(lua_State *L) {
 	int nargs = lua_gettop(L);
@@ -73,7 +70,7 @@ static int _mqtt_message_dgram(lua_State *L) {
 	lua_pushlstring(L, mm->dgram.buf, mm->dgram.len);
 
 	return 1;
-}
+};
 
 static int _mqtt_message_id(lua_State *L) {
 	int nargs = lua_gettop(L);
@@ -84,7 +81,7 @@ static int _mqtt_message_id(lua_State *L) {
 	lua_pushinteger(L, mm->id);
 
 	return 1;
-}
+};
 
 static int _mqtt_message_cmd(lua_State *L) {
 	int nargs = lua_gettop(L);
@@ -95,7 +92,7 @@ static int _mqtt_message_cmd(lua_State *L) {
 	lua_pushinteger(L, mm->cmd);
 
 	return 1;
-}
+};
 
 static int _mqtt_message_qos(lua_State *L) {
 	int nargs = lua_gettop(L);
@@ -106,7 +103,7 @@ static int _mqtt_message_qos(lua_State *L) {
 	lua_pushinteger(L, mm->qos);
 
 	return 1;
-}
+};
 
 static int _mqtt_message_ack(lua_State *L) {
 	int nargs = lua_gettop(L);
@@ -117,7 +114,7 @@ static int _mqtt_message_ack(lua_State *L) {
 	lua_pushinteger(L, mm->ack);
 
 	return 1;
-}
+};
 
 static int _mqtt_message_props_start(lua_State *L) {
 	int nargs = lua_gettop(L);
@@ -128,7 +125,7 @@ static int _mqtt_message_props_start(lua_State *L) {
 	lua_pushinteger(L, mm->props_start);
 
 	return 1;
-}
+};
 
 static int _mqtt_message_props_size(lua_State *L) {
 	int nargs = lua_gettop(L);
@@ -139,34 +136,10 @@ static int _mqtt_message_props_size(lua_State *L) {
 	lua_pushinteger(L, mm->props_size);
 
 	return 1;
-}
-
-/*static void dumpstack (lua_State *L) {
-  int top=lua_gettop(L);
-  for (int i = 1; i <= top; i++) {
-    printf("%d\t%s\t", i, luaL_typename(L,i));
-    switch (lua_type(L, i)) {
-      case LUA_TNUMBER:
-        printf("%g\n",lua_tonumber(L,i));
-        break;
-      case LUA_TSTRING:
-        printf("%s\n",lua_tostring(L,i));
-        break;
-      case LUA_TBOOLEAN:
-        printf("%s\n", (lua_toboolean(L, i) ? "true" : "false"));
-        break;
-      case LUA_TNIL:
-        printf("%s\n", "nil");
-        break;
-      default:
-        printf("%p\n",lua_topointer(L,i));
-        break;
-    }
-  }
-}*/
+};
 
 static const struct luaL_reg mqtt_message_lib_f [] = {
-	{"new", 	new_mqtt_message	},
+	{"new", 	new_mqtt_message		},
 	{NULL, NULL}
 };
 
@@ -185,9 +158,7 @@ static const struct luaL_reg mqtt_message_lib_m [] = {
 };
 
 void  mg_open_mg_mqtt_message (lua_State *L) {
-	//printf("START MG.MQTT.MESSAGE: \n");
 	lua_getfield(L, -1, "mqtt");
-	//dumpstack(L);
 	lua_newtable(L);
 	luaL_register(L, NULL, mqtt_message_lib_m);
 	lua_setfield(L, -2, "message");
@@ -199,5 +170,4 @@ void  mg_open_mg_mqtt_message (lua_State *L) {
 	luaL_openlib(L, NULL, mqtt_message_lib_m, 0);
 	luaL_openlib(L, "mg_mqtt_message", mqtt_message_lib_f, 0);
 	lua_pop(L, 2);
-	//printf("END MG.MQTT.MESSAGE:\n"); dumpstack(L);
-}
+};

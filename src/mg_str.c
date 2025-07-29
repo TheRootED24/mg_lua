@@ -26,13 +26,13 @@ int new_mg_str (lua_State *L) {
 	if(!str) lua_pushnil(L);
 
 	return 1;  /* new userdatum is already on the stack */
-}
+};
 
 mg_str *check_mg_str(lua_State *L) {
 	void *ud = luaL_checkudata(L, 1, "LuaBook.mg_str");
 	luaL_argcheck(L, ud != NULL, 1, "`mg_str' expected");
 	return(mg_str*)ud;
-}
+};
 
 static int _mg_str_buf(lua_State *L) {
 	int index = lua_gettop(L);
@@ -45,14 +45,14 @@ static int _mg_str_buf(lua_State *L) {
 	lua_pushlstring(L, str->buf, str->len);
 
 	return 1;
-}
+};
 
 static int _mg_str_len(lua_State *L) {
 	mg_str *str = check_mg_str(L);
 	lua_pushinteger(L, str->len);
 
 	return 1;
-}
+};
 
 static const struct luaL_reg mg_str_lib_f [] = {
 	{"new", 	new_mg_str	},
@@ -78,4 +78,4 @@ void  mg_open_mg_str (lua_State *L) {
 	luaL_openlib(L, NULL, mg_str_lib_m, 0);
 	luaL_openlib(L, "mg_str", mg_str_lib_f, 0);
 	lua_pop(L, 2);
-}
+};

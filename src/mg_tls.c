@@ -8,7 +8,7 @@ static int _mg_tls_init(lua_State *L) {
 	mg_tls_init(conn, opts);
 
 	return 0;
-}
+};
 
 static const struct luaL_reg mg_tls_lib_m [] = {
 	{"init",	_mg_tls_init	},
@@ -28,4 +28,4 @@ void mg_open_mg_tls (lua_State *L) {
 	// open sub module
 	mg_open_mg_tls_opts(L);
 	lua_pop(L, 1);
-}
+};

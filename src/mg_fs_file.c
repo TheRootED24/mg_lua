@@ -15,7 +15,7 @@ static int _mg_file_read(lua_State *L) {
 		lua_pushnil(L);
 
 	return 1;
-}
+};
 
 // bool mg_file_write(struct mg_fs *fs, const char *path, const void *buf, size_t len);
 static int _mg_file_write(lua_State *L) {
@@ -31,7 +31,7 @@ static int _mg_file_write(lua_State *L) {
 		lua_pushboolean(L, false);
 
 	return 1;
-}
+};
 
 // bool mg_file_printf(struct mg_fs *fs, const char *path, const char *fmt, ...);
 static int _mg_file_printf(lua_State *L) {
@@ -47,7 +47,7 @@ static int _mg_file_printf(lua_State *L) {
 		lua_pushboolean(L, false);
 
 	return 1;
-}
+};
 
 static const struct luaL_reg fs_file_lib_f [] = {
 	{"read"	,	_mg_file_read	},
@@ -76,4 +76,4 @@ void  mg_open_mg_fs_file (lua_State *L) {
 	luaL_openlib(L, NULL, fs_file_lib_m, 0);
 	luaL_openlib(L, "mg_fs_file", fs_file_lib_f, 0);
 	lua_pop(L, 2);
-}
+};

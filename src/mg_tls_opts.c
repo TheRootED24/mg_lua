@@ -17,14 +17,14 @@ int new_tls_opts (lua_State *L) {
 	if(!opts) lua_pushnil(L);
 
 	return 1;  /* new userdatum is already on the stack */
-}
+};
 
 tls_opts *check_tls_opts(lua_State *L) {
 	void *ud = luaL_checkudata(L, 1, "LuaBook.tls_opts");
 	luaL_argcheck(L, ud != NULL, 1, "`tls_opts' expected");
 
 	return(tls_opts*)ud;
-}
+};
 
 static int _mg_tls_opts_ca(lua_State *L) {
 	int nargs = lua_gettop(L);
@@ -35,7 +35,7 @@ static int _mg_tls_opts_ca(lua_State *L) {
 	lua_pushlstring(L, opts->ca.buf, opts->ca.len);
 
 	return 1;
-}
+};
 
 static int _mg_tls_opts_cert(lua_State *L) {
 	int nargs = lua_gettop(L);
@@ -46,7 +46,7 @@ static int _mg_tls_opts_cert(lua_State *L) {
 	lua_pushlstring(L, opts->cert.buf, opts->cert.len);
 
 	return 1;
-}
+};
 
 static int _mg_tls_opts_key(lua_State *L) {
 	int nargs = lua_gettop(L);
@@ -57,7 +57,7 @@ static int _mg_tls_opts_key(lua_State *L) {
 	lua_pushlstring(L, opts->key.buf, opts->key.len);
 
 	return 1;
-}
+};
 
 static int _mg_tls_opts_name(lua_State *L) {
 	int nargs = lua_gettop(L);
@@ -68,7 +68,7 @@ static int _mg_tls_opts_name(lua_State *L) {
 	lua_pushlstring(L, opts->name.buf, opts->name.len);
 
 	return 1;
-}
+};
 
 static const struct luaL_reg tls_opts_lib_f [] = {
 	{"new", 	new_tls_opts		},
@@ -97,4 +97,4 @@ void  mg_open_mg_tls_opts (lua_State *L) {
 	luaL_openlib(L, NULL, tls_opts_lib_m, 0);
 	luaL_openlib(L, "mg_tls_opts", tls_opts_lib_f, 0);
 	lua_pop(L, 2);
-}
+};

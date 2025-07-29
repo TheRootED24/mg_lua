@@ -9,7 +9,7 @@ static int _mg_json_get(lua_State *L) {
 	lua_pushinteger(L, toklen);
 
 	return 2;
-}
+};
 
 // struct mg_str mg_json_get_tok(struct mg_str json, const char *path);
 static int _mg_json_get_tok(lua_State *L) {
@@ -19,7 +19,7 @@ static int _mg_json_get_tok(lua_State *L) {
 	lua_pushlstring(L, str.buf, str.len);
 
 	return 1;
-}
+};
 
 // bool mg_json_get_num(struct mg_str json, const char *path, double *v);
 static int _mg_json_get_num(lua_State *L) {
@@ -31,7 +31,7 @@ static int _mg_json_get_num(lua_State *L) {
 		lua_pushnumber(L, b);
 
 	return found;
-}
+};
 
 // bool mg_json_get_bool(struct mg_str json, const char *path, bool *v);
 static int _mg_json_get_bool(lua_State *L) {
@@ -42,7 +42,7 @@ static int _mg_json_get_bool(lua_State *L) {
 	lua_pushboolean(L, b);
 
 	return 1;
-}
+};
 
 // long mg_json_get_long(struct mg_str json, const char *path, long default_val);
 static int _mg_json_get_long(lua_State *L) {
@@ -53,7 +53,7 @@ static int _mg_json_get_long(lua_State *L) {
 	lua_pushinteger(L, l);
 
 	return 1;
-}
+};
 
 // char *mg_json_get_str(struct mg_str json, const char *path);
 static int _mg_json_get_str(lua_State *L) {
@@ -70,7 +70,7 @@ static int _mg_json_get_str(lua_State *L) {
 		lua_pushnil(L);
 
 	return 1;
-}
+};
 
 // char *mg_json_get_hex(struct mg_str json, const char *path, int *len);
 static int _mg_json_get_hex(lua_State *L) {
@@ -88,7 +88,7 @@ static int _mg_json_get_hex(lua_State *L) {
 		lua_pushnil(L);
 
 	return 1;
-}
+};
 
 // char *mg_json_get_b64(struct mg_str json, const char *path, int *len);
 static int _mg_json_get_b64(lua_State *L) {
@@ -106,7 +106,7 @@ static int _mg_json_get_b64(lua_State *L) {
 		lua_pushnil(L);
 
 	return 1;
-}
+};
 
 // bool mg_json_unescape(struct mg_str str, char *buf, size_t len);
 static int _mg_json_unescape(lua_State *L) {
@@ -126,7 +126,7 @@ static int _mg_json_unescape(lua_State *L) {
 	}
 
 	return 1;
-}
+};
 
 // size_t mg_json_next(struct mg_str obj, size_t ofs, struct mg_str *key, struct mg_str *val);
 static int _mg_json_next(lua_State *L) {
@@ -139,7 +139,7 @@ static int _mg_json_next(lua_State *L) {
 	lua_pushnumber(L, next);
 
 	return 1;
-}
+};
 
 static const struct luaL_reg mg_json_lib_m [] = {
 	{"get",		_mg_json_get		},
@@ -165,4 +165,4 @@ void mg_open_mg_json(lua_State *L) {
 	lua_pushvalue(L, -2);  /* pushes the metatable */
 	lua_settable(L, -3);  /* metatable.__index = metatable */
 	lua_pop(L, 1);
-}
+};

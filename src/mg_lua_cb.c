@@ -12,7 +12,7 @@ void fn_lua_cb(mg_connection *c, int ev, void *ev_data) {
 	lua_pushlightuserdata(L, ev_data);
 
 	lua_pcall(L, 3, 0, 0);
-}
+};
 
 void fn_lua_timer(void *arg) {
 	lua_State_t *GL = (lua_State_t*)arg;
@@ -21,7 +21,7 @@ void fn_lua_timer(void *arg) {
 	lua_pushlightuserdata(L, GL->fn_data);
 
 	lua_pcall(L, 1, 0, 0);
-}
+};
 
 void fn_lua_signal(int signo) {
 	s_signo = signo;
@@ -30,12 +30,12 @@ void fn_lua_signal(int signo) {
 	lua_pushinteger(L, signo);
 
 	lua_pcall(L, 1, 0, 0);
-}
+};
 
 void store_state(lua_State *L, const char *cb) {
 	_GL.L = L;
 	_GL.callback = cb;
-}
+};
 
 void lua_rpc_cb(rpc_req* req) {
 	int fn_args = 1;
@@ -49,4 +49,4 @@ void lua_rpc_cb(rpc_req* req) {
 	}
 
 	lua_pcall(L, fn_args, 0, 0);
-}
+};

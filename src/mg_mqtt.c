@@ -1,7 +1,6 @@
 #include "mg_mqtt.h"
-// struct mg_connection *mg_mqtt_connect(struct mg_mgr *mgr, const char *url,
-					//const struct mg_mqtt_opts *opts, mg_event_handler_t fn, void *fn_data);
 
+// struct mg_connection *mg_mqtt_connect(struct mg_mgr *mgr, const char *url, const struct mg_mqtt_opts *opts, mg_event_handler_t fn, void *fn_data);
 static int _mg_mqtt_connect(lua_State *L) {
 	mg_mgr *mgr = check_mg_mgr(L);
 	lua_remove(L, 1);
@@ -24,7 +23,7 @@ static int _mg_mqtt_connect(lua_State *L) {
 	check_mg_connection(L, 1); // check conn is ready
 
 	return 1;
-}
+};
 
 static int _mg_mqtt_listen(lua_State *L) {
 	mg_mgr *mgr = check_mg_mgr(L);
@@ -43,7 +42,7 @@ static int _mg_mqtt_listen(lua_State *L) {
 	check_mg_connection(L, 1); // check conn is ready
 
 	return 1;
-}
+};
 
 // void mg_mqtt_login(struct mg_connection *c, const struct mg_mqtt_opts *opts);
 static int _mg_mqtt_login(lua_State *L) {
@@ -53,7 +52,7 @@ static int _mg_mqtt_login(lua_State *L) {
 	mg_mqtt_login(conn, opts);
 
 	return 0;
-}
+};
 
 // uint16_t mg_mqtt_pub(struct mg_connection *c, const struct mg_mqtt_opts *opts);
 static int _mg_mqtt_pub(lua_State *L) {
@@ -64,7 +63,7 @@ static int _mg_mqtt_pub(lua_State *L) {
 	lua_pushinteger(L, ret);
 
 	return 1;
-}
+};
 
 // void mg_mqtt_sub(struct mg_connection *, const struct mg_mqtt_opts *opts);
 static int _mg_mqtt_sub(lua_State *L) {
@@ -74,7 +73,7 @@ static int _mg_mqtt_sub(lua_State *L) {
 	mg_mqtt_sub(conn, opts);
 
 	return 0;
-}
+};
 
 // void mg_mqtt_send_header(struct mg_connection *c, uint8_t cmd, uint8_t flags, uint32_t len);
 static int _mg_mqtt_send_header(lua_State *L) {
@@ -85,7 +84,7 @@ static int _mg_mqtt_send_header(lua_State *L) {
 	mg_mqtt_send_header(conn, cmd, flags, len);
 
 	return 0;
-}
+};
 
 // void mg_mqtt_ping(struct mg_connection *c);
 static int _mg_mqtt_ping(lua_State *L) {
@@ -93,7 +92,7 @@ static int _mg_mqtt_ping(lua_State *L) {
 	mg_mqtt_ping(conn);
 
 	return 0;
-}
+};
 
 // int mg_mqtt_parse(const uint8_t *buf, size_t len, uint8_t version, struct mg_mqtt_message *m)
 static int _mg_mqtt_parse(lua_State *L) {
@@ -105,7 +104,7 @@ static int _mg_mqtt_parse(lua_State *L) {
 	lua_pushinteger(L, ret);
 
 	return 1;
-}
+};
 
 // void mg_mqtt_disconnect(struct mg_connection *c, const struct mg_mqtt_opts *opts);
 static int _mg_mqtt_disconnect(lua_State *L) {
@@ -115,7 +114,7 @@ static int _mg_mqtt_disconnect(lua_State *L) {
 	mg_mqtt_disconnect(conn, opts);
 
 	return 0;
-}
+};
 
 static const struct luaL_reg mg_mqtt_lib_f [] = {
 	{"connect",	_mg_mqtt_connect	},
@@ -148,8 +147,8 @@ void mg_open_mg_mqtt(lua_State *L) {
 	luaL_openlib(L, NULL, mg_mqtt_lib_m, 0);
 	luaL_openlib(L, "mg_mqtt", mg_mqtt_lib_f, 0);
 	lua_pop(L, 2);
-
+	// open sub-modules
 	mg_open_mg_mqtt_message(L);
 	mg_open_mg_mqtt_opts(L);
 	lua_pop(L, 1);
-}
+};

@@ -17,14 +17,14 @@ int new_ws_msg (lua_State *L) {
 	if(!wm) lua_pushnil(L);
 
 	return 1;  /* new userdatum is already on the stack */
-}
+};
 
 ws_message *check_ws_message (lua_State *L) {
 	void *ud = luaL_checkudata(L, 1, "LuaBook.ws_message");
 	luaL_argcheck(L, ud != NULL, 1, "`ws_message' expected");
 
 	return(ws_message*)ud;
-}
+};
 
 static int _message_data(lua_State *L) {
 	int nargs = lua_gettop(L);
@@ -35,7 +35,7 @@ static int _message_data(lua_State *L) {
 	lua_pushlstring(L, msg->data.buf, msg->data.len);
 
 	return 1;
-}
+};
 
 static int _message_next(lua_State *L) {
 	ws_message *msg = check_ws_message(L);
@@ -44,7 +44,7 @@ static int _message_next(lua_State *L) {
 	msg->data.len -= len;
 
 	return 0;
-}
+};
 
 static int _message_len(lua_State *L) {
 	int nargs = lua_gettop(L);
@@ -55,7 +55,7 @@ static int _message_len(lua_State *L) {
 	lua_pushinteger(L, msg->data.len);
 
 	return 1;
-}
+};
 
 static int _message_flags(lua_State *L) {
 	int nargs = lua_gettop(L);
@@ -65,7 +65,7 @@ static int _message_flags(lua_State *L) {
 
 	lua_pushinteger(L, msg->flags);
 	return 1;
-}
+};
 
 static const struct luaL_reg ws_message_lib_f [] = {
 	{"new", 	new_ws_msg	},
@@ -94,4 +94,4 @@ void  mg_open_mg_ws_message (lua_State *L) {
 	luaL_openlib(L, NULL, ws_message_lib_m, 0);
 	luaL_openlib(L, "mg_ws_message", ws_message_lib_f, 0);
 	lua_pop(L, 2);
-}
+};

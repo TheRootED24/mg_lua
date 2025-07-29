@@ -15,7 +15,7 @@ static int _mg_fs_open(lua_State *L) {
 		lua_pushnil(L);
 
 	return 1;
-}
+};
 
 static int _mg_fs_close(lua_State *L) {
 	mg_fd *fd = check_mg_fd(L, 1);
@@ -23,7 +23,7 @@ static int _mg_fs_close(lua_State *L) {
 		mg_fs_close(fd);
 
 	return 0;
-}
+};
 
 static const struct luaL_reg mg_fs_lib_m [] = {
 	{"open"	,	_mg_fs_open	},
@@ -44,4 +44,4 @@ void mg_open_mg_fs(lua_State *L) {
 
 	mg_open_mg_fs_file(L);
 	lua_pop(L, 1);
-}
+};

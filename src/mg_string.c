@@ -8,7 +8,7 @@ static int _mg_casecmp(lua_State *L) {
 	lua_pushinteger(L, mg_casecmp(s1, s2));
 
 	return 1;
-}
+};
 
 // int mg_strcmp(const struct mg_str str1, const struct mg_str str2);
 static int _mg_strcmp(lua_State *L) {
@@ -18,7 +18,7 @@ static int _mg_strcmp(lua_State *L) {
 	lua_pushinteger(L, mg_strcmp(*s1, *s2));
 
 	return 1;
-}
+};
 
 // int mg_strcasecmp(const struct mg_str str1, const struct mg_str str2);
 static int _mg_strcasecmp(lua_State *L) {
@@ -28,7 +28,7 @@ static int _mg_strcasecmp(lua_State *L) {
 	lua_pushinteger(L, mg_strcasecmp(*s1, *s2));
 
 	return 1;
-}
+};
 
 // struct mg_str mg_strdup(const struct mg_str s);
 static int _mg_strdup(lua_State *L) {
@@ -38,7 +38,7 @@ static int _mg_strdup(lua_State *L) {
 	*s = mg_strdup(*str);
 
 	return 1;
-}
+};
 
 // bool mg_match(struct mg_str str, struct mg_str pattern, struct mg_str *caps);
 static int _mg_match(lua_State *L) {
@@ -51,7 +51,7 @@ static int _mg_match(lua_State *L) {
 	lua_pushboolean(L, mg_match(*str, *pat, caps));
 
 	return 1;
-}
+};
 
 // bool mg_span(struct mg_str s, struct mg_str *a, struct mg_str *b, char delim);
 static int _mg_span(lua_State *L) {
@@ -64,7 +64,7 @@ static int _mg_span(lua_State *L) {
 	lua_pushboolean(L, mg_span(*s, a, b, d));
 
 	return 1;
-}
+};
 
 // bool mg_str_to_num(struct mg_str s, int base, void *val, size_t val_len);
 static int _mg_str_to_num(lua_State *L) {
@@ -76,7 +76,7 @@ static int _mg_str_to_num(lua_State *L) {
 	lua_pushboolean(L, mg_str_to_num(s, base, val, vlen));
 
 	return 1;
-}
+};
 
 // bool mg_path_is_sane(struct mg_str path);
 static int _mg_path_is_sane(lua_State *L) {
@@ -85,7 +85,7 @@ static int _mg_path_is_sane(lua_State *L) {
 	lua_pushboolean(L, mg_path_is_sane(path));
 
 	return 1;
-}
+};
 
 // void mg_pfn_iobuf(char ch, void *param);
 static int _mg_pfn_iobuf(lua_State *L) {
@@ -95,7 +95,7 @@ static int _mg_pfn_iobuf(lua_State *L) {
 	mg_pfn_iobuf(ch, io);
 
 	return 0;
-}
+};
 
 // bool mg_aton(struct mg_str str, struct mg_addr *addr);
 static int _mg_aton(lua_State *L) {
@@ -107,7 +107,7 @@ static int _mg_aton(lua_State *L) {
 	lua_pushboolean(L, mg_aton(str, addr));
 
 	return 1;
-}
+};
 
 static const struct luaL_reg mg_string_lib_m [] = {
 	{"casecmp",		_mg_casecmp	},
@@ -133,4 +133,5 @@ void mg_open_mg_string(lua_State *L) {
 	lua_pushvalue(L, -2);  /* pushes the metatable */
 	lua_settable(L, -3);  /* metatable.__index = metatable */
 	lua_pop(L, 1);
-}
+};
+

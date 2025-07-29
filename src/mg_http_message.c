@@ -27,14 +27,14 @@ int new_mg_http_message (lua_State *L) {
 	if(!hm) lua_pushnil(L);
 
 	return 1;  /* new userdatum is already on the stack */
-}
+};
 
 http_message *check_mg_http_message(lua_State *L, int pos) {
 	void *ud = luaL_checkudata(L, pos, "LuaBook.http_message");
 	luaL_argcheck(L, ud != NULL, pos, "`mg_http_message' expected");
 
 	return(http_message *)ud;
-}
+};
 
 static int _method(lua_State *L) {
 	int index = lua_gettop(L);
@@ -45,7 +45,7 @@ static int _method(lua_State *L) {
 	lua_pushlstring(L, hm->method.buf, hm->method.len);
 
 	return 1;
-}
+};
 
 static int _uri(lua_State *L) {
 	int index = lua_gettop(L);
@@ -56,7 +56,7 @@ static int _uri(lua_State *L) {
 	lua_pushlstring(L, hm->uri.buf, hm->uri.len);
 
 	return 1;
-}
+};
 
 static int _query(lua_State *L) {
 	int index = lua_gettop(L);
@@ -67,7 +67,7 @@ static int _query(lua_State *L) {
 	lua_pushlstring(L, hm->query.buf, hm->query.len);
 
 	return 1;
-}
+};
 
 static int _proto(lua_State *L) {
 	int index = lua_gettop(L);
@@ -78,7 +78,7 @@ static int _proto(lua_State *L) {
 	lua_pushlstring(L, hm->proto.buf, hm->proto.len);
 
 	return 1;
-}
+};
 
 static int _message(lua_State *L) {
 	int index = lua_gettop(L);
@@ -89,7 +89,7 @@ static int _message(lua_State *L) {
 	lua_pushlstring(L, hm->message.buf, hm->message.len);
 
 	return 1;
-}
+};
 
 static int _head(lua_State *L) {
 	int index = lua_gettop(L);
@@ -100,7 +100,7 @@ static int _head(lua_State *L) {
 	lua_pushlstring(L, hm->head.buf, hm->head.len);
 
 	return 1;
-}
+};
 
 static int _headers(lua_State *L) {
 	int sargs = lua_gettop(L);
@@ -123,7 +123,7 @@ static int _headers(lua_State *L) {
 	lua_pushlstring(L, hm->headers[index].value.buf, hm->headers[index].value.len);
 
 	return 2;
-}
+};
 
 static int _body(lua_State *L) {
 	int index = lua_gettop(L);
@@ -134,7 +134,7 @@ static int _body(lua_State *L) {
 	lua_pushlstring(L, hm->body.buf, hm->body.len);
 
 	return 1;
-}
+};
 
 static int _print_message(lua_State *L) {
 	http_message *hm = check_mg_http_message(L, 1);
@@ -142,7 +142,7 @@ static int _print_message(lua_State *L) {
 		hm->method.buf, hm->uri.buf, hm->proto.buf, hm->query.buf, hm->head.buf, hm->body.buf, hm->message.buf, (int)(sizeof(hm->headers)/sizeof(http_header)));
 
 	return 1;
-}
+};
 
 static int _message_json(lua_State *L) {
 	http_message *hm = check_mg_http_message(L, 1);
@@ -151,7 +151,7 @@ static int _message_json(lua_State *L) {
 		hm->method.buf, hm->uri.buf, hm->proto.buf, hm->query.buf, hm->head.buf, hm->body.buf, hm->message.buf, (int)(sizeof(hm->headers)/sizeof(http_header)));
 
 	return 1;
-}
+};
 
 static int _message_table(lua_State *L) {
 	http_message *hm = check_mg_http_message(L, 1);
@@ -174,7 +174,7 @@ static int _message_table(lua_State *L) {
 	lua_setfield(L, -2, "headers");
 
 	return 1;
-}
+};
 
 static int _call_message(lua_State *L) {
 	http_message *hm = check_mg_http_message(L, 1);
@@ -189,7 +189,7 @@ static int _call_message(lua_State *L) {
 	lua_pushinteger(L, sizeof(hm->headers));
 
 	return 8;
-}
+};
 
 static const struct luaL_reg messagelib_f [] = {
 	{"new", 	new_mg_http_message	},
@@ -226,4 +226,4 @@ void  mg_open_mg_http_message (lua_State *L) {
 	luaL_openlib(L, NULL, messagelib_m, 0);
 	luaL_openlib(L, "mg_http_message", messagelib_f, 0);
 	lua_pop(L, 2);
-}
+};

@@ -7,14 +7,14 @@ int new_mg_queue (lua_State *L) {
 	if(!q) lua_pushnil(L);
 
 	return 1 ;  /* new userdatum is already on the stack */
-}
+};
 
 mg_queue*check_mg_queue (lua_State *L) {
 	void *ud = luaL_checkudata(L, 1, "LuaBook.mg_queue");
 	luaL_argcheck(L, ud != NULL, 1, "`mg_queue' expected");
 
 	return(mg_queue*)ud;
-}
+};
 
 // void mg_queue_init(struct mg_queue *q, char *buf, size_t size);
 static int _mg_queue_init(lua_State *L) {
@@ -24,7 +24,7 @@ static int _mg_queue_init(lua_State *L) {
 	mg_queue_init(q, buf, size);
 
 	return 0;
-}
+};
 
 // size_t mg_queue_book(struct mg_queue *q, char **ptr, size_t len);
 static int _mg_queue_book(lua_State *L) {
@@ -43,7 +43,7 @@ static int _mg_queue_book(lua_State *L) {
 	}
 
 	return 2;
-}
+};
 
 // void mg_queue_add(struct mg_queue *q, size_t len);
 static int _mg_queue_add(lua_State *L) {
@@ -53,7 +53,7 @@ static int _mg_queue_add(lua_State *L) {
 	mg_queue_add(q, len);
 
 	return 0;
-}
+};
 
 // size_t mg_queue_next(struct mg_queue *q, char **ptr);
 static int _mg_queue_next(lua_State *L) {
@@ -70,7 +70,7 @@ static int _mg_queue_next(lua_State *L) {
 	}
 
 	return 2;
-}
+};
 
 // void mg_queue_del(struct mg_queue *q, size_t len);
 static int _mg_queue_del(lua_State *L) {
@@ -80,14 +80,14 @@ static int _mg_queue_del(lua_State *L) {
 	mg_queue_del(q, len);
 
 	return 0;
-}
+};
 
 // size_t mg_queue_vprintf(struct mg_queue *q, const char *fmt, va_list *);
 static int _mg_queue_vprintf(lua_State *L) {
 	if(L) return 0;
 
 	return 0;
-}
+};
 
 // size_t mg_queue_printf(struct mg_queue *q, const char *fmt, ...);
 static int _mg_queue_printf(lua_State *L) {
@@ -99,10 +99,10 @@ static int _mg_queue_printf(lua_State *L) {
 	lua_pushinteger(L, ret);
 
 	return 1;
-}
+};
 
 static const struct luaL_reg mg_queue_lib_f [] = {
-	{"new", 	new_mg_queue	},
+	{"new", 	new_mg_queue		},
 	{"new", 	new_mg_queue		},
 	{"init",	_mg_queue_init		},
 	{"book",	_mg_queue_book		},
@@ -126,35 +126,9 @@ static const struct luaL_reg mg_queue_lib_m [] = {
 	{NULL, NULL}
 };
 
-/*static void dumpstack (lua_State *L) {
-  int top=lua_gettop(L);
-  for (int i = 1; i <= top; i++) {
-    printf("%d\t%s\t", i, luaL_typename(L,i));
-    switch (lua_type(L, i)) {
-      case LUA_TNUMBER:
-        printf("%g\n",lua_tonumber(L,i));
-        break;
-      case LUA_TSTRING:
-        printf("%s\n",lua_tostring(L,i));
-        break;
-      case LUA_TBOOLEAN:
-        printf("%s\n", (lua_toboolean(L, i) ? "true" : "false"));
-        break;
-      case LUA_TNIL:
-        printf("%s\n", "nil");
-        break;
-      default:
-        printf("%p\n",lua_topointer(L,i));
-        break;
-    }
-  }
-}*/
-
 void mg_open_mg_queue (lua_State *L) {
-	//printf("START MG.QUEUE: \n"); dumpstack(L);
 	lua_newtable(L);
 	luaL_register(L, NULL, mg_queue_lib_m);
-	//dumpstack(L);
 	lua_setfield(L, -2, "queue");
 	// mg_queue
 	luaL_newmetatable(L, "LuaBook.mg_queue");
@@ -164,5 +138,4 @@ void mg_open_mg_queue (lua_State *L) {
 	luaL_openlib(L, NULL, mg_queue_lib_m, 0);
 	luaL_openlib(L, "mg_mgr", mg_queue_lib_f, 0);
 	lua_pop(L, 2);
-	//printf("END MG.QUEUE: \n"); dumpstack(L);
-}
+};

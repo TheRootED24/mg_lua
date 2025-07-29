@@ -28,7 +28,7 @@ static int _mg_ws_connect(lua_State *L) {
 	check_mg_connection(L, 1); // check conn is ready
 
 	return 1; // return the udata on the stack
-}
+};
 
 // void mg_ws_upgrade(struct mg_connection *c, struct mg_http_message *, const char *fmt, ...);
 static int _mg_ws_upgrade(lua_State *L) {
@@ -44,7 +44,7 @@ static int _mg_ws_upgrade(lua_State *L) {
 		mg_ws_upgrade(conn, hm, fmt);
 
 	return 0;
-}
+};
 
 // size_t mg_ws_send(struct mg_connection *c, const void *buf, size_t len, int op);
 static int _mg_ws_send(lua_State *L) {
@@ -57,7 +57,7 @@ static int _mg_ws_send(lua_State *L) {
 	lua_pushnumber(L, sent);
 
 	return 1;
-}
+};
 
 // size_t mg_ws_printf(struct mg_connection *, int op, const char *fmt, ...);
 static int _mg_ws_printf(lua_State *L) {
@@ -70,7 +70,7 @@ static int _mg_ws_printf(lua_State *L) {
 	lua_pushinteger(L, ret);
 
 	return 1;
-}
+};
 
 // TODO VARIADIC ARG HANDLER
 static int _mg_ws_vprintf(lua_State *L) {
@@ -78,7 +78,7 @@ static int _mg_ws_vprintf(lua_State *L) {
 		return 0;
 
 	return 0;
-}
+};
 
 // size_t mg_ws_wrap(struct mg_connection *c, size_t len, int op)
 static int _mg_ws_wrap(lua_State *L) {
@@ -89,7 +89,7 @@ static int _mg_ws_wrap(lua_State *L) {
 	lua_pushnumber(L, sent);
 
 	return 1;
-}
+};
 
 static const struct luaL_reg mg_ws_lib_m [] = {
 	{"connect",	_mg_ws_connect	},
@@ -114,4 +114,4 @@ void mg_open_mg_ws(lua_State *L) {
 	// open sub-module
 	mg_open_mg_ws_message(L);
 	lua_pop(L, 1);
-}
+};

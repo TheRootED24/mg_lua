@@ -18,14 +18,14 @@ int new_mg_http_part (lua_State *L) {
 	if(!hp) lua_pushnil(L);
 
 	return 1;  /* new userdatum is already on the stack */
-}
+};
 
 http_part *check_mg_http_part(lua_State *L, int pos) {
 	void *ud = luaL_checkudata(L, pos, "LuaBook.http_part");
 	luaL_argcheck(L, ud != NULL, pos, "`mg_http_part' expected");
 
 	return(http_part*)ud;
-}
+};
 
 static int _http_part_name(lua_State *L) {
 	int nargs = lua_gettop(L);
@@ -36,7 +36,7 @@ static int _http_part_name(lua_State *L) {
 	lua_pushlstring(L, hp->name.buf, hp->name.len);
 
 	return 1;
-}
+};
 
 static int _http_part_filename(lua_State *L) {
 	int nargs = lua_gettop(L);
@@ -47,7 +47,7 @@ static int _http_part_filename(lua_State *L) {
 	lua_pushlstring(L, hp->filename.buf, hp->filename.len);
 
 	return 1;
-}
+};
 
 static int _http_part_body(lua_State *L) {
 	int nargs = lua_gettop(L);
@@ -58,7 +58,7 @@ static int _http_part_body(lua_State *L) {
 	lua_pushlstring(L, hp->body.buf, hp->body.len);
 
 	return 1;
-}
+};
 
 static const struct luaL_reg http_part_lib_f [] = {
 	{"new", 	new_mg_http_part	},
@@ -84,4 +84,4 @@ void mg_open_mg_http_part(lua_State *L) {
 	luaL_openlib(L, NULL, http_part_lib_m, 0);
 	luaL_openlib(L, "mg_http_part", http_part_lib_f, 0);
 	lua_pop(L, 2);
-}
+};

@@ -18,7 +18,7 @@ static int _mg_sntp_connect(lua_State *L) {
 	check_mg_connection(L, 1); // check conn is ready
 
 	return 1; // return the udata on the stack
-}
+};
 
 // void mg_sntp_request(struct mg_connection *c)
 static int _mg_sntp_request(lua_State *L) {
@@ -26,7 +26,7 @@ static int _mg_sntp_request(lua_State *L) {
 	mg_sntp_request(conn);
 
 	return 0;
-}
+};
 
 static const struct luaL_reg mg_sntp_lib_m [] = {
 	{"connect",	_mg_sntp_connect	},
@@ -44,4 +44,5 @@ void mg_open_mg_sntp(lua_State *L) {
 	lua_pushvalue(L, -2);  /* pushes the metatable */
 	lua_settable(L, -3);  /* metatable.__index = metatable */
 	lua_pop(L, 1);
-}
+};
+

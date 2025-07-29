@@ -17,14 +17,14 @@ int new_mg_connection (lua_State *L) {
 	if(!conn) lua_pushnil(L);
 
 	return 1;  /* new userdatum is already on the stack */
-}
+};
 
 mg_connection *check_mg_connection(lua_State *L, int pos) {
 	void *ud = luaL_checkudata(L, pos, "LuaBook.mg_connection");
 	luaL_argcheck(L, ud != NULL, pos, "`mg_connection' expected");
 
 	return (mg_connection*)ud;
-}
+};
 
 static int _mg_connection_next(lua_State *L) {
 	mg_connection *conn = check_mg_connection(L, 1);
@@ -34,7 +34,7 @@ static int _mg_connection_next(lua_State *L) {
 		lua_pushnil(L);
 
 	return 1;
-}
+};
 
 static int _mg_connection_mgr(lua_State *L) {
 	mg_connection *conn = (mg_connection*)lua_topointer(L, 1);
@@ -48,14 +48,14 @@ static int _mg_connection_mgr(lua_State *L) {
 		lua_pushnil(L);
 
 	return 1;
-}
+};
 
 static int _mg_connection_loc(lua_State *L) {
 	mg_connection *conn = check_mg_connection(L, 1);
 	lua_pushlightuserdata(L, &conn->loc);
 
 	return 1;
-}
+};
 
 static int _mg_connection_send(lua_State *L) {
 	int nargs = lua_gettop(L);
@@ -80,7 +80,7 @@ static int _mg_connection_send(lua_State *L) {
 	}
 
 	return 4;
-}
+};
 
 static int _mg_connection_recv(lua_State *L) {
 	mg_connection *conn = check_mg_connection(L, 1);
@@ -91,7 +91,7 @@ static int _mg_connection_recv(lua_State *L) {
 	check_mg_iobuf(L, 1);
 
 	return 1;
-}
+};
 
 static int _mg_connection_loc_ip(lua_State *L) {
 	mg_connection *conn = check_mg_connection(L, 1);
@@ -101,7 +101,7 @@ static int _mg_connection_loc_ip(lua_State *L) {
 	//lua_pushlightuserdata(L, loc);
 
 	return 1;
-}
+};
 
 static int _mg_connection_loc_port(lua_State *L) {
 	mg_connection *conn = check_mg_connection(L, 1);
@@ -111,7 +111,7 @@ static int _mg_connection_loc_port(lua_State *L) {
 	//lua_pushlightuserdata(L, loc);
 
 	return 1;
-}
+};
 
 static int _mg_connection_rem_ip(lua_State *L) {
 	mg_connection *conn = check_mg_connection(L, 1);
@@ -120,7 +120,7 @@ static int _mg_connection_rem_ip(lua_State *L) {
 	lua_pushlstring(L, buf, ret);
 
 	return 1;
-}
+};
 
 static int _mg_connection_rem_port(lua_State *L) {
 	mg_connection *conn = check_mg_connection(L, 1);
@@ -129,28 +129,28 @@ static int _mg_connection_rem_port(lua_State *L) {
 	lua_pushlstring(L, buf, ret);
 
 	return 1;
-}
+};
 
 static int _mg_connection_rem(lua_State *L) {
 	mg_connection *conn = check_mg_connection(L, 1);
 	lua_pushlightuserdata(L, &conn->rem);
 
 	return 1;
-}
+};
 
 static int _mg_connection_fd(lua_State *L) {
 	mg_connection *conn = check_mg_connection(L, 1);
 	lua_pushlightuserdata(L, conn->fd);
 
 	return 1;
-}
+};
 
 static int _mg_connection_id(lua_State *L) {
 	mg_connection *conn = check_mg_connection(L, 1);
 	lua_pushnumber(L, conn->id);
 
 	return 1;
-}
+};
 
 static int _mg_connection_data(lua_State *L) {
 	int nargs = lua_gettop(L);
@@ -423,4 +423,4 @@ void mg_open_mg_connection(lua_State *L) {
 	luaL_openlib(L, NULL, mg_connection_lib_m, 0);
 	luaL_openlib(L, "mg_connection",mg_connection_lib_f, 0);
 	lua_pop(L, 2);
-}
+};

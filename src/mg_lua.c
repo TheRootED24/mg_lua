@@ -15,7 +15,7 @@ static int _mg_web_root(lua_State *L) {
 	s_web_root = luaL_checkstring(L, -1);
 
 	return 0;
-}
+};
 
 static int _MG_U32(lua_State *L) {
 	uint8_t a = (uint8_t)lua_tointeger(L, 1);
@@ -25,7 +25,7 @@ static int _MG_U32(lua_State *L) {
 	lua_pushinteger(L, MG_U32(a, b, c, d));
 
 	return 1;
-}
+};
 
 /* MG CORE */
 static int _mg_listen(lua_State *L) {
@@ -45,7 +45,7 @@ static int _mg_listen(lua_State *L) {
 	check_mg_connection(L, 1); // check conn is ready
 
 	return 1;
-}
+};
 
 static int _mg_connect(lua_State *L) {
 	mg_mgr *mgr = check_mg_mgr(L);
@@ -64,7 +64,7 @@ static int _mg_connect(lua_State *L) {
 	check_mg_connection(L, 1); // check conn is ready
 
 	return 1; // return the udata on the stack
-}
+};
 
 static int _mg_send(lua_State *L) {
 	mg_connection *conn = check_mg_connection(L, 1);
@@ -74,7 +74,7 @@ static int _mg_send(lua_State *L) {
 	lua_pushboolean(L, ret);
 
 	return 1;
-}
+};
 
 static int _mg_wakeup(lua_State *L) {
 	mg_mgr *mgr = check_mg_mgr(L);
@@ -85,7 +85,7 @@ static int _mg_wakeup(lua_State *L) {
 	lua_pushboolean(L, ret);
 
 	return 1;
-}
+};
 
 static int _mg_wakeup_init(lua_State *L) {
 	mg_mgr *mgr = check_mg_mgr(L);
@@ -93,7 +93,7 @@ static int _mg_wakeup_init(lua_State *L) {
 	lua_pushboolean(L, ret);
 
 	return 1;
-}
+};
 
 // struct mg_connection *mg_wrapfd(struct mg_mgr *mgr, int fd, mg_event_handler_t fn, void *fn_data);
 static int _mg_wrapfd(lua_State *L) {
@@ -111,9 +111,9 @@ static int _mg_wrapfd(lua_State *L) {
 	lua_pushlightuserdata(L, c);
 	new_mg_connection(L); // push a new connection udata on stack
 	check_mg_connection(L, 1); // check conn is ready
-	
+
 	return 1;
-}
+};
 
 static int _mg_printf(lua_State *L) {
 	mg_connection *conn = (mg_connection*)lua_topointer(L, 1);
@@ -122,8 +122,7 @@ static int _mg_printf(lua_State *L) {
 	lua_pushnumber(L, ret);
 
 	return 1;
-
-}
+};
 
 static int _mg_handle_sig(lua_State *L) {
 	int signo = luaL_checkinteger(L, 1);
@@ -131,7 +130,7 @@ static int _mg_handle_sig(lua_State *L) {
 	signal(signo, fn_lua_signal);
 
 	return 0;
-}
+};
 
 static const luaL_reg mg_methods[] = {
 	{ "set_web_root",	_mg_web_root	},
@@ -179,4 +178,4 @@ int luaopen_mg_lua(lua_State *L)
 	mg_open_mg_queue(L);
 
 	return 1;
-}
+};
