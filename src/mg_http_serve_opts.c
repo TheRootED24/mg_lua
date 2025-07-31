@@ -23,7 +23,7 @@ int _mg_http_serve_opts_new (lua_State *L) {
 	if(opts)
 		opts->root_dir = root_dir;
 	else
-	 	lua_pushnil(L);
+		lua_pushnil(L);
 
 	return 1;  /* new userdatum is already on the stack */
 };

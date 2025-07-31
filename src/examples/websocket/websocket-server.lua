@@ -43,7 +43,7 @@ CALLBACK = function(c, ev, ev_data)
 		--/* load all marked "WS" connection into conns table */--
 		local conns = {}
 			while(t) do
-				print(t:id(), t:loc_ip(), t:rem_ip())
+				--print(t:id(), t:loc_ip(), t:rem_ip())
 				if(t:data() == "WS" ) then
 					conns[ #conns + 1 ] = t;
 				end

@@ -38,7 +38,7 @@ CALLBACK = function(c, ev, ev_data)
 		conn:is_hexdumping(0);
 	elseif(ev == MG_EV_WS_OPEN) then
 		local conn = mg.connection.new(c);
-		conn:data("WS", 2);
+		conn:data("WS", 2); -- mark websocket connections with "WS"
 	elseif(ev == MG_EV_HTTP_MSG) then
 		local hm = mg.http.message.new(ev_data);
 		if(mg.string.match(mg.str.new(hm:uri()), mg.str.new("/websocket"))) then

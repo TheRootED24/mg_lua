@@ -3,8 +3,7 @@
 // void mg_tls_init(struct mg_connection *c, const struct mg_tls_opts *);
 static int _mg_tls_init(lua_State *L) {
 	mg_connection *conn = check_mg_connection(L, 1);
-	lua_remove(L, 1);
-	tls_opts *opts = check_mg_tls_opts(L, 1);
+	tls_opts *opts = check_mg_tls_opts(L, 2);
 	mg_tls_init(conn, opts);
 
 	return 0;

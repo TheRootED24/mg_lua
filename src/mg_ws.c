@@ -52,7 +52,6 @@ static int _mg_ws_send(lua_State *L) {
 	const char *buf = lua_tostring(L, 2);
 	size_t len = luaL_checkinteger(L, 3);
 	int op = luaL_checkinteger(L, 4);
-	//printf("buf: %s len: %ld op: %d\n", buf, len, op);
 	size_t sent = mg_ws_send(conn, (const void*)buf, len, op);
 	lua_pushnumber(L, sent);
 

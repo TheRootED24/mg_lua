@@ -11,11 +11,11 @@ static int _mg_sntp_connect(lua_State *L) {
 	GL->L = L; // pass the lua_State pointer to fn_serv
 	GL->callback = cb;
 
-	lua_settop(L, 0); // clear the stack
+	//lua_settop(L, 0); // clear the stack
 	mg_connection *c = (mg_connection*)mg_sntp_connect(mgr, s_url, fn, GL);
 	lua_pushlightuserdata(L, c);
 	_mg_connection_new(L); // push a new connection udata on stack
-	check_mg_connection(L, 1); // check conn is ready
+	check_mg_connection(L, -1); // check conn is ready
 
 	return 1; // return the udata on the stack
 };

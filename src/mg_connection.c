@@ -155,6 +155,7 @@ static int _mg_connection_id(lua_State *L) {
 static int _mg_connection_data(lua_State *L) {
 	int nargs = lua_gettop(L);
 	mg_connection *conn = check_mg_connection(L, 1);
+	
 	size_t maxlen = sizeof(conn->data);
 
 	if(nargs > 1){
@@ -177,9 +178,9 @@ static int _is_accepted(lua_State *L) {
 	int nargs = lua_gettop(L);
 	mg_connection *conn = check_mg_connection(L, 1);
 	if(nargs > 1)
-		conn->is_accepted = (uint8_t)luaL_checkinteger(L, -1);
+		conn->is_accepted = (unsigned int)luaL_checkinteger(L, -1);
 
-	lua_pushinteger(L, (uint8_t)conn->is_accepted);
+	lua_pushinteger(L, conn->is_accepted);
 
 	return 1;
 };
@@ -188,7 +189,7 @@ static int _is_arplooking(lua_State *L) {
 	int nargs = lua_gettop(L);
 	mg_connection *conn = check_mg_connection(L, 1);
 	if(nargs > 1)
-		conn->is_arplooking = luaL_checkinteger(L, -1);
+		conn->is_arplooking = (unsigned int)luaL_checkinteger(L, -1);
 
 	lua_pushinteger(L, conn->is_arplooking);
 
@@ -199,7 +200,7 @@ static int _is_client(lua_State *L) {
 	int nargs = lua_gettop(L);
 	mg_connection *conn = check_mg_connection(L, 1);
 	if(nargs > 1)
-		conn->is_client = luaL_checkinteger(L, -1);
+		conn->is_client = (unsigned int)luaL_checkinteger(L, -1);
 
 	lua_pushinteger(L, conn->is_client);
 
@@ -210,7 +211,7 @@ static int _is_closing(lua_State *L) {
 	int nargs = lua_gettop(L);
 	mg_connection *conn = check_mg_connection(L, 1);
 	if(nargs > 1)
-		conn->is_closing = luaL_checkinteger(L, -1);
+		conn->is_closing = (unsigned int)luaL_checkinteger(L, -1);
 
 	lua_pushinteger(L, conn->is_closing);
 
@@ -221,7 +222,7 @@ static int _is_draininig(lua_State *L) {
 	int nargs = lua_gettop(L);
 	mg_connection *conn = check_mg_connection(L, 1);
 	if(nargs > 1)
-		conn->is_draining = luaL_checkinteger(L, -1);
+		conn->is_draining = (unsigned int)luaL_checkinteger(L, -1);
 
 	lua_pushinteger(L, conn->is_draining);
 
@@ -232,7 +233,7 @@ static int _is_full(lua_State *L) {
 	int nargs = lua_gettop(L);
 	mg_connection *conn = check_mg_connection(L, 1);
 	if(nargs > 1)
-		conn->is_full = luaL_checkinteger(L, -1);
+		conn->is_full = (unsigned int)luaL_checkinteger(L, -1);
 
 	lua_pushinteger(L, conn->is_full);
 
@@ -243,7 +244,7 @@ static int _is_hexdumping(lua_State *L) {
 	int nargs = lua_gettop(L);
 	mg_connection *conn = check_mg_connection(L, 1);
 	if(nargs > 1)
-		conn->is_hexdumping = luaL_checkinteger(L, -1);
+		conn->is_hexdumping = (unsigned int)luaL_checkinteger(L, -1);
 
 	lua_pushinteger(L, conn->is_hexdumping);
 	return 1;
@@ -253,7 +254,7 @@ static int _is_listening(lua_State *L) {
 	int nargs = lua_gettop(L);
 	mg_connection *conn = check_mg_connection(L, 1);
 	if(nargs > 1)
-		conn->is_listening = luaL_checkinteger(L, -1);
+		conn->is_listening = (unsigned int)luaL_checkinteger(L, -1);
 
 	lua_pushinteger(L, conn->is_listening);
 
@@ -264,7 +265,7 @@ static int _is_mqtt5(lua_State *L) {
 	int nargs = lua_gettop(L);
 	mg_connection *conn = check_mg_connection(L, 1);
 	if(nargs > 1)
-		conn->is_mqtt5 = luaL_checkinteger(L, -1);
+		conn->is_mqtt5 = (unsigned int)luaL_checkinteger(L, -1);
 
 	lua_pushinteger(L, conn->is_mqtt5);
 
@@ -275,7 +276,7 @@ static int _is_readable(lua_State *L) {
 	int nargs = lua_gettop(L);
 	mg_connection *conn = check_mg_connection(L, 1);
 	if(nargs > 1)
-		conn->is_readable = luaL_checkinteger(L, -1);
+		conn->is_readable = (unsigned int)luaL_checkinteger(L, -1);
 
 	lua_pushinteger(L, conn->is_readable);
 
@@ -286,7 +287,7 @@ static int _is_resolving(lua_State *L) {
 	int nargs = lua_gettop(L);
 	mg_connection *conn = check_mg_connection(L, 1);
 	if(nargs > 1)
-		conn->is_resolving = luaL_checkinteger(L, -1);
+		conn->is_resolving = (unsigned int)luaL_checkinteger(L, -1);
 
 	lua_pushinteger(L, conn->is_resolving);
 
@@ -297,7 +298,7 @@ static int _is_resp(lua_State *L) {
 	int nargs = lua_gettop(L);
 	mg_connection *conn = check_mg_connection(L, 1);
 	if(nargs > 1)
-		conn->is_resp = luaL_checkinteger(L, -1);
+		conn->is_resp = (unsigned int)luaL_checkinteger(L, -1);
 
 	lua_pushinteger(L, conn->is_resp);
 
@@ -308,7 +309,7 @@ static int _is_tls(lua_State *L) {
 	int nargs = lua_gettop(L);
 	mg_connection *conn = check_mg_connection(L, 1);
 	if(nargs > 1)
-		conn->is_tls = luaL_checkinteger(L, -1);
+		conn->is_tls = (unsigned int)luaL_checkinteger(L, -1);
 
 	lua_pushinteger(L, conn->is_tls);
 
@@ -319,7 +320,7 @@ static int _is_tls_hs(lua_State *L) {
 	int nargs = lua_gettop(L);
 	mg_connection *conn = check_mg_connection(L, 1);
 	if(nargs > 1)
-		conn->is_tls_hs = luaL_checkinteger(L, -1);
+		conn->is_tls_hs = (unsigned int)luaL_checkinteger(L, -1);
 
 	lua_pushinteger(L, conn->is_tls_hs);
 
@@ -330,7 +331,7 @@ static int _is_tls_throttled(lua_State *L) {
 	int nargs = lua_gettop(L);
 	mg_connection *conn = check_mg_connection(L, 1);
 	if(nargs > 1)
-		conn->is_tls_throttled = luaL_checkinteger(L, -1);
+		conn->is_tls_throttled = (unsigned int)luaL_checkinteger(L, -1);
 
 	lua_pushinteger(L, conn->is_tls_throttled);
 
@@ -341,7 +342,7 @@ static int _is_udp(lua_State *L) {
 	int nargs = lua_gettop(L);
 	mg_connection *conn = check_mg_connection(L, 1);
 	if(nargs > 1)
-		conn->is_udp= luaL_checkinteger(L, -1);
+		conn->is_udp = (unsigned int)luaL_checkinteger(L, -1);
 
 	lua_pushinteger(L, conn->is_udp);
 
@@ -352,7 +353,7 @@ static int _is_websocket(lua_State *L) {
 	int nargs = lua_gettop(L);
 	mg_connection *conn = check_mg_connection(L, 1);
 	if(nargs > 1)
-		conn->is_websocket= luaL_checkinteger(L, -1);
+		conn->is_websocket = (unsigned int)luaL_checkinteger(L, -1);
 
 	lua_pushinteger(L, conn->is_websocket);
 
@@ -363,7 +364,7 @@ static int _is_writable(lua_State *L) {
 	int nargs = lua_gettop(L);
 	mg_connection *conn = check_mg_connection(L, 1);
 	if(nargs > 1)
-		conn->is_writable= luaL_checkinteger(L, -1);
+		conn->is_writable = (unsigned int)luaL_checkinteger(L, -1);
 
 	lua_pushinteger(L, conn->is_writable);
 
