@@ -3,6 +3,23 @@
 
 #define MG "mg_lua"
 
+// C++ GAURDS FOR C LIBS
+#ifndef __cplusplus
+// LUA LIBS FOR gcc
+#include <lua.h>
+#include <lauxlib.h>
+#include <lualib.h>
+#endif
+
+#ifdef __cplusplus
+// LUA LIBS FOR g++
+#include <lua.hpp>
+extern "C" {
+#endif
+// MONGOOSE C LIB
+#include "../includes/libmongoose/src/mongoose.h"
+
+#include "mg_lua_cb.h"
 #include "mg_addr.h"
 #include "mg_dns.h"
 #include "mg_iobuf.h"
@@ -23,37 +40,17 @@
 #include "mg_string.h"
 #include "mg_url.h"
 #include "mg_logging.h"
-
-// C++ GAURDS FOR C LIBS
-#ifndef __cplusplus
-// LUA LIBS FOR gcc
-#include <lua.h>
-#include <lauxlib.h>
-#include <lualib.h>
-#endif
-
-#ifdef __cplusplus
-// LUA LIBS FOR g++
-#include <lua.hpp>
-extern "C" {
-#endif
-// MONGOOSE C LIB
-#include "../includes/libmongoose/src/mongoose.h"
+#include "mg_fs.h"
+#include "mg_fd.h"
+#include "mg_fs_file.h"
+#include "mg_queue.h"
 
 #ifdef __cplusplus
 }
 #endif
 
-typedef struct {
-	lua_State *L;
-	const char *callback;
-} lua_State_t;
-
-void fn_serv(mg_connection *c, int ev, void *ev_data);
-
-typedef struct mg_mgr mg_mgr;
-typedef struct mg_addr mg_addr;
-typedef struct mg_connection mg_connection;
-typedef struct mg_http_message mg_http_message;
+extern struct mg_fs mg_fs_posix;   // POSIX open/close/read/write/seek
+extern struct mg_fs mg_fs_packed;  // see tutorials/core/embedded-filesystem
+extern struct mg_fs mg_fs_fat;     // FAT FS
 
 #endif

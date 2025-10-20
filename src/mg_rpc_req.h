@@ -5,8 +5,9 @@
 
 typedef struct mg_rpc_req rpc_req;
 
-#include "mg_lua.h"
+#include "mg_lua_cb.h"
 #include "mg_rpc.h"
+#include "mg_iobuf.h"
 
 // C++ GAURDS FOR C LIBS
 #ifndef __cplusplus
@@ -29,7 +30,7 @@ extern "C" {
 #endif
 
 void mg_open_mg_rpc_req (lua_State *L);
-rpc_req *check_rpc_req (lua_State *L);
-int new_rpc_req (lua_State *L);
+rpc_req *check_rpc_req (lua_State *L, int pos);
+int _mg_rpc_req_new (lua_State *L);
 
 #endif

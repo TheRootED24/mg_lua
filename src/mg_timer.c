@@ -12,14 +12,9 @@ struct mg_timer {
   void *arg;                // Function argument
   struct mg_timer *next;    // Linkage
 };
-
 */
 
-void dummy(void *data){
-	printf("data address :%p\n", data);
-}
-
-int new_mg_timer(lua_State *L) {
+int _mg_timer_new(lua_State *L) {
 	mg_timer *tmr = (mg_timer*)lua_newuserdata(L, sizeof(mg_timer));
 
 	luaL_getmetatable(L, "LuaBook.mg_timer");
@@ -27,89 +22,99 @@ int new_mg_timer(lua_State *L) {
 	if(!tmr) lua_pushnil(L);
 
 	return 1;  /* new userdatum is already on the stack */
-}
+};
 
-mg_timer *check_mg_timer(lua_State *L) {
-	void *ud = luaL_checkudata(L, 1, "LuaBook.mg_timer");
-	luaL_argcheck(L, ud != NULL, 1, "`mg_timer' expected");
+mg_timer *check_mg_timer(lua_State *L, int pos) {
+	void *ud = luaL_checkudata(L, pos, "LuaBook.mg_timer");
+	luaL_argcheck(L, ud != NULL, pos, "`mg_timer' expected");
+
 	return(mg_timer*)ud;
-}
+};
 
 // struct mg_timer *mg_timer_add(struct mg_mgr *mgr, uint64_t period_ms, unsigned flags, void (*fn)(void *), void *fn_data);
 static int _mg_timer_add(lua_State *L) {
-	mg_mgr *mgr = checkmgr(L);
-	uint64_t period_ms = luaL_checknumber(L, 2);
-	unsigned flags = luaL_checkint(L, 3);
+	void *arg = NULL;
+	int nargs = lua_gettop(L);
+	mg_mgr *mgr = check_mg_mgr(L);
+	uint64_t period_ms = luaL_checkinteger(L, 2);
+	unsigned flags = 0;
+	uint8_t flag = 0;
+	// parse flags
+	for( int i = 0; i < 3; i++) {
+		if(lua_type(L, (3 + i)) == LUA_TNUMBER) {
+			if(i > 0) lua_remove(L, 3);
+			flag = (uint8_t)lua_tointeger(L, 3);
+
+			if(i == 0)
+				flags = flag;
+			else
+				flags = flags | flag;
+		}
+		else
+			break;
+	}
+
+	const char *cb = luaL_checkstring(L, 4);
+
+	if(nargs > 4)
+		arg = (void*)lua_topointer(L, 5);
+
 	lua_State_t *GL = ((lua_State_t*)lua_newuserdata(L, sizeof(lua_State_t)));
 	GL->L = L; // pass the lua_State pointer to fn_serv
-	new_mg_timer(L);
-	mg_timer *tmr = mg_timer_add(mgr, period_ms, flags, dummy, GL);
+	GL->callback = cb;
+	GL->fn_data = arg;
+
+	_mg_timer_new(L);
+	mg_timer *tmr = mg_timer_add(mgr, period_ms, flags, fn_lua_timer, GL);
 	if(!tmr) lua_pushnil(L);
 
 	return 1;
-}
+};
 
 // void mg_timer_init(struct mg_timer **head, struct mg_timer *t, uint64_t period_ms, unsigned flags, void (*fn)(void *), void *fn_data);
 static int _mg_timer_init(lua_State *L) {
-	mg_timer *head = check_mg_timer(L);
+	mg_timer *head = check_mg_timer(L, 1);
 	lua_remove(L, 1);
-	mg_timer *t = check_mg_timer(L);
+	mg_timer *t = check_mg_timer(L, 1);
 	uint64_t period_ms = luaL_checknumber(L, 2);
 	unsigned flags = luaL_checkint(L, 3);
+	const char *cb = luaL_checkstring(L, 4);
+
 	lua_State_t *GL = ((lua_State_t*)lua_newuserdata(L, sizeof(lua_State_t)));
-	GL->L = L; // pass the lua_State pointer to fn_serv
-	mg_timer_init(&head, t, period_ms, flags, dummy, GL );
+	GL->L = L; 		// pass the lua_State pointer to fn_serv
+	GL->callback = cb;	 // pass the lua callbaack
+	GL->fn_data = NULL;
+	mg_timer_init(&head, t, period_ms, flags, fn_lua_timer, GL );
+
 	return 0;
-}
+};
 
 // void mg_timer_free(struct mg_timer **head, struct mg_timer *t);
 static int _mg_timer_free(lua_State *L) {
-	mg_timer *head = check_mg_timer(L);
+	mg_timer *head = check_mg_timer(L, 1);
 	lua_remove(L, 1);
-	mg_timer *t = check_mg_timer(L);
+	mg_timer *t = check_mg_timer(L, 1);
 	mg_timer_free(&head, t);
+
 	return 0;
-}
+};
 
 // void mg_timer_poll(struct mg_timer **head, uint64_t uptime_ms);
 static int _mg_timer_poll(lua_State *L) {
-	mg_timer *head = check_mg_timer(L);
+	mg_timer *head = check_mg_timer(L, 1);
 	uint64_t uptime_ms = luaL_checknumber(L, 2);
 	mg_timer_poll(&head, uptime_ms);
-	return 0;
-}
 
-/*static void dumpstack (lua_State *L) {
-  int top=lua_gettop(L);
-  for (int i = 1; i <= top; i++) {
-    printf("%d\t%s\t", i, luaL_typename(L,i));
-    switch (lua_type(L, i)) {
-      case LUA_TNUMBER:
-        printf("%g\n",lua_tonumber(L,i));
-        break;
-      case LUA_TSTRING:
-        printf("%s\n",lua_tostring(L,i));
-        break;
-      case LUA_TBOOLEAN:
-        printf("%s\n", (lua_toboolean(L, i) ? "true" : "false"));
-        break;
-      case LUA_TNIL:
-        printf("%s\n", "nil");
-        break;
-      default:
-        printf("%p\n",lua_topointer(L,i));
-        break;
-    }
-  }
-}*/
+	return 0;
+};
 
 static const struct luaL_reg mg_timer_lib_f [] = {
-	{"new", 	new_mg_timer	},
+	{"new", 	_mg_timer_new	},
 	{NULL, NULL}
 };
 
 static const struct luaL_reg mg_timer_lib_m [] = {
-	{"new",		new_mg_timer	},
+	{"new",		_mg_timer_new	},
 	{"add",		_mg_timer_add	},
 	{"init",	_mg_timer_init	},
 	{"poll",	_mg_timer_poll	},
@@ -118,7 +123,6 @@ static const struct luaL_reg mg_timer_lib_m [] = {
 };
 
 void mg_open_mg_timer(lua_State *L) {
-	//printf("START MG.TIMER: \n"); dumpstack(L);
 	lua_newtable(L);
 	luaL_register(L, NULL, mg_timer_lib_m);
 	lua_setfield(L, -2, "timer");
@@ -130,5 +134,4 @@ void mg_open_mg_timer(lua_State *L) {
 	luaL_openlib(L, NULL, mg_timer_lib_m, 0);
 	luaL_openlib(L, MGTIMER, mg_timer_lib_f, 0);
 	lua_pop(L, 2);
-	//printf("END MG.TIMER: \n"); dumpstack(L);
-}
+};

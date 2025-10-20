@@ -3,8 +3,6 @@
 
 #define MG_IOBUF "mg_iobuf"
 
-typedef struct mg_iobuf mg_iobuf;
-
 // C++ GAURDS FOR C LIBS
 #ifndef __cplusplus
 // LUA LIBS FOR gcc
@@ -25,8 +23,11 @@ extern "C" {
 }
 #endif
 
+typedef struct mg_iobuf mg_iobuf;
+
 void mg_open_mg_iobuf(lua_State *L);
-int newiobuf (lua_State *L);
-mg_iobuf *checkiobuf(lua_State *L);
+int _mg_iobuf_new (lua_State *L);
+int _mg_iobuf_newt(lua_State * L);
+mg_iobuf *check_mg_iobuf(lua_State *L, int pos);
 
 #endif

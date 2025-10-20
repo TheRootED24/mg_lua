@@ -1,11 +1,7 @@
 #ifndef MG_TIMER_H
 #define MG_TIMER_H
 
-#include "mg_lua.h"
-
 #define MGTIMER "mg_timer"
-
-typedef struct mg_timer mg_timer;
 
 // C++ GAURDS FOR C LIBS
 #ifndef __cplusplus
@@ -22,13 +18,16 @@ extern "C" {
 #endif
 // MONGOOSE C LIB
 #include "../includes/libmongoose/src/mongoose.h"
+#include "mg_lua_cb.h"
 
 #ifdef __cplusplus
 }
 #endif
 
+typedef struct mg_timer mg_timer;
+
 void  mg_open_mg_timer (lua_State *L);
-int new_mg_timer (lua_State *L);
-mg_timer *check_mg_timer(lua_State *L);
+int _mg_timer_new (lua_State *L);
+mg_timer *check_mg_timer(lua_State *L, int pos);
 
 #endif

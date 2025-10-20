@@ -28,7 +28,7 @@ extern "C" {
 #endif
 
 void  mg_open_mg_mqtt_opts (lua_State *L);
-int new_mqtt_opts (lua_State *L);
-mqtt_opts *check_mqtt_opts(lua_State *L);
+int _mg_mqtt_opts_new (lua_State *L);
+mqtt_opts *check_mqtt_opts(lua_State *L, int pos);
 
 #endif

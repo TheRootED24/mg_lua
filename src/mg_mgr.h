@@ -1,11 +1,7 @@
 #ifndef MGMGR_H
 #define MGMGR_H
 
-#include "mg_lua.h"
-
 #define MGMGR "mgr"
-
-typedef struct mg_mgr mg_mgr;
 
 // C++ GAURDS FOR C LIBS
 #ifndef __cplusplus
@@ -22,12 +18,16 @@ extern "C" {
 #endif
 // MONGOOSE C LIB
 #include "../includes/libmongoose/src/mongoose.h"
+#include "mg_connection.h"
 
 #ifdef __cplusplus
 }
 #endif
 
+typedef struct mg_mgr mg_mgr;
+
 void mg_open_mg_mgr (lua_State *L);
-mg_mgr *checkmgr(lua_State *L);
-int newmgr (lua_State *L);
+mg_mgr *check_mg_mgr(lua_State *L);
+int _mg_mgr_new (lua_State *L);
+
 #endif

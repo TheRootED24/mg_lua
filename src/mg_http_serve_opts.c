@@ -12,149 +12,240 @@ struct mg_http_serve_opts {
 };
 */
 
-int newopts (lua_State *L) {
+int _mg_http_serve_opts_new (lua_State *L) {
 	http_serve_opts *opts = NULL;
-	const char *root_dir 		= luaL_optstring(L, 1, ".");
-	//const char *ssi_pattern 	= NULL; //luaL_optstring(L, 2, NULL);
-	//const char *extra_headers 	= NULL; //luaL_optstring(L, 3, NULL);
-	//const char *mime_types 		= NULL; //luaL_optstring(L, 4, NULL);
-	//const char *page404 		= NULL; //luaL_optstring(L, 5, NULL);
+	const char *root_dir = ".";
+	if(lua_isstring(L, 1)) {
+		root_dir = lua_tostring(L, 1);
+		lua_remove(L, 1);
+	}
+	int nargs = lua_gettop(L);
+	
+	if(nargs > 0) {
+		int pos = nargs > 1 ? -1 : 1;
+		if(lua_istable(L, 1)) {
+			lua_getfield(L, 1, "ctx");
+			pos = -1;
+		}
 
-	opts = (http_serve_opts *)lua_newuserdata(L, sizeof(http_serve_opts));
-	memset(opts, 0, sizeof(http_serve_opts));
+		if(lua_isstring(L, 1))
+			root_dir = lua_tostring(L, 1);
+		
+		opts = (http_serve_opts*)lua_touserdata(L, pos);
+	}
+	else {
+		opts = (http_serve_opts*)lua_newuserdata(L, sizeof(http_serve_opts));
+		memset(opts, 0 , sizeof(http_serve_opts));
+	}
+	
 	luaL_getmetatable(L, "LuaBook.http_serve_opts");
 	lua_setmetatable(L, -2);
-
-	opts->root_dir 		= root_dir;
-
-	if(!opts) lua_pushnil(L);
+	if(opts)
+		opts->root_dir = root_dir;
+	else {
+		
+		lua_pushnil(L);
+	}
 
 	return 1;  /* new userdatum is already on the stack */
-}
+};
 
-http_serve_opts *checkopts(lua_State *L) {
-	void *ud = luaL_checkudata(L, 1, "LuaBook.http_serve_opts");
-	luaL_argcheck(L, ud != NULL, 1, "`http_serve_opts' expected");
+http_serve_opts *check_mg_http_serve_opts(lua_State *L, int pos) {
+	if(lua_istable(L, pos)) {
+		lua_getfield(L, pos, "ctx");
+
+		if(lua_isuserdata(L, -1))
+			pos = -1;
+	}
+	void *ud = luaL_checkudata(L, pos, "LuaBook.http_serve_opts");
+	luaL_argcheck(L, ud != NULL, pos, "`mg_http_serve_opts' expected");
+
 	return (http_serve_opts*)ud;
-
 };
 
 static int _opts_root_dir(lua_State *L) {
 	int nargs = lua_gettop(L);
-	http_serve_opts *opts = (http_serve_opts*)lua_topointer(L, 1);
+	http_serve_opts *opts = check_mg_http_serve_opts(L, 1);
 	if(nargs > 1)
-		opts->root_dir = luaL_checkstring(L, -1);
+		opts->root_dir = luaL_checkstring(L, 2);
 
 	lua_pushstring(L, opts->root_dir);
+
 	return 1;
 };
 
 static int _opts_ssi_pattern(lua_State *L) {
 	int nargs = lua_gettop(L);
-	http_serve_opts *opts = (http_serve_opts*)lua_topointer(L, 1);
+	http_serve_opts *opts = check_mg_http_serve_opts(L, 1);
 	if(nargs > 1)
-		opts->ssi_pattern = luaL_checkstring(L, -1);
+		opts->ssi_pattern = luaL_checkstring(L, 2);
 
 	lua_pushstring(L, opts->ssi_pattern);
+
 	return 1;
 };
 
 static int _opts_extra_headers(lua_State *L) {
 	int nargs = lua_gettop(L);
-	http_serve_opts *opts = (http_serve_opts*)lua_topointer(L, 1);
+	http_serve_opts *opts = check_mg_http_serve_opts(L, 1);
 	if(nargs > 1)
-		opts->extra_headers = luaL_checkstring(L, -1);
+		opts->extra_headers = luaL_checkstring(L, 2);
 
 	lua_pushstring(L, opts->extra_headers);
+
 	return 1;
 };
 
 static int _opts_mime_types(lua_State *L) {
 	int nargs = lua_gettop(L);
-	http_serve_opts *opts = (http_serve_opts*)lua_topointer(L, 1);
+	http_serve_opts *opts = check_mg_http_serve_opts(L, 1);
 	if(nargs > 1)
-		opts->mime_types= luaL_checkstring(L, -1);
+		opts->mime_types= luaL_checkstring(L, 2);
 
 	lua_pushstring(L, opts->mime_types);
+
 	return 1;
 };
 
 static int _opts_page404(lua_State *L) {
 	int nargs = lua_gettop(L);
-	http_serve_opts *opts = (http_serve_opts*)lua_topointer(L, 1);
+	http_serve_opts *opts = check_mg_http_serve_opts(L, 1);
 	if(nargs > 1)
-		opts->page404 = luaL_checkstring(L, -1);
+		opts->page404 = luaL_checkstring(L, 2);
 
 	lua_pushstring(L, opts->page404);
+
 	return 1;
 };
-
-/*static void dumpstack (lua_State *L) {
-  int top=lua_gettop(L);
-  for (int i = 1; i <= top; i++) {
-    printf("%d\t%s\t", i, luaL_typename(L,i));
-    switch (lua_type(L, i)) {
-      case LUA_TNUMBER:
-        printf("%g\n",lua_tonumber(L,i));
-        break;
-      case LUA_TSTRING:
-        printf("%s\n",lua_tostring(L,i));
-        break;
-      case LUA_TBOOLEAN:
-        printf("%s\n", (lua_toboolean(L, i) ? "true" : "false"));
-        break;
-      case LUA_TNIL:
-        printf("%s\n", "nil");
-        break;
-      default:
-        printf("%p\n",lua_topointer(L,i));
-        break;
-    }
-  }
-}*/
 
 static int _opts_fs(lua_State *L) {
-	//int nargs = lua_gettop(L);
-	http_serve_opts *opts = checkopts(L);
+	http_serve_opts *opts = check_mg_http_serve_opts(L, 1);
 	if(lua_islightuserdata(L, -1))
-		opts->fs = (void*)lua_topointer(L, -1);
+		opts->fs = (void*)lua_topointer(L, 2);
 
 	lua_pushlightuserdata(L, opts->fs);
+
 	return 1;
 };
 
-static const struct luaL_reg http_opts_lib_f [] = {
-	{"new", newopts },
+static int _mg_http_serve_opts_new_index(lua_State *L) {
+	if(lua_istable(L, 1)) { // stack : {table, key}
+		const char *key = luaL_checkstring(L, 2);
+		lua_remove(L, 2);
+		
+		if(strcmp(key, "ctx") != 0) {
+			if(key && strcmp(key, "root_dir") == 0 ) {
+				_opts_root_dir(L);
+			}
+			else if(key && strcmp(key, "ssi_pattern") == 0 ) {
+				_opts_ssi_pattern(L);
+			}
+			else if(key && strcmp(key, "extra_headers") == 0 ) {
+				_opts_extra_headers(L);
+			}
+			else if(key && strcmp(key, "mime_types") == 0 ) {
+				_opts_mime_types(L);
+			}
+			else if(key && strcmp(key, "page404") == 0 ) {
+				_opts_page404(L);
+			}
+			else if(key && strcmp(key, "fs") == 0 ) {
+				_opts_fs(L);
+			}
+		}
+	}
+
+	return 0;
+};
+
+static int _mg_http_serve_opts_index(lua_State *L) {
+	if(lua_istable(L, 1)) {
+		const char *key = luaL_checkstring(L, 2);
+		lua_pop(L, 1);
+
+		if(key && strcmp(key, "root_dir") == 0 ) {
+			_opts_root_dir(L);
+		}
+		else if(key && strcmp(key, "ssi_pattern") == 0 ) {
+			_opts_ssi_pattern(L);
+		}
+		else if(key && strcmp(key, "extra_headers") == 0 ) {
+			_opts_extra_headers(L);
+		}
+		else if(key && strcmp(key, "mime_types") == 0 ) {
+			_opts_mime_types(L);
+		}
+		else if(key && strcmp(key, "page404") == 0 ) {
+			_opts_page404(L);
+		}
+		else if(key && strcmp(key, "fs") == 0 ) {
+			_opts_fs(L);
+		}
+		else if(key && strcmp(key, "ctx") == 0 ) {
+			lua_getfield(L, 1, "ctx");
+			lua_remove(L, 1);
+			_mg_http_serve_opts_new(L);
+		}
+		else
+			lua_pushnil(L);
+
+		return 1;
+	}
+	lua_pushnil(L);
+
+	return 1;
+};
+
+int _mg_http_serve_opts_newt(lua_State * L) {
+	_mg_http_serve_opts_new(L);
+
+	lua_newtable(L);
+	lua_pushvalue(L, 1);
+	lua_setfield(L, -2, "ctx");
+
+	lua_newtable(L);
+	lua_pushstring(L, "__index");
+	lua_pushcfunction(L, _mg_http_serve_opts_index);
+	lua_settable(L, -3); // set the __index in the metatable (-3)
+
+	lua_pushstring(L, "__newindex");
+	lua_pushcfunction(L, _mg_http_serve_opts_new_index);
+	lua_settable(L, -3); // set the __newindex in the metatable (-3)
+
+	lua_setmetatable(L, -2);
+
+	return 1;
+};
+
+static const struct luaL_reg http_serve_opts_lib_f [] = {
+	//{"new",		_mg_http_serve_opts_new		},
+	{"new", 	_mg_http_serve_opts_newt	},
 	{NULL, NULL}
 };
 
-static const struct luaL_reg http_opts_lib_m [] = {
-	//{"__tostring",	_print_header	},
-	//{"__call",		_call_header	},
-	{"new", 			newopts 			},
+static const struct luaL_reg http_serve_opts_lib_m [] = {
+
+	//{"new", 		_mg_http_serve_opts_new },
+	{"new", 		_mg_http_serve_opts_newt},
 	{"root_dir", 		_opts_root_dir		},
 	{"ssi_pattern", 	_opts_ssi_pattern	},
 	{"extra_headers", 	_opts_extra_headers	},
 	{"mime_types", 		_opts_mime_types	},
 	{"page404", 		_opts_page404		},
-	{"fs", 				_opts_fs			},
+	{"fs", 			_opts_fs		},
 	{NULL, NULL}
 };
 
 void mg_open_mg_http_serve_opts(lua_State *L) {
-	//printf("START MG.HTTP.OPTS: \n");
-	//dumpstack(L);
 	lua_newtable(L);
-	luaL_register(L, NULL, http_opts_lib_m);
+	luaL_register(L, NULL, http_serve_opts_lib_m);
 	lua_setfield(L, -2, "serve_opts");
 	// mg_http_serve_opts
-	luaL_newmetatable(L, "LuaBook.http_opts");
+	luaL_newmetatable(L, "LuaBook.http_serve_opts");
 	lua_pushstring(L, "__index");
 	lua_pushvalue(L, -2);  /* pushes the metatable */
 	lua_settable(L, -3);  /* metatable.__index = metatable */
-	luaL_openlib(L, NULL, http_opts_lib_m, 0);
-	luaL_openlib(L, "mg_http_opts", http_opts_lib_f, 0);
+	luaL_openlib(L, NULL, http_serve_opts_lib_m, 0);
+	luaL_openlib(L, "http_serve_opts", http_serve_opts_lib_f, 0);
 	lua_pop(L, 2);
-
-	//printf("END MG.HTTP.OPTS: \n"); dumpstack(L);
-}
+};

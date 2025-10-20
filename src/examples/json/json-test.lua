@@ -45,7 +45,7 @@ print(offset, length);
 --[[ **** mg_json_get_tok() **** ]]
 local json1 = mg.str.new("{\"a\":\"b:c\"}")
 local resp = mg.json.get_tok(json1, "$.a")
-print(resp)
+print(resp,"here")
 
 
 
@@ -164,13 +164,13 @@ while ((ofs = mg_json_next(obj, ofs, &key, &val)) > 0) {
 }
 ]]
 
-local obj = mg.str.new("{\"a\": [true], \"b\": 12345}");
-local key = mg.str.new();
-local val = mg.str.new();
+local obj = mg.str.newt("{\"a\": [true], \"b\": 12345}");
+local key = mg.str.newt();
+local val = mg.str.newt();
 
 local ofs = mg.json.next(obj, 0, key, val);
 while(ofs > 0) do
-    print(key:buf(), val:buf(), ofs)
+    print(key.buf, val.buf, ofs)
     ofs = mg.json.next(obj, ofs, key, val);
 end
 

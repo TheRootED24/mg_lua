@@ -3,8 +3,6 @@
 
 #define MG_TLS_OPTS "mg_tls_opts"
 
-typedef struct mg_tls_opts tls_opts;
-
 // C++ GAURDS FOR C LIBS
 #ifndef __cplusplus
 // LUA LIBS FOR gcc
@@ -25,8 +23,10 @@ extern "C" {
 }
 #endif
 
+typedef struct mg_tls_opts tls_opts;
+
 void  mg_open_mg_tls_opts (lua_State *L);
-int new_tls_opts (lua_State *L);
-tls_opts *check_tls_opts(lua_State *L);
+int _mg_tls_opts_new (lua_State *L);
+tls_opts *check_mg_tls_opts(lua_State *L, int pos);
 
 #endif
