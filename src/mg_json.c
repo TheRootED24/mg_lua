@@ -2,8 +2,16 @@
 
 // int mg_json_get(struct mg_str json, const char *path, int *toklen);
 static int _mg_json_get(lua_State *L) {
-	struct mg_str *json = check_mg_str(L , 1);
 	const char *path = luaL_checkstring(L, 2);
+	lua_pop(L, 1);
+
+	if(lua_isstring(L, 1)) {
+		_mg_str_newt(L);
+		lua_remove(L, 1);
+	}
+
+	struct mg_str *json = check_mg_str(L , 1);
+
 	int toklen, offset = mg_json_get(*json, path, &toklen);
 	lua_pushinteger(L, toklen);
 	lua_pushinteger(L, offset);
@@ -13,8 +21,16 @@ static int _mg_json_get(lua_State *L) {
 
 // struct mg_str mg_json_get_tok(struct mg_str json, const char *path);
 static int _mg_json_get_tok(lua_State *L) {
-	struct mg_str *json = check_mg_str(L , 1); //mg_str(luaL_checkstring(L, 1));
 	const char *path = luaL_checkstring(L, 2);
+	lua_pop(L, 1);
+
+	if(lua_isstring(L, 1)) {
+		_mg_str_newt(L);
+		lua_remove(L, 1);
+	}
+
+	struct mg_str *json = check_mg_str(L , 1); //mg_str(luaL_checkstring(L, 1));
+	
 	struct mg_str str =  mg_json_get_tok(*json, path);
 	lua_pushlstring(L, str.buf, str.len);
 
@@ -23,8 +39,15 @@ static int _mg_json_get_tok(lua_State *L) {
 
 // bool mg_json_get_num(struct mg_str json, const char *path, double *v);
 static int _mg_json_get_num(lua_State *L) {
-	struct mg_str *json = check_mg_str(L , 1); //mg_str(luaL_checkstring(L, 1));
 	const char *path = luaL_checkstring(L, 2);
+	lua_pop(L, 1);
+
+	if(lua_isstring(L, 1)) {
+		_mg_str_newt(L);
+		lua_remove(L, 1);
+	}
+	struct mg_str *json = check_mg_str(L , 1);
+
 	double b;
 	bool found = mg_json_get_num(*json, path, &b);
 	if(found)
@@ -35,8 +58,15 @@ static int _mg_json_get_num(lua_State *L) {
 
 // bool mg_json_get_bool(struct mg_str json, const char *path, bool *v);
 static int _mg_json_get_bool(lua_State *L) {
-	struct mg_str *json = check_mg_str(L , 1); //mg_str(luaL_checkstring(L, 1));
 	const char *path = luaL_checkstring(L, 2);
+	lua_pop(L, 1);
+
+	if(lua_isstring(L, 1)) {
+		_mg_str_newt(L);
+		lua_remove(L, 1);
+	}
+	struct mg_str *json = check_mg_str(L , 1);
+
 	bool b = false;
 	mg_json_get_bool(*json, path, &b);
 	lua_pushboolean(L, b);
@@ -46,9 +76,16 @@ static int _mg_json_get_bool(lua_State *L) {
 
 // long mg_json_get_long(struct mg_str json, const char *path, long default_val);
 static int _mg_json_get_long(lua_State *L) {
-	struct mg_str *json = check_mg_str(L , 1); //mg_str(luaL_checkstring(L, 1));
-	const char *path = luaL_checkstring(L, 2);
 	long l = luaL_optlong(L, 3, -1);
+	const char *path = luaL_checkstring(L, 2);
+	lua_settop(L, 1);
+
+	if(lua_isstring(L, 1)) {
+		_mg_str_newt(L);
+		lua_remove(L, 1);
+	}
+	struct mg_str *json = check_mg_str(L , 1);
+	
 	l = mg_json_get_long(*json, path, l);
 	lua_pushinteger(L, l);
 
@@ -57,8 +94,15 @@ static int _mg_json_get_long(lua_State *L) {
 
 // char *mg_json_get_str(struct mg_str json, const char *path);
 static int _mg_json_get_str(lua_State *L) {
-	struct mg_str *json = check_mg_str(L , 1); //mg_str(luaL_checkstring(L, 1));
 	const char *path = luaL_checkstring(L, 2);
+	lua_pop(L, 1);
+
+	if(lua_isstring(L, 1)) {
+		_mg_str_newt(L);
+		lua_remove(L, 1);
+	}
+	struct mg_str *json = check_mg_str(L , 1);
+
 	char *res = mg_json_get_str(*json, path);
 	if(res) {
 		lua_pushstring(L, res);
@@ -74,9 +118,17 @@ static int _mg_json_get_str(lua_State *L) {
 
 // char *mg_json_get_hex(struct mg_str json, const char *path, int *len);
 static int _mg_json_get_hex(lua_State *L) {
-	struct mg_str *json = check_mg_str(L , 1); //mg_str(luaL_checkstring(L, 1));
-	const char *path = luaL_checkstring(L, 2);
 	int len = luaL_optinteger(L, 3, 0);
+	const char *path = luaL_checkstring(L, 2);
+	lua_settop(L, 1);
+
+	if(lua_isstring(L, 1)) {
+		_mg_str_newt(L);
+		lua_remove(L, 1);
+	}
+	struct mg_str *json = check_mg_str(L , 1);
+
+	
 	char *res = mg_json_get_hex(*json, path, &len);
 	if(res) {
 		lua_pushstring(L, res);
@@ -92,9 +144,16 @@ static int _mg_json_get_hex(lua_State *L) {
 
 // char *mg_json_get_b64(struct mg_str json, const char *path, int *len);
 static int _mg_json_get_b64(lua_State *L) {
-	struct mg_str *json = check_mg_str(L , 1); //mg_str(luaL_checkstring(L, 1));
 	const char *path = luaL_checkstring(L, 2);
 	int len = luaL_checkinteger(L, 3);
+	lua_settop(L, 1);
+
+	if(lua_isstring(L, 1)) {
+		_mg_str_newt(L);
+		lua_remove(L, 1);
+	}
+	struct mg_str *json = check_mg_str(L , 1);
+
 	char *res = mg_json_get_b64(*json, path, &len);
 	if(res) {
 		lua_pushstring(L, res);
@@ -110,8 +169,15 @@ static int _mg_json_get_b64(lua_State *L) {
 
 // bool mg_json_unescape(struct mg_str str, char *buf, size_t len);
 static int _mg_json_unescape(lua_State *L) {
-	struct mg_str *json = check_mg_str(L , 1); //mg_str(luaL_checkstring(L, 1));
 	size_t len = luaL_checklong(L, 2);
+	lua_pop(L, 1);
+
+	if(lua_isstring(L, 1)) {
+		_mg_str_newt(L);
+		lua_remove(L, 1);
+	}
+	struct mg_str *json = check_mg_str(L , 1);
+
 	char buf[len];
 	memset(buf, 0, len);
 	bool found = mg_json_unescape( *json, buf, len);
@@ -130,10 +196,28 @@ static int _mg_json_unescape(lua_State *L) {
 
 // size_t mg_json_next(struct mg_str obj, size_t ofs, struct mg_str *key, struct mg_str *val);
 static int _mg_json_next(lua_State *L) {
-	struct mg_str *obj = check_mg_str(L , 1); //mg_str(luaL_checkstring(L, 1));
 	size_t ofs = (size_t)luaL_checkinteger(L, 2);
-	struct mg_str *key = (struct mg_str *)lua_topointer(L, 3);
-	struct mg_str *val = (struct mg_str *)lua_topointer(L, 4);
+	lua_remove(L, 2);
+
+	if(lua_isstring(L, 1)) {
+		_mg_str_newt(L);
+		lua_remove(L, 1);
+	}
+	struct mg_str *obj = check_mg_str(L , 1); //mg_str(luaL_checkstring(L, 1));
+	lua_remove(L, 1);
+
+	if(lua_isstring(L, 1)) {
+		_mg_str_newt(L);
+		lua_remove(L, 1);
+	}
+	struct mg_str *key = check_mg_str(L , 1); 
+	lua_remove(L, 1);
+
+	if(lua_isstring(L, 1)) {
+		_mg_str_newt(L);
+		lua_remove(L, 1);
+	}
+	struct mg_str *val = check_mg_str(L , 1); 
 
 	size_t next = mg_json_next(*obj, ofs, key, val);
 	lua_pushnumber(L, next);

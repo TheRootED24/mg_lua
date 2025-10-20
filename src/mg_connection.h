@@ -20,6 +20,7 @@ extern "C" {
 #include "../includes/libmongoose/src/mongoose.h"
 #include "mg_iobuf.h"
 #include "mg_addr.h"
+#include "mg_mgr.h"
 
 #ifdef __cplusplus
 }
@@ -29,6 +30,7 @@ typedef struct mg_connection mg_connection;
 
 void mg_open_mg_connection(lua_State *L);
 int _mg_connection_new (lua_State *L);
+int _mg_connection_newt (lua_State *L);
 mg_connection *check_mg_connection(lua_State *L, int pos);
 
 #endif

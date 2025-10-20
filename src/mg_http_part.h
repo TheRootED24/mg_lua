@@ -19,6 +19,8 @@ extern "C" {
 // MONGOOSE C LIB
 #include "../includes/libmongoose/src/mongoose.h"
 
+#include "mg_str.h"
+
 #ifdef __cplusplus
 }
 #endif

@@ -14,12 +14,12 @@ int _mg_addr_new (lua_State *L) {
 	mg_addr *addr;
 	int nargs = lua_gettop(L);
 
-	if(nargs > 0) {
+	if(nargs > 0)
 		addr = (mg_addr*)lua_touserdata(L, 1);
-		lua_pushlightuserdata(L, addr);
-	 }
-	else
+	else {
 		addr = (mg_addr*)lua_newuserdata(L, sizeof(mg_addr));
+		memset(addr, 0 , sizeof(mg_addr));
+	}
 
 	luaL_getmetatable(L, "LuaBook.mg_addr");
 	lua_setmetatable(L, -2);
@@ -29,6 +29,11 @@ int _mg_addr_new (lua_State *L) {
 }
 
 mg_addr *check_mg_addr(lua_State *L, int pos) {
+	if(lua_istable(L, 1)) {
+		lua_getfield(L, 1, "ctx");
+		pos = -1;
+	}
+
 	void *ud = luaL_checkudata(L, pos, "LuaBook.mg_addr");
 	luaL_argcheck(L, ud != NULL, pos, "`mg_addr' expected");
 
@@ -65,13 +70,75 @@ static int _addr_is_ip6(lua_State *L) {
 	return 1;
 }
 
+static int _mg_addr_new_index(lua_State *L) {
+	if(lua_istable(L, 1)) {
+		const char *key = luaL_checkstring(L, 2);
+		printf("KEY: %s CANNOT BE UPDATED !\n", key);
+		lua_pop(L, 1);
+	}
+
+	return 0;
+};
+
+static int _mg_addr_index(lua_State *L) {
+	if(lua_istable(L, 1)) {
+		const char *key = luaL_checkstring(L, 2);
+		lua_pop(L, 1);
+
+		if(key && strcmp(key, "ip") == 0 ) {
+			_addr_ip(L);
+		}
+		else if(key && strcmp(key, "port") == 0 ) {
+			_addr_port(L);
+		}
+		else if(key && strcmp(key, "scope") == 0 ) {
+			_addr_scope_id(L);
+		}
+		else if(key && strcmp(key, "is_ip6") == 0 ) {
+			_addr_is_ip6(L);
+		}
+		else if(key && strcmp(key, "ctx") == 0 ) {
+			lua_getfield(L, 1, "ctx");
+			_mg_addr_new(L);
+		}
+		else
+			lua_pushnil(L);
+
+		return 1;
+	}
+	lua_pushnil(L);
+
+	return 1;
+};
+
+int _mg_addr_newt(lua_State * L) {
+	_mg_addr_new(L);
+
+	lua_newtable(L);
+	lua_pushvalue(L, 1);
+	lua_setfield(L, -2, "ctx");
+
+	lua_newtable(L);
+	lua_pushstring(L, "__index");
+	lua_pushcfunction(L, _mg_addr_index);
+	lua_settable(L, -3); // set the __index in the metatable (-3)
+
+	lua_pushstring(L, "__newindex");
+	lua_pushcfunction(L, _mg_addr_new_index);
+	lua_settable(L, -3); // set the __newindex in the metatable (-3)
+
+	lua_setmetatable(L, -2);
+
+	return 1;
+};
+
 static const struct luaL_reg mg_addr_lib_f [] = {
 	{"new", 	_mg_addr_new	},
 	{NULL, NULL}
 };
 
 static const struct luaL_reg mg_addr_lib_m [] = {
-	{"new", 	_mg_addr_new	},
+	{"new", 	_mg_addr_newt	},
 	{"ip",		_addr_ip	},
 	{"port",	_addr_port	},
 	{"scope_id",	_addr_scope_id	},

@@ -2,6 +2,8 @@
 
 int _mg_queue_new (lua_State *L) {
 	mg_queue *q = (mg_queue*)lua_newuserdata(L, sizeof(mg_queue));
+	memset(q, 0, sizeof(mg_queue));
+
 	luaL_getmetatable(L, "LuaBook.mg_queue");
 	lua_setmetatable(L, -2);
 	if(!q) lua_pushnil(L);
@@ -10,6 +12,11 @@ int _mg_queue_new (lua_State *L) {
 };
 
 mg_queue*check_mg_queue (lua_State *L, int pos) {
+	if(lua_istable(L, 1)) {
+		lua_getfield(L, 1, "ctx");
+		pos = -1;
+	}
+	
 	void *ud = luaL_checkudata(L, pos, "LuaBook.mg_queue");
 	luaL_argcheck(L, ud != NULL, pos, "`mg_queue' expected");
 
@@ -97,6 +104,77 @@ static int _mg_queue_printf(lua_State *L) {
 
 	size_t ret = mg_queue_printf(q, fmt, argstr);
 	lua_pushinteger(L, ret);
+
+	return 1;
+};
+
+static int _mg_queue_new_index(lua_State *L) {
+	if(lua_istable(L, 1)) { // stack : {table, key}
+		const char *key = luaL_checkstring(L, 2);
+		lua_remove(L, 2);
+		printf("Key: %s\n cannot be set !!\n", key);
+	}
+
+	return 0;
+};
+
+static int _mg_queue_index(lua_State *L) {
+	if(lua_istable(L, 1)) {
+		const char *key = luaL_checkstring(L, 2);
+		lua_pop(L, 1);
+
+		if(key && strcmp(key, "ctx") == 0 ) {
+			lua_getfield(L, 1, "ctx");
+			_mg_queue_new(L);
+		}
+		else
+			lua_pushnil(L);
+
+		return 1;
+	}
+	lua_pushnil(L);
+
+	return 1;
+};
+
+int _mg_queue_newt(lua_State * L) {
+	_mg_queue_new(L);
+
+	lua_newtable(L);
+	lua_pushvalue(L, 1);
+	lua_setfield(L, -2, "ctx");
+
+	lua_pushcfunction(L, _mg_queue_init);
+	lua_setfield(L, -2, "init");
+
+	lua_pushcfunction(L, _mg_queue_book);
+	lua_setfield(L, -2, "book");
+
+	lua_pushcfunction(L, _mg_queue_add);
+	lua_setfield(L, -2, "add");
+
+	lua_pushcfunction(L, _mg_queue_del);
+	lua_setfield(L, -2, "del");
+
+	lua_pushcfunction(L, _mg_queue_next);
+	lua_setfield(L, -2, "next");
+
+	lua_pushcfunction(L, _mg_queue_printf);
+	lua_setfield(L, -2, "printf");
+
+	lua_pushcfunction(L, _mg_queue_vprintf);
+	lua_setfield(L, -2, "vprintf");
+
+	lua_newtable(L);
+	lua_pushstring(L, "__index");
+	lua_pushcfunction(L, _mg_queue_index);
+	lua_settable(L, -3); // set the __index in the metatable (-3)
+
+	lua_pushstring(L, "__newindex");
+	lua_pushcfunction(L, _mg_queue_new_index);
+	lua_settable(L, -3); // set the __newindex in the metatable (-3)
+
+	lua_setmetatable(L, -2);
 
 	return 1;
 };

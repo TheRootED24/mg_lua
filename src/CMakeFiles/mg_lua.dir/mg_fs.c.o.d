@@ -145,4 +145,7 @@ src/CMakeFiles/mg_lua.dir/mg_fs.c.o: /home/hostle/mg_lua/src/mg_fs.c \
  /usr/include/x86_64-linux-gnu/bits/unistd.h \
  /usr/include/x86_64-linux-gnu/bits/unistd-decl.h \
  /usr/include/x86_64-linux-gnu/bits/unistd_ext.h \
- /home/hostle/mg_lua/src/mg_fd.h /home/hostle/mg_lua/src/mg_fs_file.h
+ /home/hostle/mg_lua/src/mg_fd.h /home/hostle/mg_lua/src/mg_fs_file.h \
+ /home/hostle/mg_lua/src/mg_str.h /home/hostle/mg_lua/src/mg_string.h \
+ /home/hostle/mg_lua/src/mg_mgr.h /home/hostle/mg_lua/src/mg_connection.h \
+ /home/hostle/mg_lua/src/mg_iobuf.h /home/hostle/mg_lua/src/mg_addr.h

@@ -1,8 +1,13 @@
 {
 	"files.associations": {
+		"*.c": "c",
 		"lauxlib.h": "c",
 		"lua.hpp": "c",
 		"mg_connection.h": "c",
-		"mongoose.h": "c"
+		"mongoose.h": "c",
+		"sstream": "c",
+		"array": "c",
+		"string": "c",
+		"string_view": "c"
 	}
 }

@@ -147,4 +147,5 @@ src/CMakeFiles/mg_lua.dir/mg_tls.c.o: /home/hostle/mg_lua/src/mg_tls.c \
  /usr/include/x86_64-linux-gnu/bits/unistd_ext.h \
  /home/hostle/mg_lua/src/mg_tls_opts.h \
  /home/hostle/mg_lua/src/mg_connection.h \
- /home/hostle/mg_lua/src/mg_iobuf.h /home/hostle/mg_lua/src/mg_addr.h
+ /home/hostle/mg_lua/src/mg_iobuf.h /home/hostle/mg_lua/src/mg_addr.h \
+ /home/hostle/mg_lua/src/mg_mgr.h

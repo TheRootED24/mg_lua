@@ -2,17 +2,24 @@
 
 //struct mg_str mg_file_read(struct mg_fs *fs, const char *path);
 static int _mg_file_read(lua_State *L) {
+	mg_str s; // = check_mg_str(L, 1);
+	memset(&s, 0, sizeof(mg_str));
+
 	int type = luaL_checkinteger(L, 1);
 	mg_fs *fs = type == 0 ? &mg_fs_posix : &mg_fs_packed;
 	const char *path = luaL_checkstring(L, 2);
+	//lua_settop(L, 1);
 
 	if(fs) {
-		struct mg_str file = mg_file_read(fs, path);
-		if(file.len > 1)
-			lua_pushlstring(L, file.buf, file.len);
+		mg_str s = mg_file_read(fs, path);
+		lua_pushlstring(L, s.buf, s.len);
+
+		if(s.buf)
+			free(s.buf);
 	}
-	else
-		lua_pushnil(L);
+
+	//if(s.buf && s.len < 1)
+		//lua_pushnil(L);
 
 	return 1;
 };
@@ -49,10 +56,31 @@ static int _mg_file_printf(lua_State *L) {
 	return 1;
 };
 
+// void mg_fs_close(struct mg_fd *fd);
+static int _mg_file_close(lua_State *L) {
+	mg_fd *fd = check_mg_fd(L, 1);
+	mg_fs_close(fd->fd);
+
+	return 0;
+};
+
+static int _mg_file_free(lua_State *L) {
+	printf("MADE IT!!\n");
+	mg_str *str = check_mg_str(L, 1);
+	if(str->buf != NULL)
+		free(str->buf);
+
+	//lua_pushlightuserdata(L, &str);
+
+	return 0;
+};
+
 static const struct luaL_reg fs_file_lib_f [] = {
 	{"read"	,	_mg_file_read	},
 	{"write", 	_mg_file_write	},
 	{"printf",  	_mg_file_printf	},
+	{"close",  	_mg_file_close	},
+	{"free",  	_mg_file_free	},
 	{NULL, NULL}
 };
 
@@ -60,6 +88,8 @@ static const struct luaL_reg fs_file_lib_m [] = {
 	{"read"	,	_mg_file_read	},
 	{"write", 	_mg_file_write	},
 	{"printf",  	_mg_file_printf },
+	{"close",  	_mg_file_close	},
+	{"free",  	_mg_file_free	},
 	{NULL, NULL}
 };
 

@@ -106,7 +106,7 @@ local function main(arg)
 	local mgr = mg.mgr.new();
 	mgr = mg.mgr.init(mgr);
 
-	mg.timer.add(mgr, 3000, MG_TIMER_RUN_NOW, MG_TIMER_REPEAT, "timer", mgr);
+	mg.timer.add(mgr, 3000, MG_TIMER_REPEAT, MG_TIMER_RUN_NOW, "timer", mgr);
 
 	while(run) do
 		mg.mgr.poll(mgr, 1000);

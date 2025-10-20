@@ -1,7 +1,7 @@
 require "mg_types"
 local mg = require "mg_lua"
 
-local s_listen_on = "ws://localhost:8000";
+local s_listen_on = "ws://localhost:8600";
 local s_web_root = "examples/websocket/rpc-over-websocket/web_root/";
 
 
@@ -54,14 +54,15 @@ CALLBACK = function(c, ev, ev_data)
 		end
 	elseif(ev == MG_EV_WS_MSG) then
 		local wm = mg.ws.message.new(ev_data);
-		local io = mg.iobuf.new(0, 0, 0, 512);
+		local io = mg.iobuf.newt();
+		--io = io.ctx;
 		local io_ok = mg.iobuf.init(io, 32,512);
 
 		local req = mg.rpc.req.new(rpc_head, io, wm:data());
 		mg.rpc.process(req);
-		if(io:buf()) then
+		if(io.buf) then
 			local conn = mg.connection.new(c);
-			 mg.ws.send(conn, io:buf(), io:len(), WEBSOCKET_OP_TEXT);
+			 mg.ws.send(conn, io.buf, io.len, WEBSOCKET_OP_TEXT);
 		end
 		mg.iobuf.free(io);
 	end

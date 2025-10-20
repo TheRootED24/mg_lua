@@ -67,10 +67,10 @@ static int _mg_connect(lua_State *L) {
 };
 
 static int _mg_send(lua_State *L) {
-	mg_connection *conn = check_mg_connection(L, 1);
-	//void *data = (void*)lua_topointer(L, -2);
-	//size_t len = luaL_checknumber(L, -1);
-	bool ret = mg_send(conn, (void*)lua_topointer(L, -2), luaL_checknumber(L, -1));
+	mg_connection *conn = (mg_connection*)lua_topointer(L, 1);
+	const char *data = lua_tostring(L, 2);
+	size_t len = luaL_checkinteger(L, 3);
+	bool ret = mg_send(conn, (const void *)data, len);
 	lua_pushboolean(L, ret);
 
 	return 1;
@@ -81,7 +81,7 @@ static int _mg_wakeup(lua_State *L) {
 	// long id = (long)lua_tonumber(L, -3);
 	// void *data = (void*)lua_topointer(L, -2);
 	//size_t len = luaL_checknumber(L, -1);
-	bool ret = mg_wakeup(mgr, (long)lua_tonumber(L, -3), (void*)lua_topointer(L, -2), luaL_checknumber(L, -1));
+	bool ret = mg_wakeup(mgr, (unsigned long)lua_tonumber(L, 2), lua_tostring(L, 3), (size_t)luaL_checklong(L, 4));
 	lua_pushboolean(L, ret);
 
 	return 1;
@@ -116,7 +116,7 @@ static int _mg_wrapfd(lua_State *L) {
 };
 
 static int _mg_printf(lua_State *L) {
-	mg_connection *conn = (mg_connection*)lua_topointer(L, 1);
+	mg_connection *conn = check_mg_connection(L, 1);//(mg_connection*)lua_topointer(L, 1);
 	const char *fargs = luaL_checkstring(L, 2);
 	size_t ret  = mg_printf(conn, "%s", fargs);
 	lua_pushnumber(L, ret);

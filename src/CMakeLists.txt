@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.1...3.27)
 #-------------------------------------------------------------------------------
 # Symlink Macro
 # usage: install_symlink(filepath sympath) -- for install only
+#-------------------------------------------------------------------------------
 macro(install_symlink filepath sympath)
     install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${filepath} ${sympath})")
     install(CODE "message(\"-- Created symlink: ${sympath} -> ${filepath}\")")
@@ -19,7 +20,7 @@ endif()
 
 project(
   mg_lua
-  VERSION 1.0
+  VERSION 7.1.9
   LANGUAGES C
   )
 

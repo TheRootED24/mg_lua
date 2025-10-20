@@ -28,6 +28,7 @@ typedef struct mg_str mg_str;
 
 void mg_open_mg_str (lua_State *L);
 int _mg_str_new (lua_State *L);
+int _mg_str_newt (lua_State *L);
 struct mg_str *check_mg_str(lua_State *L, int pos);
 
 #endif

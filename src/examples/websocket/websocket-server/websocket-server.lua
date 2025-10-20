@@ -39,7 +39,7 @@ CALLBACK = function(c, ev, ev_data)
 		local conn = mg.connection.new(c);
 		-- NOTE mg.ws.messages.new() must be called after gathering the connections
 		-- currently, conns are popped from stack upon call to message.new() ...
-		local t = conn:mgr()
+		local t = conn:mgr_conns()
 		--/* load all marked "WS" connection into conns table */--
 		local conns = {}
 			while(t) do

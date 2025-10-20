@@ -8,14 +8,15 @@ static int _mg_http_listen(lua_State *L) {
 
 	mg_event_handler_t fn = (mg_event_handler_t)fn_lua_cb;
 	lua_State_t *GL = ((lua_State_t*)lua_newuserdata(L, sizeof(lua_State_t)));
+	memset(GL, 0, sizeof(lua_State_t));
 	GL->L = L; // pass the lua_State pointer to fn_serv
 	GL->callback = cb;
 
-	//lua_settop(L, 0); // clear the stack
+	lua_settop(L, 0); // clear the stack
 	mg_connection *c = (mg_connection*)mg_http_listen(mgr, s_url, fn, GL);
 	lua_pushlightuserdata(L, c);
-	_mg_connection_new(L); // push a new connection udata on stack
-	check_mg_connection(L, -1); // check conn is ready
+	_mg_connection_newt(L); // push a new connection udata on stack
+	check_mg_connection(L, 1); // check conn is ready
 
 	return 1;
 };
@@ -31,11 +32,11 @@ static int _mg_http_connect(lua_State *L) {
 	GL->L = L; // pass the lua_State pointer to fn_serv
 	GL->callback = cb;
 
-	//lua_settop(L, 0); // clear the stack
+	lua_settop(L, 0); // clear the stack
 	mg_connection *c = (mg_connection*)mg_http_connect(mgr, s_url, fn, GL);
 	lua_pushlightuserdata(L, c);
-	_mg_connection_new(L); // push a new connection udata on stack
-	check_mg_connection(L, -1); // check conn is ready
+	_mg_connection_newt(L); // push a new connection udata on stack
+	check_mg_connection(L, 1); // check conn is ready
 
 	return 1;
 };
@@ -60,7 +61,8 @@ static int _mg_http_get_request_len(lua_State *L) {
 static int _mg_http_parse(lua_State *L) {
 	const char *str = luaL_checkstring(L, 1);
 	size_t size = luaL_checklong(L, 2);
-	lua_pushvalue(L, 3);
+	lua_pop(L, 2);
+	
 	http_message *hm = check_mg_http_message(L, 1);
 
 	lua_pushinteger(L, luaL_checkinteger(L, mg_http_parse(str, size, hm)));
@@ -71,7 +73,8 @@ static int _mg_http_parse(lua_State *L) {
 // void mg_http_printf_chunk(struct mg_connection *c, const char *fmt, ...);
 /* formating should be done pre-call via lua string.format to prevent the over head */
 static int _mg_http_printf_chunk(lua_State *L) {
-	mg_connection *conn = (mg_connection*)lua_topointer(L, 1);
+	
+	mg_connection *conn = check_mg_connection(L, 1); //(mg_connection*)lua_topointer(L, 1);
 	const char *chunk = lua_tostring(L, 2);
 	mg_http_printf_chunk(conn, "%s", chunk);
 
@@ -80,7 +83,7 @@ static int _mg_http_printf_chunk(lua_State *L) {
 
 // void mg_http_write_chunk(struct mg_connection *c, const char *buf, size_t len);
 static int _mg_http_write_chunk(lua_State *L) {
-	mg_connection *conn = (mg_connection*)lua_topointer(L, 1);
+	mg_connection *conn = check_mg_connection(L, 1); //(mg_connection*)lua_topointer(L, 1);
 
 	mg_http_write_chunk(conn, luaL_checkstring(L, 2), luaL_checklong(L, 3));
 
@@ -103,7 +106,7 @@ static int _mg_http_serve_dir(lua_State *L) {
 
 // void mg_http_serve_file(struct mg_connection *c, struct mg_http_message *hm, const char *path, struct mg_http_serve_opts *opts);
 static int _mg_http_serve_file(lua_State *L) {
-	mg_connection *conn = (mg_connection*)lua_topointer(L, 1);
+	mg_connection *conn = check_mg_connection(L, 1); //(mg_connection*)lua_topointer(L, 1);
 	http_message *hm = (http_message*)lua_topointer(L, 2);
 	const char *path = luaL_checkstring(L, 3);
 
@@ -115,7 +118,7 @@ static int _mg_http_serve_file(lua_State *L) {
 
 // void mg_http_reply(struct mg_connection *c, int status_code, const char *headers, const char *body_fmt, ...);
 static int _mg_http_reply(lua_State *L) {
-	mg_connection *conn = (mg_connection*)lua_topointer(L, 1);
+	mg_connection *conn = check_mg_connection(L, 1); //(mg_connection*)lua_topointer(L, 1);
 	int code = luaL_checkinteger(L, 2);
 	const char *headers = luaL_optstring(L, 3, "");
 	const char *fargs = luaL_checkstring(L, 4);
@@ -143,6 +146,20 @@ static int _mg_http_get_header_var(lua_State *L) {
 	return 1;
 };
 
+
+// size_t mg_http_next_multipart(struct mg_str body, size_t offset, struct mg_http_part *part);
+static int _mg_http_next_multipart(lua_State *L) {
+	mg_str *body = check_mg_str(L, 1);
+	//lua_pop(L, 1);
+	size_t ofs = (size_t)luaL_checkinteger(L, 2);
+	http_part *part = check_mg_http_part(L, 3);
+
+	size_t p = mg_http_next_multipart(*body, ofs, part);
+	lua_pushinteger(L, p);
+
+	return 1;
+}
+
 static const struct luaL_reg mg_http_lib_f [] = {
 	{"listen",		_mg_http_listen		},
 	{"connect",		_mg_http_connect	},
@@ -162,7 +179,8 @@ static const struct luaL_reg mg_http_lib_m [] = {
 	{"serve_file", 		_mg_http_serve_file	},
 	{"reply",		_mg_http_reply		},
 	{"get_header",		_mg_http_get_header	},
-	{"get_header_var",	_mg_http_get_header_var	},
+	{"get_header_var",	_mg_http_get_header_var },
+	{"next_multipart",	_mg_http_next_multipart	},
 	{NULL, NULL}
 };
 

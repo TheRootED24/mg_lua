@@ -17,10 +17,11 @@ int _mg_rpc_req_new (lua_State *L) {
 	if(nargs > 1 ) {
 		mg_rpc **head = (mg_rpc **)lua_topointer(L, 1);
 		//mg_rpc *rpc = (mg_rpc *)lua_topointer(L, 2);
-		mg_iobuf *io = (mg_iobuf*)lua_topointer(L, 2);
+		lua_remove(L, 1);
+		mg_iobuf *io = check_mg_iobuf(L, 1); //(mg_iobuf*)lua_topointer(L, 2);
 		//mg_iobuf_init(io, 16,512);
 		//void *req_data = (void*) luaL_optstring(L, 2, NULL);
-		const char *frame = luaL_checkstring(L, 3);
+		const char *frame = luaL_checkstring(L, 2);
 
 		req = (rpc_req *)lua_newuserdata(L, sizeof(rpc_req));
 		memset(req, 0, sizeof(rpc_req));
@@ -35,7 +36,7 @@ int _mg_rpc_req_new (lua_State *L) {
 	else
 		req = (rpc_req*)lua_touserdata(L, 1);
 
-	lua_pushlightuserdata(L, req);
+	//lua_pushlightuserdata(L, req);
 	luaL_getmetatable(L, "LuaBook.rpc_request");
 	lua_setmetatable(L, -2);
 
@@ -43,6 +44,11 @@ int _mg_rpc_req_new (lua_State *L) {
 };
 
 rpc_req *check_rpc_req (lua_State *L, int pos) {
+	if(lua_istable(L, 1)) {
+		lua_getfield(L, 1, "ctx");
+		pos = -1;
+	}
+	
 	void *ud = luaL_checkudata(L, pos, "LuaBook.rpc_request");
 	luaL_argcheck(L, ud != NULL, pos, "`rpc_request' expected");
 
@@ -60,13 +66,72 @@ static int _mg_rpc_req_frame (lua_State *L) {
 	return 1;
 };
 
+static int _mg_rpc_req_new_index(lua_State *L) {
+	if(lua_istable(L, 1)) { // stack : {table, key}
+		const char *key = luaL_checkstring(L, 2);
+		lua_remove(L, 2);
+		
+		if(strcmp(key, "ctx") != 0) {
+			if(key && strcmp(key, "frame") == 0 )
+				_mg_rpc_req_frame(L);
+		}
+	}
+
+	return 0;
+};
+
+static int _mg_rpc_req_index(lua_State *L) {
+	if(lua_istable(L, 1)) {
+		const char *key = luaL_checkstring(L, 2);
+		lua_pop(L, 1);
+
+		if(key && strcmp(key, "frame") == 0 ) {
+			_mg_rpc_req_frame(L);
+		}
+		else if(key && strcmp(key, "ctx") == 0 ) {
+			lua_getfield(L, 1, "ctx");
+			_mg_rpc_req_new(L);
+		}
+		else
+			lua_pushnil(L);
+
+		return 1;
+	}
+	lua_pushnil(L);
+
+	return 1;
+};
+
+int _mg_rpc_req_newt(lua_State * L) {
+	_mg_rpc_req_new(L);
+
+	lua_newtable(L);
+	lua_pushvalue(L, 1);
+	lua_setfield(L, -2, "ctx");
+
+	lua_newtable(L);
+	lua_pushstring(L, "__index");
+	lua_pushcfunction(L, _mg_rpc_req_index);
+	lua_settable(L, -3); // set the __index in the metatable (-3)
+
+	lua_pushstring(L, "__newindex");
+	lua_pushcfunction(L, _mg_rpc_req_new_index);
+	lua_settable(L, -3); // set the __newindex in the metatable (-3)
+
+	lua_setmetatable(L, -2);
+
+	return 1;
+};
+
 static const struct luaL_reg rpc_req_lib_f [] = {
 	{"new", 	_mg_rpc_req_new		},
+	{"newt", 	_mg_rpc_req_newt	},
 	{NULL, NULL}
 };
 
 static const struct luaL_reg rpc_req_lib_m [] = {
 	{"new",		_mg_rpc_req_new		},
+	{"newt", 	_mg_rpc_req_newt	},
 	{"frame",	_mg_rpc_req_frame	},
 	{NULL, NULL}
 };

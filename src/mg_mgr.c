@@ -1,18 +1,25 @@
 #include "mg_mgr.h"
 
+//static mg_mgr mgr = {0};
+
+// create a mgr pointer in c
+// create a new mgr object and assign the ctx to the mgr pointer
 int _mg_mgr_new (lua_State *L) {
 	mg_mgr *mgr = NULL;
 	int nargs = lua_gettop(L);
 
 	if(nargs > 0) {
 		mgr = (mg_mgr*)lua_touserdata(L, 1);
-		lua_pushlightuserdata(L, mgr);
+		//lua_pushlightuserdata(L, mgr);
 	}
-	else
+	else {
 		mgr = (mg_mgr*)lua_newuserdata(L, sizeof(mg_mgr));
+		memset(mgr, 0, sizeof(mg_mgr));
+	}
 
 	luaL_getmetatable(L, "LuaBook.mg_mgr");
 	lua_setmetatable(L, -2);
+
 	if(!mgr) lua_pushnil(L);
 
 	return 1;  /* new userdatum is already on the stack */

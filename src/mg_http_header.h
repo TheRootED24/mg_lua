@@ -28,6 +28,7 @@ typedef struct mg_http_header http_header;
 
 void mg_open_mg_http_header(lua_State *L);
 int _mg_http_header_new (lua_State *L);
+int _mg_http_header_newt (lua_State *L);
 http_header *check_mg_http_header(lua_State *L, int pos);
 
 #endif
