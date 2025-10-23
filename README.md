@@ -77,7 +77,6 @@ end
 
 -- Reconnection timer function. If we get disconnected, reconnect again
 function timer_fn(args)
-	print("here")
   local mgr = mg.mgr.new(args);
   
   if (s_mqtt_conn == "NULL") then
