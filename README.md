@@ -29,8 +29,6 @@ local function main(...)
   end
   return 0;
 end
-
-main(...)
 ```
 HTTP server implements a REST API that returns current time. JSON formatting:
 ```lua
