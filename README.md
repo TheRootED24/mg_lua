@@ -7,38 +7,58 @@ Below are quick snippets that should give an idea how simple the API is and how 
 
 Create a simple web server that serves a directory. The behavior of the HTTP server is specified by its event handler function:
 ```lua
-local mg = require "mg_lua"   -- include the mg_lua library, 
+local mg = require "mg_lua"   -- include the mg_lua library 
 
+local web_root = ".";
 -- HTTP server event handler function
 function ev_handler(c, ev, ev_data) 
   if (ev == MG_EV_HTTP_MSG) then
     local hm = mg.http.message.new(ev_data);
-    local opts = mg.http.serve_opts.new("./web_root/");
+    local opts = mg.http.serve_opts.new(web_root);
     mg.http.serve_dir(c, hm, opts);
   end
 end
 
 local function main(...) 
+  local run = true
   local mgr = mg.mgr.new();  -- Declare event manager
   mg.mgr.init(mgr);  -- Initialise event manager
   mg.http.listen(mgr, "http://0.0.0.0:8000", "ev_handler");  -- Setup listener
-  while(1) do         -- Run an infinite event loop
+  while(run) do         -- Run an infinite event loop
     mg.mgr.poll(mgr, 1000);
   end
   return 0;
-}
+end
+
+main(...)
 ```
 HTTP server implements a REST API that returns current time. JSON formatting:
 ```lua
-function ev_handler(c, ev, ev_data) 
+local mg = require "mg_lua"
+
+function ev_handler(c, ev, ev_data)
   if (ev == MG_EV_HTTP_MSG) then
     local hm = mg.http.message.new(ev_data);
+    
     if (mg.string.match(mg.str.new(hm.uri), mg.str.new("/api/time/get"))) then
-      mg.http.reply(c, 200, "", "{%q:%q}\n", "time", tostring(os.time()));
+      local conn = mg.connection.new(c);
+      mg.http.reply(conn, 200, "", string.format("{%q:%q}\n", "time", tostring(os.date())));
     else
-      mg.http.reply(c, 500, "",  "{%q:%q}\n", "error", "Unsupported URI"); 
+	local conn = mg.connection.new(c);
+        mg.http.reply(conn, 500, "",  string.format("{%q:%q}\n", "error", "Unsupported URI"));
     end
   end
+end
+
+local function main(...) 
+  local run = true
+  local mgr = mg.mgr.new();  -- Declare event manager
+  mg.mgr.init(mgr);  -- Initialise event manager
+  mg.http.listen(mgr, "http://0.0.0.0:8000", "ev_handler");  -- Setup listener
+  while(run) do         -- Run an infinite event loop
+    mg.mgr.poll(mgr, 1000);
+  end
+  return 0;
 end
 ```
 MQTT client that subscribes to a topic device1/rx and echoes incoming messages to device1/tx:
