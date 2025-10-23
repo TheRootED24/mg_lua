@@ -80,7 +80,6 @@ function timer_fn(args)
   local mgr = mg.mgr.new(args);
   
   if (s_mqtt_conn == "NULL") then
-    print(s_mqtt_conn);
     local opts = mg.mqtt.opts.new();
     opts.clean = 0;
     s_mqtt_conn = mg.mqtt.connect(mgr, s_mqtt_url, opts, "ev_handler", mgr);
