@@ -18,7 +18,7 @@ function ev_handler(c, ev, ev_data)
   end
 end
 
-local function main(void) {
+local function main(...) 
   local mgr = mg.mgr.new();  -- Declare event manager
   mg.mgr.init(mgr);  -- Initialise event manager
   mg.http.listen(mgr, "http://0.0.0.0:8000", "ev_handler");  -- Setup listener
