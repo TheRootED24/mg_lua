@@ -6,7 +6,7 @@ mg_lua is a full set lua bindings for the Mongoose C Networking Library
 Below are quick snippets that should give an idea how simple the API is and how easy it is to create applications with it.
 
 Create a simple web server that serves a directory. The behavior of the HTTP server is specified by its event handler function:
-```
+```lua
 local mg = require "mg_lua"   -- include the mg_lua library, 
 
 -- HTTP server event handler function
@@ -29,7 +29,7 @@ local function main(...)
 }
 ```
 HTTP server implements a REST API that returns current time. JSON formatting:
-```
+```lua
 function ev_handler(c, ev, ev_data) 
   if (ev == MG_EV_HTTP_MSG) then
     local hm = mg.http.message.new(ev_data);
@@ -42,7 +42,7 @@ function ev_handler(c, ev, ev_data)
 end
 ```
 MQTT client that subscribes to a topic device1/rx and echoes incoming messages to device1/tx:
-```
+```lua
 local mg = require "mg_lua"
 
 local s_mqtt_url = "mqtt://broker.hivemq.com:1883";
