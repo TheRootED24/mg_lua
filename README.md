@@ -42,7 +42,7 @@ function ev_handler(c, ev, ev_data)
       local conn = mg.connection.new(c);
       mg.http.reply(conn, 200, "", string.format("{%q:%q}\n", "time", tostring(os.date())));
     else
-	local conn = mg.connection.new(c);
+	    local conn = mg.connection.new(c);
         mg.http.reply(conn, 500, "",  string.format("{%q:%q}\n", "error", "Unsupported URI"));
     end
   end
@@ -77,7 +77,7 @@ function ev_handler(c, ev, ev_data)
    opts.qos = 1;
    opts.topic = "device1/rx";
    mg.mqtt.sub(conn, opts);
-    mg.log.info(string.format("%d connected, subscribing to %s", conn.id, opts.topic));
+   mg.log.info(string.format("%d connected, subscribing to %s", conn.id, opts.topic));
   elseif (ev == MG_EV_MQTT_MSG) then
     local conn = mg.connection.new(c);
     local mm = mg.mqtt.message.new(ev_data);
