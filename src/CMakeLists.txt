@@ -24,6 +24,9 @@ project(
   LANGUAGES C
   )
 
+# check for LuaThread package needed by multi-thread.lua example
+find_package(LuaThreads, QUIET)
+
 set(CMAKE_SHARED_LIBRARY_PREFIX "")
 
 add_library(mg_lua SHARED mg_lua.c mg_mgr.c mg_connection.c mg_http.c mg_http_message.c mg_http_header.c mg_http_part.c
