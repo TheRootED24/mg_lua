@@ -14,8 +14,8 @@ endmacro(install_symlink)
 #-------------------------------------------------------------------------------
 
 if (CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")
-  add_definitions(-g -fpic -shared -O3)
-  add_compile_options(-g -W -Wall -Werror -Wextra -DMG_TLS=MG_TLS_BUILTIN -O3 )
+  add_definitions(-fpic -shared -O3)
+  add_compile_options(-W -Wall -Werror -Wextra -DMG_TLS=MG_TLS_BUILTIN -O3 )
 endif()
 
 project(
@@ -42,6 +42,3 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DMG_TLS=MG_TLS_BUILTIN")
 target_link_libraries(mg_lua libmongoose.so)
 target_link_libraries(mg_lua m)
 install(TARGETS mg_lua  DESTINATION /usr/lib/lua/mg_lua/)
-install(DIRECTORY src/examples DESTINATION dir/usr/lib/lua/mg_lua/examples/)
-install_symlink(mg_lua src/examples/http-server/)
-install_symlink(src/mg_types.lua src/examples/http-server/)
