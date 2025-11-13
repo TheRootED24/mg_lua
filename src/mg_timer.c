@@ -64,11 +64,9 @@ static int _mg_timer_add(lua_State *L) {
 	GL->callback = cb;
 	GL->fn_data = arg;
 
-	_mg_timer_new(L);
-	mg_timer *tmr = mg_timer_add(mgr, period_ms, flags, fn_lua_timer, GL);
-	if(!tmr) lua_pushnil(L);
+	mg_timer_add(mgr, period_ms, flags, fn_lua_timer, GL);
 
-	return 1;
+	return 0;
 };
 
 // void mg_timer_init(struct mg_timer **head, struct mg_timer *t, uint64_t period_ms, unsigned flags, void (*fn)(void *), void *fn_data);

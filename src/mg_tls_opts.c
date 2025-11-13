@@ -161,11 +161,13 @@ int _mg_tls_opts_newt(lua_State * L) {
 };
 
 static const struct luaL_reg tls_opts_lib_f [] = {
+	{"ptr", 	_mg_tls_opts_new	},
 	{"new", 	_mg_tls_opts_newt	},
 	{NULL, NULL}
 };
 
 static const struct luaL_reg tls_opts_lib_m [] = {
+	{"ptr", 	_mg_tls_opts_new	},
 	{"new", 	_mg_tls_opts_newt	},
 	{"ca",		_mg_tls_opts_ca		},
 	{"cert",	_mg_tls_opts_cert	},

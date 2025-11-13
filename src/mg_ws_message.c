@@ -152,13 +152,13 @@ int _mg_ws_message_newt(lua_State * L) {
 };
 
 static const struct luaL_reg ws_message_lib_f [] = {
-	//{"new", 	_mg_ws_message_new 	},
+	{"ptr", 	_mg_ws_message_new 	},
 	{"new", 	_mg_ws_message_newt	},
 	{NULL, NULL}
 };
 
 static const struct luaL_reg ws_message_lib_m [] = {
-	//{"new",		_mg_ws_message_new 	},
+	{"ptr",		_mg_ws_message_new 	},
 	{"new", 	_mg_ws_message_newt	},
 	{"data",	_message_data		},
 	{"next",	_message_next		},

@@ -123,13 +123,13 @@ static int _mg_dns_index(lua_State *L) {
 };
 
 static const struct luaL_reg mg_dns_lib_f [] = {
-	//{"new", 	_mg_dns_new	},
+	{"ptr", 	_mg_dns_new	},
 	{"new", 	_mg_dns_newt	},
 	{NULL, NULL}
 };
 
 static const struct luaL_reg mg_dns_lib_m [] = {
-	//{"new", 	_mg_dns_new	},
+	{"ptr", 	_mg_dns_new	},
 	{"new", 	_mg_dns_newt	},
 	{"url",		_mg_dns_url	},
 	{"conn",	_mg_dns_conn	},

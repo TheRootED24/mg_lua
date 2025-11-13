@@ -218,14 +218,14 @@ int _mg_http_serve_opts_newt(lua_State * L) {
 };
 
 static const struct luaL_reg http_serve_opts_lib_f [] = {
-	//{"new",		_mg_http_serve_opts_new		},
+	{"ptr",		_mg_http_serve_opts_new		},
 	{"new", 	_mg_http_serve_opts_newt	},
 	{NULL, NULL}
 };
 
 static const struct luaL_reg http_serve_opts_lib_m [] = {
 
-	//{"new", 		_mg_http_serve_opts_new },
+	{"ptr", 		_mg_http_serve_opts_new },
 	{"new", 		_mg_http_serve_opts_newt},
 	{"root_dir", 		_opts_root_dir		},
 	{"ssi_pattern", 	_opts_ssi_pattern	},

@@ -123,14 +123,14 @@ int _mg_rpc_req_newt(lua_State * L) {
 };
 
 static const struct luaL_reg rpc_req_lib_f [] = {
-	{"new", 	_mg_rpc_req_new		},
-	{"newt", 	_mg_rpc_req_newt	},
+	{"ptr", 	_mg_rpc_req_new		},
+	{"new", 	_mg_rpc_req_newt	},
 	{NULL, NULL}
 };
 
 static const struct luaL_reg rpc_req_lib_m [] = {
-	{"new",		_mg_rpc_req_new		},
-	{"newt", 	_mg_rpc_req_newt	},
+	{"ptr",		_mg_rpc_req_new		},
+	{"new", 	_mg_rpc_req_newt	},
 	{"frame",	_mg_rpc_req_frame	},
 	{NULL, NULL}
 };

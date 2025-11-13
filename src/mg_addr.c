@@ -133,11 +133,13 @@ int _mg_addr_newt(lua_State * L) {
 };
 
 static const struct luaL_reg mg_addr_lib_f [] = {
+	{"ptr", 	_mg_addr_new	},
 	{"new", 	_mg_addr_newt	},
 	{NULL, NULL}
 };
 
 static const struct luaL_reg mg_addr_lib_m [] = {
+	{"ptr", 	_mg_addr_new	},
 	{"new", 	_mg_addr_newt	},
 	{"ip",		_addr_ip	},
 	{"port",	_addr_port	},

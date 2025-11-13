@@ -9,28 +9,28 @@ void fn_lua_cb(mg_connection *c, int ev, void *ev_data) {
 	if(c->fn_data)
 		GL = (lua_State_t*)c->fn_data;
 
-	if(GL) {
-		lua_State *L = GL->L;
-		lua_getglobal(L, GL->callback);
-		lua_pushlightuserdata(L, c);
-		lua_pushinteger(L, ev);
-		lua_pushlightuserdata(L, ev_data);
+	if(NULL == GL) GL = &_GL;
+	lua_State *L = GL->L;
+	lua_getglobal(L, GL->callback);
+	lua_pushlightuserdata(L, c);
+	lua_pushinteger(L, ev);
+	lua_pushlightuserdata(L, ev_data);
 
-		lua_pcall(L, 3, 0, 0);
-	}
+	lua_pcall(L, 3, 0, 0);
 };
 
 void fn_lua_timer(void *arg) {
 	if(arg == NULL) return;
 	lua_State_t *GL = (lua_State_t*)arg;
 
-	if(GL) {
-		lua_State *L = GL->L;
-		lua_getglobal(L, GL->callback);
-		lua_pushlightuserdata(L, GL->fn_data);
+	if(NULL == GL) GL = &_GL;
 
-		lua_pcall(L, 1, 0, 0);
-	}
+	lua_State *L = GL->L;
+	lua_getglobal(L, GL->callback);
+	lua_pushlightuserdata(L, GL->fn_data);
+
+	lua_pcall(L, 1, 0, 0);
+	
 };
 
 void fn_lua_signal(int signo) {
@@ -50,10 +50,11 @@ void store_state(lua_State *L, const char *cb) {
 void lua_rpc_cb(rpc_req* req) {
 	int fn_args = 1;
 	lua_State_t *GL = (lua_State_t*)req->rpc->fn_data;
+	if(NULL == GL) GL = &_GL;
 	lua_State *L = GL->L;
 	lua_getglobal(L, GL->callback);
 	lua_pushlightuserdata(L, req);
-	if(GL->fn_data){
+	if(GL->fn_data != NULL){
 		lua_pushlightuserdata(L, GL->fn_data);
 		fn_args++;
 	}

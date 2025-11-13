@@ -72,7 +72,7 @@ static int _http_part_filename(lua_State *L) {
 	http_part *hp = check_mg_http_part(L, 1); lua_remove(L, 1);
 	if(nargs > 1) {
 		if(lua_isstring(L, 1)) {
-			//_mg_str_new(L)
+
 			char *str = (char*)lua_tostring(L, 1);
 			size_t len = strlen(str);
 
@@ -92,7 +92,7 @@ static int _http_part_body(lua_State *L) {
 	http_part *hp = check_mg_http_part(L, 1); lua_remove(L, 1);
 	if(nargs > 1) {
 		if(lua_isstring(L, 1)) {
-			//_mg_str_new(L)
+
 			char *str = (char*)lua_tostring(L, 1);
 			size_t len = strlen(str);
 
@@ -108,7 +108,7 @@ static int _http_part_body(lua_State *L) {
 };
 
 static int _mg_http_part_new_index(lua_State *L) {
-	if(lua_istable(L, 1)) { // stack : {table, key}
+	if(lua_istable(L, 1)) {
 		const char *key = luaL_checkstring(L, 2);
 		lua_remove(L, 2);
 		
@@ -175,13 +175,13 @@ int _mg_http_part_newt(lua_State * L) {
 };
 
 static const struct luaL_reg http_part_lib_f [] = {
-	//{"new", 	_mg_http_part_new	},
+	{"ptr", 	_mg_http_part_new	},
 	{"new", 	_mg_http_part_newt	},
 	{NULL, NULL}
 };
 
 static const struct luaL_reg http_part_lib_m [] = {
-	//{"new", 	_mg_http_part_new	},
+	{"ptr", 	_mg_http_part_new	},
 	{"new", 	_mg_http_part_newt	},
 	{"name", 	_http_part_name		},
 	{"filename", 	_http_part_filename	},

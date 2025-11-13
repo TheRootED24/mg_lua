@@ -6,7 +6,7 @@ static int _mg_str_new_index(lua_State *L);
 
 int _mg_str_new (lua_State *L) {
 	int nargs = lua_gettop(L);
-	mg_str *str = NULL;
+	static mg_str *str = NULL;
 
 	if(nargs > 0) {
 		//case s = mg.str.new(ex-s)
@@ -166,13 +166,13 @@ int _mg_str_newt(lua_State * L) {
 };
 
 static const struct luaL_reg mg_str_lib_f [] = {
-	//{"new", 	_mg_str_new	},
+	{"ptr", 	_mg_str_new	},
 	{"new",		_mg_str_newt	},
 	{NULL, NULL}
 };
 
 static const struct luaL_reg mg_str_lib_m [] = {
-	//{"new",		_mg_str_new	},
+	{"ptr",		_mg_str_new	},
 	{"new",		_mg_str_newt	},
 	{"buf",		_mg_str_buf	},
 	{"length",	_mg_str_len	},

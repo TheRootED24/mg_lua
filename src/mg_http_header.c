@@ -8,30 +8,6 @@ struct mg_http_header {
 };
 */
 
-/*static void dumpstack (lua_State *L) {
-  int top=lua_gettop(L);
-  for (int i = 1; i <= top; i++) {
-    printf("%d\t%s\t", i, luaL_typename(L,i));
-    switch (lua_type(L, i)) {
-      case LUA_TNUMBER:
-        printf("%g\n",lua_tonumber(L,i));
-        break;
-      case LUA_TSTRING:
-        printf("%s\n",lua_tostring(L,i));
-        break;
-      case LUA_TBOOLEAN:
-        printf("%s\n", (lua_toboolean(L, i) ? "true" : "false"));
-        break;
-      case LUA_TNIL:
-        printf("%s\n", "nil");
-        break;
-      default:
-        printf("%p\n",lua_topointer(L,i));
-        break;
-    }
-  }
-}*/
-
 static int _mg_http_header_index(lua_State *L);
 static int _mg_http_header_new_index(lua_State *L);
 
@@ -224,7 +200,7 @@ static int _mg_http_header_index(lua_State *L) {
 };
 
 static const struct luaL_reg http_header_lib_f [] = {
-	//{"new", 	_mg_http_header_new	},
+	{"ptr", 	_mg_http_header_new	},
 	{"new", 	_mg_http_header_newt	},
 	{"name", 	_name			},
 	{"value", 	_value			},
@@ -232,6 +208,7 @@ static const struct luaL_reg http_header_lib_f [] = {
 };
 
 static const struct luaL_reg http_header_lib_m [] = {
+	{"ptr", 	_mg_http_header_new	},
 	{"new", 	_mg_http_header_newt	},
 	{"__tostring",	_print_header		},
 	{"__call",	_call_header		},

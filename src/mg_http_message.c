@@ -297,13 +297,13 @@ int _mg_http_message_newt(lua_State * L) {
 };
 
 static const struct luaL_reg messagelib_f [] = {
-	//{"new", 	_mg_http_message_new	},
+	{"ptr", 	_mg_http_message_new	},
 	{"new", 	_mg_http_message_newt	},
 	{NULL, NULL}
 };
 
 static const struct luaL_reg messagelib_m [] = {
-	//{"new", 	_mg_http_message_new	},
+	{"ptr", 	_mg_http_message_new	},
 	{"new", 	_mg_http_message_newt	},
 	{"method", 	_method			},
 	{"uri", 	_uri			},

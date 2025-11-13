@@ -54,7 +54,10 @@ static int _mg_iobuf_buf(lua_State *L) {
 	}
 		
 	mg_iobuf *io = check_mg_iobuf(L, 1);
-	lua_pushlstring(L, (char*)io->buf, (io->len - ofs));
+	if(io)
+		lua_pushlstring(L, (char*)io->buf, (io->len - ofs));
+	else
+		lua_pushnil(L);
 
 	return 1;
 };
@@ -228,7 +231,6 @@ static int _mg_iobuf_index(lua_State *L) {
 };
 
 static int _mg_iobuf_gc(lua_State *L) {
-	//printf("********************************* Destroy mg_iobuf *********************************\n");
 	mg_iobuf *io = NULL;
 	if(lua_istable(L, 1)) {
 		lua_getfield(L, 1, "ctx");
@@ -246,14 +248,14 @@ static int _mg_iobuf_gc(lua_State *L) {
 };
 
 static const struct luaL_reg mg_iobuf_lib_f [] = {
-	//{"new", 	_mg_iobuf_new		},
+	{"ptr", 	_mg_iobuf_new		},
 	{"new", 	_mg_iobuf_newt		},
 	{"init",	_mg_iobuf_init		},
 	{NULL, NULL}
 };
 
 static const struct luaL_reg mg_iobuf_lib_m [] = {
-	//{"new", 	_mg_iobuf_new		},
+	{"ptr", 	_mg_iobuf_new		},
 	{"new", 	_mg_iobuf_newt		},
 	{"init",	_mg_iobuf_init		},
 	{"add",		_mg_iobuf_add		},

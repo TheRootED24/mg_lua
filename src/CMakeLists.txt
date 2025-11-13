@@ -14,8 +14,8 @@ endmacro(install_symlink)
 #-------------------------------------------------------------------------------
 
 if (CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")
-  add_definitions(-fpic -shared -O3)
-  add_compile_options(-W -Wall -Werror -Wextra -DMG_TLS=MG_TLS_BUILTIN -O3 )
+  add_definitions(-g -fpic -shared -O3)
+  add_compile_options(-g -W -Wall -Werror -Wextra -DMG_TLS=MG_TLS_BUILTIN -O3 )
 endif()
 
 project(

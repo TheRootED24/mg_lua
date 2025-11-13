@@ -7,26 +7,19 @@ static int _mg_ws_connect(lua_State *L) {
 	const char *s_url = luaL_checkstring(L, 2);
 	const char *cb = luaL_checkstring(L, 3);
 	const char *argstr;
-	mg_connection *c;
 
 	mg_event_handler_t fn = (mg_event_handler_t)fn_lua_cb;
 	lua_State_t *GL = ((lua_State_t*)lua_newuserdata(L, sizeof(lua_State_t)));
 	GL->L = L; // pass the lua_State pointer to fn_serv
 	GL->callback = cb;
 	if(nargs > 3) {
-		//fmt = luaL_checkstring(L, 4);
 		argstr = luaL_checkstring(L, 4);
-		c = mg_ws_connect(mgr, s_url, fn, GL, "%s", argstr);
+		mg_ws_connect(mgr, s_url, fn, GL, "%s", argstr);
 	}
 	else
-		c = mg_ws_connect(mgr, s_url, fn, GL, NULL);
+		mg_ws_connect(mgr, s_url, fn, GL, NULL);
 
-	lua_settop(L, 0); // clear the stack
-	lua_pushlightuserdata(L, c);
-	_mg_connection_newt(L); // push a new connection udata on stack
-	check_mg_connection(L, 1); // check conn is ready
-
-	return 1; // return the udata on the stack
+	return 0;
 };
 
 // void mg_ws_upgrade(struct mg_connection *c, struct mg_http_message *, const char *fmt, ...);

@@ -117,13 +117,13 @@ static int _mg_fd_index(lua_State *L) {
 
 
 static const struct luaL_reg mg_fd_lib_f [] = {
-	//{"new", 	_mg_fd_new	},
+	{"ptr", 	_mg_fd_new	},
 	{"new",	_mg_fd_newt	},
 	{NULL, NULL}
 };
 
 static const struct luaL_reg mg_fd_lib_m [] = {
-	//{"new",		_mg_fd_new	},
+	{"ptr",		_mg_fd_new	},
 	{"new",	_mg_fd_newt	},
 	{NULL, NULL}
 };

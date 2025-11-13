@@ -171,8 +171,8 @@ int _mg_rpc_newt(lua_State * L) {
 
 
 static const struct luaL_reg mg_rpc_lib_m [] = {
-	{"new",			_mg_rpc_new	},
-	{"newt",		_mg_rpc_newt	},
+	{"ptr",			_mg_rpc_new	},
+	{"new",		_mg_rpc_newt	},
 	{"init_head",		_rpc_head_init	},
 	{"add",			_mg_rpc_add	},
 	{"del",			_mg_rpc_del,	},

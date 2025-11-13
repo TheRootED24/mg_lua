@@ -12,13 +12,13 @@ static int _mg_http_listen(lua_State *L) {
 	GL->L = L; // pass the lua_State pointer to fn_serv
 	GL->callback = cb;
 
-	lua_settop(L, 0); // clear the stack
-	mg_connection *c = (mg_connection*)mg_http_listen(mgr, s_url, fn, GL);
-	lua_pushlightuserdata(L, c);
-	_mg_connection_newt(L); // push a new connection udata on stack
-	check_mg_connection(L, 1); // check conn is ready
+	//lua_settop(L, 0); // clear the stack
+	mg_http_listen(mgr, s_url, fn, GL);
+	//lua_pushlightuserdata(L, c);
+	//_mg_connection_newt(L); // push a new connection udata on stack
+	//check_mg_connection(L, 1); // check conn is ready
 
-	return 1;
+	return 0;
 };
 
 // struct mg_connection *mg_http_connect(struct mg_mgr *, const char *url, mg_event_handler_t fn, void *fn_data);
@@ -32,13 +32,13 @@ static int _mg_http_connect(lua_State *L) {
 	GL->L = L; // pass the lua_State pointer to fn_serv
 	GL->callback = cb;
 
-	lua_settop(L, 0); // clear the stack
-	mg_connection *c = (mg_connection*)mg_http_connect(mgr, s_url, fn, GL);
-	lua_pushlightuserdata(L, c);
-	_mg_connection_newt(L); // push a new connection udata on stack
-	check_mg_connection(L, 1); // check conn is ready
+	//lua_settop(L, 0); // clear the stack
+	mg_http_connect(mgr, s_url, fn, GL);
+	//lua_pushlightuserdata(L, c);
+	//_mg_connection_newt(L); // push a new connection udata on stack
+	//check_mg_connection(L, 1); // check conn is ready
 
-	return 1;
+	return 0;
 };
 
 // int mg_http_status(const struct mg_http_message *hm);

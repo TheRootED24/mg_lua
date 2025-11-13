@@ -18,9 +18,6 @@ static int _mg_file_read(lua_State *L) {
 			free(s.buf);
 	}
 
-	//if(s.buf && s.len < 1)
-		//lua_pushnil(L);
-
 	return 1;
 };
 
@@ -65,12 +62,9 @@ static int _mg_file_close(lua_State *L) {
 };
 
 static int _mg_file_free(lua_State *L) {
-	printf("MADE IT!!\n");
 	mg_str *str = check_mg_str(L, 1);
 	if(str->buf != NULL)
 		free(str->buf);
-
-	//lua_pushlightuserdata(L, &str);
 
 	return 0;
 };

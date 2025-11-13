@@ -321,13 +321,13 @@ int _mg_mqtt_opts_newt(lua_State * L) {
 };
 
 static const struct luaL_reg mqtt_opts_lib_f [] = {
-	//{"new", 	_mg_mqtt_opts_new	},
+	{"ptr", 	_mg_mqtt_opts_new	},
 	{"new", 	_mg_mqtt_opts_newt	},
 	{NULL, NULL}
 };
 
 static const struct luaL_reg mqtt_opts_lib_m [] = {
-	//{"new", 		_mg_mqtt_opts_new		},
+	{"ptr", 		_mg_mqtt_opts_new		},
 	{"new", 		_mg_mqtt_opts_newt		},
 	{"user", 		_mg_mqtt_opts_user		},
 	{"pass", 		_mg_mqtt_opts_pass		},

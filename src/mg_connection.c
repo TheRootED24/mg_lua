@@ -4,24 +4,24 @@ static int _mg_connection_index(lua_State *L);
 static int _mg_connection_new_index(lua_State *L);
 // MG_CONNECTION USERDATUM
 int _mg_connection_new (lua_State *L) {
-	mg_connection *conn;
+	mg_connection const *conn;
 	int nargs = lua_gettop(L);
 	
 	if(nargs > 0) {
 		int pos = nargs > 1 ? -1 : 1;
 		if(lua_istable(L, 1)) {
 			lua_getfield(L, 1, "ctx");
-			//pos = -1;
-			lua_remove(L, 1);
+			pos = -1;
+			//lua_remove(L, 1);
 
-			return 1;
+			//return 1;
 		}
 
 		conn = (mg_connection*)lua_touserdata(L, pos);
 	}
 	else {
 		conn = (mg_connection*)lua_newuserdata(L, sizeof(mg_connection));
-		memset(conn, 0, sizeof(mg_connection));
+		//memset(conn, 0, sizeof(mg_connection));
 	}
 
 	luaL_getmetatable(L, "LuaBook.mg_connection");
@@ -35,7 +35,15 @@ int _mg_connection_new (lua_State *L) {
 mg_connection *check_mg_connection(lua_State *L, int pos) {
 	if(lua_istable(L, 1)) {
 		lua_getfield(L, 1, "ctx");
-		pos = -1;
+		mg_connection **c = (mg_connection**)lua_touserdata(L, -1);
+		//if(*c)
+			lua_pushlightuserdata(L, *c);
+		/*else {
+			lua_settop(L, 0);
+			_mg_connection_new(L);
+			*c = lua_touserdata(L, -1);
+			lua_pushlightuserdata(L, *c);
+		}*/
 	}
 
 	void *ud = luaL_checkudata(L, pos, "LuaBook.mg_connection");
@@ -43,6 +51,20 @@ mg_connection *check_mg_connection(lua_State *L, int pos) {
 
 	return (mg_connection*)ud;
 };
+
+
+
+/*mg_connection *check_mg_connection(lua_State *L, int pos) {
+	if(lua_istable(L, 1)) {
+		lua_getfield(L, 1, "ctx");
+		pos = -1;
+	}
+
+	void *ud = luaL_checkudata(L, pos, "LuaBook.mg_connection");
+	luaL_argcheck(L, ud != NULL, pos, "`mg_connection' expected");
+
+	return (mg_connection*)ud;
+};*/
 
 static int _mg_connection_next(lua_State *L) {
 	mg_connection *conn = check_mg_connection(L, 1);
@@ -646,7 +668,19 @@ static int _mg_connection_index(lua_State *L) {
 };
 
 int _mg_connection_newt(lua_State * L) {
-	_mg_connection_new(L);
+	/*if(!lua_isuserdata(L, 1) && !lua_istable(L, 1)) {
+		_mg_connection_new(L);
+		mg_connection *conn = check_mg_connection(L, -1);
+
+		mg_connection **c = (mg_connection**)lua_newuserdata(L, sizeof(conn));
+		*c = conn;
+		printf("CONN ID: %ld\n", conn->id);
+	}*/
+
+	mg_connection *c = (mg_connection*)lua_topointer(L, 1);
+	mg_connection **bc = (mg_connection**)lua_newuserdata(L, sizeof(mg_connection*));
+	*bc = c;
+	lua_pushlightuserdata(L, c);
 
 	lua_newtable(L);
 	lua_pushvalue(L, 1);
@@ -681,11 +715,12 @@ int _mg_connection_newt(lua_State * L) {
 	return 1;
 };
 
+/*
 static const struct luaL_reg mg_connection_lib_f [] = {
 	{"ptr", 		_mg_connection_new	},
 	{"new", 		_mg_connection_newt	},
 	{NULL, NULL}
-};
+};*/
 
 static const struct luaL_reg mg_connection_lib_m [] = {
 	{"ptr", 		_mg_connection_new	},
@@ -735,6 +770,6 @@ void mg_open_mg_connection(lua_State *L) {
 	lua_pushvalue(L, -2);  /* pushes the metatable */
 	lua_settable(L, -3);  /* metatable.__index = metatable */
 	luaL_openlib(L, NULL, mg_connection_lib_m, 0);
-	luaL_openlib(L, "mg_connection",mg_connection_lib_f, 0);
-	lua_pop(L, 2);
+	//luaL_openlib(L, "mg_connection",mg_connection_lib_f, 0);
+	lua_pop(L, 1);
 };
