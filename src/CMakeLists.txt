@@ -42,3 +42,23 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DMG_TLS=MG_TLS_BUILTIN")
 target_link_libraries(mg_lua libmongoose.so)
 target_link_libraries(mg_lua m)
 install(TARGETS mg_lua  DESTINATION /usr/lib/lua/mg_lua/)
+
+install(TARGETS mg_lua  DESTINATION lib/lua/mg_lua/)
+
+option(INSTALL_EXAMPLES "Install Lua example scripts" OFF)
+
+if(INSTALL_EXAMPLES)
+    # 2. Install the contents of src/examples/ into the target directory
+    # Note: The trailing slash in "examples/" ensures only contents are copied
+    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/examples/"
+            DESTINATION "lib/lua/mg_lua/examples"
+            # Set default permissions for the target filesystem
+            FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ WORLD_READ
+            DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ WORLD_READ
+            # Exclude build-system files from the installation
+            PATTERN "CMakeLists.txt" EXCLUDE
+            PATTERN "CMakeFiles" EXCLUDE
+            PATTERN ".git*" EXCLUDE
+    )
+endif()
+
